@@ -166,15 +166,15 @@ Users can register, manage their profiles, upload documents, and track skills. A
 
 ## Architecture Modules
 
-![Module_Architecture.jpeg](Module_Architecture.jpeg)
+![Module_Architecture.jpeg](asset/Module_Architecture.jpeg)
 
 ## Architecture UserModule
 
-![UserModule.drawio.png](Module_Architecture.jpeg)
+![UserModule.drawio.png](asset/Module_Architecture.jpeg)
 
 ## Architecture Auth Flow
 
-![ClientFlow.drawio.png](ClientFlow.drawio.png)
+![ClientFlow.drawio.png](asset/ClientFlow.drawio.png)
 
 ## **File Management**
 
