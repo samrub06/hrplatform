@@ -45,7 +45,7 @@ export class CreateUserDto {
     description: "Date de création de l'utilisateur",
     type: String,
   })
-  createdAt?: Date; // Date optionnelle
+  createdAt?: Date;
 
   @ApiProperty({ description: "Les compétences de l'utilisateur" })
   skills?: string[]; // Compétences optionnelles

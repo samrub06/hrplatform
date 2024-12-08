@@ -1,7 +1,7 @@
 import { IQuery, IQueryHandler, QueryHandler } from '@nestjs/cqrs';
 import { InjectModel } from '@nestjs/sequelize';
 import { Repository } from 'sequelize-typescript';
-import { User } from '../models/user.model';
+import { User } from '../../users/models/user.model';
 
 export class FindAllUsersQuery implements IQuery {}
 

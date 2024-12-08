@@ -1,6 +1,6 @@
 import { IsNotEmpty, MinLength } from 'class-validator';
 import { Column, DataType, Model, Table } from 'sequelize-typescript';
-import { Role } from '../../enums/role.enum';
+import { Role } from 'src/enums/role.enum';
 
 @Table({ tableName: 'User' })
 export class User extends Model {
@@ -40,6 +40,25 @@ export class User extends Model {
   @Column
   cv?: string;
 
+  @Column(DataType.JSONB)
+  skills: {
+    language: string;
+    experience_years: number;
+    level?: number;
+  }[];
+
+  @Column(DataType.JSONB)
+  desired_position: {
+    name: string;
+    description?: string;
+  };
+
   @Column(DataType.TEXT)
   adminNotes?: string;
+
+  @Column
+  createdAt?: Date;
+
+  @Column
+  updatedAt?: Date;
 }

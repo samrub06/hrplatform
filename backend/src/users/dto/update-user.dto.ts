@@ -11,4 +11,5 @@ export class UpdateUserDto extends PartialType(CreateUserDto) {
   role: Role;
   skills: string[];
   cv: string;
+  updateAt: Date;
 }

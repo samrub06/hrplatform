@@ -13,7 +13,8 @@ export interface IUserLoginResponse {
 }
 
 export interface User {
-  email?: string;
+  email: string;
+  id: number;
   name: string;
   role: string;
 
@@ -22,9 +23,10 @@ export interface User {
 
 export interface IAuthContext {
   isAuthenticated?: boolean;
-  user?: User;
+  user: User | null;
   role?: string;
-
+  login: (credentials: IUserLoginRequest) => Promise<void>;
+  logout: () => void;
 }
 
 export const USER_ROLES = {
