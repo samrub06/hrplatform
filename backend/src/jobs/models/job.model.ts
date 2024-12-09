@@ -1,4 +1,11 @@
-import { Column, DataType, Model, Table } from 'sequelize-typescript';
+import {
+  Column,
+  DataType,
+  ForeignKey,
+  Model,
+  Table,
+} from 'sequelize-typescript';
+import { User } from 'src/users/models/user.model';
 
 export enum WorkCondition {
   ONSITE = 'onsite',
@@ -66,4 +73,8 @@ export class Job extends Model {
 
   @Column
   email_address: string;
+
+  @ForeignKey(() => User)
+  @Column
+  userId: number;
 }

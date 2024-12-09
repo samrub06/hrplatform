@@ -1,10 +1,10 @@
 import { ApiProperty } from '@nestjs/swagger';
 import {
-	IsEmail,
-	IsEnum,
-	IsNotEmpty,
-	IsNumber,
-	IsString,
+    IsEmail,
+    IsEnum,
+    IsNotEmpty,
+    IsNumber,
+    IsString,
 } from 'class-validator';
 import { CompanyType, WorkCondition } from '../models/job.model';
 

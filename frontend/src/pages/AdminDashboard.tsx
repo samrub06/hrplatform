@@ -35,14 +35,14 @@ const AdminDashboard = () => {
 	});
 
 	const filteredUsers = (users || []).filter((user: any) => 
-		user.first_name.toLowerCase().includes(userSearchText.toLowerCase()) ||
-		user.last_name.toLowerCase().includes(userSearchText.toLowerCase()) ||
-		user.email.toLowerCase().includes(userSearchText.toLowerCase())
+		user.first_name?.toLowerCase().includes(userSearchText.toLowerCase()) ||
+		user.last_name?.toLowerCase().includes(userSearchText.toLowerCase()) ||
+		user.email?.toLowerCase().includes(userSearchText.toLowerCase())
 	);
 
 	const filteredJobs = (jobs || []).filter(job =>
-		job.name.toLowerCase().includes(jobSearchText.toLowerCase()) ||
-		job.description.toLowerCase().includes(jobSearchText.toLowerCase())
+		job.name?.toLowerCase().includes(jobSearchText.toLowerCase()) ||
+		job.description?.toLowerCase().includes(jobSearchText.toLowerCase())
 	);
 
 	const handleAddUser = () => {
