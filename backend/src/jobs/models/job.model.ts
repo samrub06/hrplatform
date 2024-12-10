@@ -20,10 +20,10 @@ export enum CompanyType {
   CONSULTING = 'consulting',
 }
 
-@Table({ tableName: 'Job' })
+@Table({ tableName: 'job' })
 export class Job extends Model {
   @Column({
-    type: DataType.INTEGER,
+    type: DataType.UUID,
     autoIncrement: true,
     primaryKey: true,
   })

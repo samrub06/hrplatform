@@ -1,14 +1,14 @@
 import {
-  ConflictException,
-  Injectable,
-  NotFoundException,
+    ConflictException,
+    Injectable,
+    NotFoundException,
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
 import { Repository } from 'sequelize-typescript';
 import { Role } from 'src/enums/role.enum';
-import { User } from '../users/models/user.model';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { User } from './models/user.model';
 export const IUserServiceKey = Symbol('IUserService');
 
 export interface IUserService {

@@ -1,6 +1,6 @@
 import { Column, DataType, Model, Table } from 'sequelize-typescript';
 
-@Table({ tableName: 'Admin' })
+@Table({ tableName: 'admin' })
 export class Admin extends Model {
   @Column({
     type: DataType.UUID,

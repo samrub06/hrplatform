@@ -2,7 +2,7 @@ import { Column, DataType, HasMany, Model, Table } from 'sequelize-typescript';
 import { User } from 'src/users/models/user.model';
 import { RolePermission } from './role-permission.model';
 
-@Table({ tableName: 'Role' })
+@Table({ tableName: 'role' })
 export class Role extends Model {
   @Column({
     type: DataType.UUID,
@@ -11,12 +11,18 @@ export class Role extends Model {
   })
   id: string;
 
-  @Column
+  @Column({
+    type: DataType.STRING,
+    allowNull: false,
+  })
   name: string;
 
   @HasMany(() => User)
   users: User[];
 
-  @HasMany(() => RolePermission)
+  @HasMany(() => RolePermission, {
+    foreignKey: 'roleId',
+    as: 'rolePermissions',
+  })
   rolePermissions: RolePermission[];
 }

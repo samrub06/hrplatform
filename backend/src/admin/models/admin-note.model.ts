@@ -5,9 +5,9 @@ import {
   Model,
   Table,
 } from 'sequelize-typescript';
-import { User } from 'src/users/models/user.model';
+import { Admin } from './admin.model';
 
-@Table({ tableName: 'AdminNote' })
+@Table({ tableName: 'admin_note' })
 export class AdminNote extends Model {
   @Column({
     type: DataType.UUID,
@@ -16,7 +16,7 @@ export class AdminNote extends Model {
   })
   id: string;
 
-  @ForeignKey(() => User)
+  @ForeignKey(() => Admin)
   @Column
   userId: number;
 

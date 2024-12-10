@@ -1,11 +1,17 @@
 import { IsNotEmpty, MinLength } from 'class-validator';
-import { Column, DataType, Model, Table } from 'sequelize-typescript';
-import { Role } from 'src/enums/role.enum';
+import {
+  Column,
+  DataType,
+  ForeignKey,
+  Model,
+  Table,
+} from 'sequelize-typescript';
+import { Role } from 'src/models/role.model';
 
-@Table({ tableName: 'User' })
+@Table({ tableName: 'user' })
 export class User extends Model {
   @Column({
-    type: DataType.INTEGER,
+    type: DataType.UUID,
     autoIncrement: true,
     primaryKey: true,
   })
@@ -26,13 +32,6 @@ export class User extends Model {
     message: 'Le mot de passe doit contenir au moins 6 caractères.',
   })
   password: string;
-
-  @Column({
-    type: DataType.ENUM,
-    values: Object.values(Role),
-    defaultValue: Role.USER,
-  })
-  role: Role;
 
   @Column
   profilePicture?: string;
@@ -61,4 +60,11 @@ export class User extends Model {
 
   @Column
   updatedAt?: Date;
+
+  @ForeignKey(() => Role)
+  @Column({
+    type: DataType.UUID,
+    allowNull: true,
+  })
+  roleId?: string;
 }

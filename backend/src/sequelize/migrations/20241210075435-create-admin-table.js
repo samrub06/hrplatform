@@ -1,29 +1,33 @@
+'use strict';
+
 module.exports = {
   up: async (queryInterface, Sequelize) => {
-    await queryInterface.createTable('Role', {
+    await queryInterface.createTable('admin', {
       id: {
         type: Sequelize.UUID,
         defaultValue: Sequelize.UUIDV4,
-        primaryKey: true,
+        primaryKey: true
       },
       name: {
         type: Sequelize.STRING,
-        allowNull: false,
-        unique: true,
+        allowNull: false
+      },
+      password: {
+        type: Sequelize.STRING,
+        allowNull: false
       },
       createdAt: {
         type: Sequelize.DATE,
-        allowNull: false,
-        defaultValue: Sequelize.literal('CURRENT_TIMESTAMP'),
+        allowNull: false
       },
       updatedAt: {
         type: Sequelize.DATE,
-        allowNull: false,
-        defaultValue: Sequelize.literal('CURRENT_TIMESTAMP'),
-      },
+        allowNull: false
+      }
     });
   },
+
   down: async (queryInterface) => {
-    await queryInterface.dropTable('Role');
-  },
+    await queryInterface.dropTable('admin');
+  }
 };

@@ -71,7 +71,7 @@ export class AuthService {
       password,
       password_confirmation,
       email,
-      role = Role.USER,
+      role = Role.CANDIDATE,
     } = registerDto;
 
     // Vérifier si le mot de passe et la confirmation du mot de passe sont identiques
@@ -98,8 +98,8 @@ export class AuthService {
     // Générer le token
     const payload = {
       email: newUser.email,
-      id: newUser.id,
-      role: newUser.role,
+      sub: newUser.id,
+      roleId: newUser.roleId,
     };
     return {
       access_token: this.jwtService.sign(payload),
@@ -126,7 +126,7 @@ export class AuthService {
     }
 
     // Générer le token
-    const payload = { email: user.email, id: user.id, role: user.role };
+    const payload = { email: user.email, sub: user.id, roleId: user.roleId };
     return {
       access_token: this.jwtService.sign(payload),
     };

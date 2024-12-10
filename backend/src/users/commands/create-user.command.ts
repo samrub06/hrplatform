@@ -1,6 +1,6 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { User } from '../../users/models/user.model';
 import { CreateUserDto } from '../dto/create-user.dto';
+import { User } from '../models/user.model';
 import { UsersService } from '../users.service';
 
 export class CreateUserCommand {

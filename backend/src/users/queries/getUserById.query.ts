@@ -2,7 +2,7 @@ import { NotFoundException } from '@nestjs/common';
 import { IQuery, IQueryHandler, QueryHandler } from '@nestjs/cqrs';
 import { InjectModel } from '@nestjs/sequelize';
 import { Repository } from 'sequelize-typescript';
-import { User } from '../../users/models/user.model';
+import { User } from '../models/user.model';
 
 export class FindUserByIdQuery implements IQuery {
   constructor(public readonly id: number) {}

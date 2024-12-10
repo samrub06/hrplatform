@@ -1,7 +1,7 @@
 import { NotFoundException } from '@nestjs/common';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { User } from '../../users/models/user.model';
 import { UpdateUserDto } from '../dto/update-user.dto';
+import { User } from '../models/user.model';
 import { UsersService } from '../users.service';
 
 export class UpdateUserCommand {

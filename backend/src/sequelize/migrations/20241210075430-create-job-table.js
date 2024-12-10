@@ -2,74 +2,80 @@
 
 module.exports = {
   up: async (queryInterface, Sequelize) => {
-    await queryInterface.createTable('Job', {
+    await queryInterface.createTable('job', {
       id: {
-        type: Sequelize.INTEGER,
-        autoIncrement: true,
-        primaryKey: true,
+        type: Sequelize.UUID,
+        defaultValue: Sequelize.UUIDV4,
+        primaryKey: true
       },
       name: {
         type: Sequelize.STRING,
-        allowNull: false,
+        allowNull: false
       },
       description: {
         type: Sequelize.TEXT,
-        allowNull: false,
+        allowNull: false
       },
       salary_offered: {
         type: Sequelize.DECIMAL,
-        allowNull: false,
+        allowNull: false
       },
       skills: {
         type: Sequelize.JSONB,
-        allowNull: false,
+        allowNull: false
       },
       global_year_experience: {
         type: Sequelize.INTEGER,
-        allowNull: false,
+        allowNull: false
       },
       city: {
         type: Sequelize.STRING,
-        allowNull: false,
+        allowNull: false
       },
       work_condition: {
         type: Sequelize.ENUM('onsite', 'remote', 'hybrid'),
-        allowNull: false,
+        allowNull: false
       },
       company_name: {
         type: Sequelize.STRING,
-        allowNull: false,
+        allowNull: false
       },
       company_type: {
         type: Sequelize.ENUM('startup', 'enterprise', 'smb', 'consulting'),
-        allowNull: false,
+        allowNull: false
       },
       contact_name: {
         type: Sequelize.STRING,
-        allowNull: false,
+        allowNull: false
       },
       phone_number: {
         type: Sequelize.STRING,
-        allowNull: false,
+        allowNull: false
       },
       email_address: {
         type: Sequelize.STRING,
+        allowNull: false
+      },
+      userId: {
+        type: Sequelize.UUID,
         allowNull: false,
+        references: {
+          model: 'user',
+          key: 'id'
+        }
       },
       createdAt: {
         type: Sequelize.DATE,
-        allowNull: false,
-        defaultValue: Sequelize.literal('CURRENT_TIMESTAMP'),
+        allowNull: false
       },
       updatedAt: {
         type: Sequelize.DATE,
-        allowNull: false,
-        defaultValue: Sequelize.literal('CURRENT_TIMESTAMP'),
-      },
+        allowNull: false
+      }
     });
   },
 
-  down: async (queryInterface) => {
-    await queryInterface.dropTable('Job');
-  },
+  down: async (queryInterface, Sequelize) => {
+    await queryInterface.dropTable('job');
+  }
 };

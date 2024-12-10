@@ -13,8 +13,7 @@ import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { AuthGuard } from 'src/auth/auth.guards';
 import { RolesGuard } from 'src/auth/roles.guards';
 import { AwsService } from 'src/aws/aws.service';
-import { Roles } from 'src/decorator/roles.decorator';
-import { Role } from 'src/enums/role.enum';
+
 import { CreateUserCommand } from './commands/create-user.command';
 import { RemoveUserCommand } from './commands/remove-user.command';
 import { UpdateUserCommand } from './commands/update-user.command';
@@ -33,13 +32,11 @@ export class UsersController {
   ) {}
 
   @Post()
-  @Roles(Role.ADMIN)
   create(@Body() createUserDto: CreateUserDto) {
     return this.commandBus.execute(new CreateUserCommand(createUserDto));
   }
 
   @Get()
-  @Roles(Role.ADMIN)
   findAll() {
     return this.queryBus.execute(new FindAllUsersQuery());
   }
