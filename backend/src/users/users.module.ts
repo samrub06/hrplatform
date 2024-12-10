@@ -11,8 +11,8 @@ import { UpdateUserCommand } from './commands/update-user.command';
 import { User } from './models/user.model';
 
 import { RemoveUserCommand } from './commands/remove-user.command';
-import { GetAllUsersQueryCommand } from './queries/getAllUser.query';
-import { GetUserByIdQueryCommand } from './queries/getUserById.query';
+import { GetAllUsersQueryCommand } from './queries/get-all-user.query';
+import { GetUserByIdQueryCommand } from './queries/get-user-by-id.query';
 import { UsersController } from './users.controller';
 
 @Module({

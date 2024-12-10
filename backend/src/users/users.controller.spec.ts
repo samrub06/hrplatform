@@ -7,8 +7,8 @@ import { RemoveUserCommand } from './commands/remove-user.command';
 import { UpdateUserCommand } from './commands/update-user.command';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { FindAllUsersQuery } from './queries/getAllUser.query';
-import { FindUserByIdQuery } from './queries/getUserById.query';
+import { FindAllUsersQuery } from './queries/get-all-user.query';
+import { FindUserByIdQuery } from './queries/get-user-by-id.query';
 import { UsersController } from './users.controller';
 
 describe('UsersController', () => {
