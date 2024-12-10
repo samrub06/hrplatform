@@ -4,6 +4,7 @@ import { UsersService } from './users.service';
 import { CqrsModule } from '@nestjs/cqrs';
 import { SequelizeModule } from '@nestjs/sequelize';
 import { AwsModule } from 'src/aws/aws.module';
+import { PermissionService } from 'src/permission/permission.service';
 import { AuthModule } from '../auth/auth.module';
 import { CreateUserCommandHandler } from './commands/create-user.command';
 import { RemoveUserCommandHandler } from './commands/remove-user.command';
@@ -28,6 +29,7 @@ import { UsersController } from './users.controller';
     FindAllUsersQueryHandler,
     UpdateUserCommandHandler,
     UsersService,
+    PermissionService,
   ],
   exports: [UsersService],
 })

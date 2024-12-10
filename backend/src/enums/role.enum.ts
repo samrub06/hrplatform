@@ -3,4 +3,5 @@ export enum Role {
   PUBLISHER = 'publisher',
   ADMIN = 'admin',
   VIEWER = 'viewer',
+  USCANDIDATEER = "USCANDIDATEER",
 }

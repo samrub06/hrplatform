@@ -12,6 +12,7 @@ import { Job } from './jobs/models/job.model';
 import { Permission } from './models/permission.model';
 import { RolePermission } from './models/role-permission.model';
 import { Role } from './models/role.model';
+import { PermissionModule } from './permission/permission.module';
 import { User } from './users/models/user.model';
 import { UsersModule } from './users/users.module';
 
@@ -20,7 +21,7 @@ import { UsersModule } from './users/users.module';
     AuthModule,
     UsersModule,
     JobsModule,
-
+    PermissionModule,
     ConfigModule.forRoot({
       envFilePath: '.env',
       isGlobal: true,

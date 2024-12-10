@@ -6,7 +6,7 @@ import { UsersService } from '../users.service';
 
 export class UpdateUserCommand {
   constructor(
-    public readonly id: number,
+    public readonly id: string,
     public updateUserDto: UpdateUserDto,
   ) {}
 }

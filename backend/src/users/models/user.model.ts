@@ -1,5 +1,6 @@
 import { IsNotEmpty, MinLength } from 'class-validator';
 import {
+  BelongsTo,
   Column,
   DataType,
   ForeignKey,
@@ -12,11 +13,11 @@ import { Role } from 'src/models/role.model';
 export class User extends Model {
   @Column({
     type: DataType.UUID,
-    autoIncrement: true,
+    defaultValue: DataType.UUIDV4,
     primaryKey: true,
+    allowNull: false,
   })
-  id?: number;
-
+  id: string;
   @Column
   first_name?: string;
 
@@ -67,4 +68,7 @@ export class User extends Model {
     allowNull: true,
   })
   roleId?: string;
+
+  @BelongsTo(() => Role)
+  role: Role;
 }

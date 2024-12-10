@@ -5,7 +5,7 @@ import { Repository } from 'sequelize-typescript';
 import { User } from '../models/user.model';
 
 export class FindUserByIdQuery implements IQuery {
-  constructor(public readonly id: number) {}
+  constructor(public readonly id: string) {}
 }
 
 @QueryHandler(FindUserByIdQuery)

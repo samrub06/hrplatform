@@ -21,7 +21,7 @@ describe('UsersController', () => {
     first_name: 'John',
     last_name: 'Doe',
     email: 'john@example.com',
-    role: Role.USER,
+    role: Role.CANDIDATE,
   };
 
   beforeEach(async () => {
@@ -56,7 +56,7 @@ describe('UsersController', () => {
         email: 'john@example.com',
         password: 'password123',
         password_confirmation: 'password123',
-        role: Role.USER,
+        role: Role.CANDIDATE,
       };
 
       jest.spyOn(commandBus, 'execute').mockResolvedValue(mockUser);
@@ -76,7 +76,7 @@ describe('UsersController', () => {
         email: 'invalid-email',
         password: 'password123',
         password_confirmation: 'password123',
-        role: Role.USER,
+        role: Role.CANDIDATE,
       };
 
       jest
@@ -107,7 +107,7 @@ describe('UsersController', () => {
 
       const result = await controller.findOne(1);
 
-      expect(queryBus.execute).toHaveBeenCalledWith(new FindUserByIdQuery(1));
+      expect(queryBus.execute).toHaveBeenCalledWith(new FindUserByIdQuery('1'));
       expect(result).toEqual(mockUser);
     });
 
@@ -127,9 +127,10 @@ describe('UsersController', () => {
         email: 'john@example.com',
         last_name: 'Doe',
         password: 'password123',
-        role: Role.USER,
+        role: Role.USCANDIDATEER,
         skills: [],
         cv: '',
+        updateAt: undefined,
       };
 
       const updatedUser = { ...mockUser, ...updateUserDto };
@@ -149,9 +150,10 @@ describe('UsersController', () => {
         email: 'john@example.com',
         last_name: 'Doe',
         password: 'password123',
-        role: Role.USER,
+        role: Role.CANDIDATE,
         skills: [],
         cv: '',
+        updateAt: undefined,
       };
 
       jest
