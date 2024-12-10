@@ -4,7 +4,7 @@ import { InjectModel } from '@nestjs/sequelize';
 import { Job } from '../models/job.model';
 
 export class RemoveJobCommand {
-  constructor(public readonly id: number) {}
+  constructor(public readonly id: string) {}
 }
 
 @CommandHandler(RemoveJobCommand)

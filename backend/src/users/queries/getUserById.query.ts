@@ -1,28 +1,21 @@
 import { NotFoundException } from '@nestjs/common';
-import { IQuery, IQueryHandler, QueryHandler } from '@nestjs/cqrs';
-import { InjectModel } from '@nestjs/sequelize';
-import { Repository } from 'sequelize-typescript';
-import { User } from '../models/user.model';
+import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
+import { UserRepository } from '../user.repository';
 
-export class FindUserByIdQuery implements IQuery {
+export class GetUserByIdQueryCommand {
   constructor(public readonly id: string) {}
 }
 
-@QueryHandler(FindUserByIdQuery)
-export class FindUserByIdQueryHandler
-  implements IQueryHandler<FindUserByIdQuery>
+@QueryHandler(GetUserByIdQueryCommand)
+export class GetUserByIdQueryHandler
+  implements IQueryHandler<GetUserByIdQueryCommand>
 {
-  constructor(
-    @InjectModel(User)
-    private usersRepository: Repository<User>,
-  ) {}
+  constructor(private readonly userRepository: UserRepository) {}
 
-  async execute(query: FindUserByIdQuery): Promise<User> {
-    const user = await this.usersRepository.findOne({
-      where: { id: query.id },
-    });
+  async execute(query: GetUserByIdQueryCommand) {
+    const user = await this.userRepository.findById(query.id);
     if (!user) {
-      throw new NotFoundException(`User with ID ${query.id} not found.`);
+      throw new NotFoundException(`User with ID ${query.id} not found`);
     }
     return user;
   }

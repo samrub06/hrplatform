@@ -1,20 +1,17 @@
-import { IQuery, IQueryHandler, QueryHandler } from '@nestjs/cqrs';
-import { InjectModel } from '@nestjs/sequelize';
-import { Repository } from 'sequelize-typescript';
-import { User } from '../models/user.model';
+import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
+import { UserRepository } from '../user.repository';
 
-export class FindAllUsersQuery implements IQuery {}
+export class GetAllUsersQueryCommand {
+  constructor(public readonly filters: any = {}) {}
+}
 
-@QueryHandler(FindAllUsersQuery)
-export class FindAllUsersQueryHandler
-  implements IQueryHandler<FindAllUsersQuery>
+@QueryHandler(GetAllUsersQueryCommand)
+export class GetAllUsersQueryHandler
+  implements IQueryHandler<GetAllUsersQueryCommand>
 {
-  constructor(
-    @InjectModel(User)
-    private usersRepository: Repository<User>,
-  ) {}
+  constructor(private readonly userRepository: UserRepository) {}
 
-  async execute(): Promise<User[]> {
-    return this.usersRepository.findAll();
+  async execute(query: GetAllUsersQueryCommand) {
+    return this.userRepository.findAll(query.filters);
   }
 }

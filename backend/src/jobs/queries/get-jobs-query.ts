@@ -1,3 +1,6 @@
+import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
+import { JobRepository } from '../job.repository';
+
 export class GetJobsQuery {
   constructor(
     public readonly filters?: {
@@ -5,39 +8,15 @@ export class GetJobsQuery {
       work_condition?: string;
       company_type?: string;
     },
-    public readonly id?: number,
   ) {}
 }
 
-import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
-import { InjectModel } from '@nestjs/sequelize';
-import { Job } from '../models/job.model';
-
 @QueryHandler(GetJobsQuery)
 export class GetJobsHandler implements IQueryHandler<GetJobsQuery> {
-  constructor(
-    @InjectModel(Job)
-    private jobModel: typeof Job,
-  ) {}
+  constructor(private readonly jobRepository: JobRepository) {}
 
-  async execute(query: GetJobsQuery): Promise<Job[]> {
-    const where: any = {};
-
-    if (query.filters) {
-      if (query.filters.city) {
-        where.city = query.filters.city;
-      }
-      if (query.filters.work_condition) {
-        where.work_condition = query.filters.work_condition;
-      }
-      if (query.filters.company_type) {
-        where.company_type = query.filters.company_type;
-      }
-    }
-
-    return this.jobModel.findAll({
-      where,
-      order: [['createdAt', 'DESC']],
-    });
+  async execute(query: GetJobsQuery) {
+    const { filters } = query;
+    return this.jobRepository.findAll(filters);
   }
 }

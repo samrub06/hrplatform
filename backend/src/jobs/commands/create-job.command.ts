@@ -1,31 +1,35 @@
+import { BadRequestException } from '@nestjs/common';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { InjectModel } from '@nestjs/sequelize';
 import { v4 as uuidv4 } from 'uuid';
-import { CreateJobDto } from '../dto/create-job-dto';
-import { Job } from '../models/job.model';
+import { JobRepository } from '../job.repository';
+import { CreateJobRequestDto } from './create-job-command.request.dto';
+import { CreateJobValidator } from './create-job.command.validator';
+import { CreateJobResponseDto } from './create-jobs-command.response.dto';
 
 export class CreateJobCommand {
-  constructor(public readonly createJobDto: CreateJobDto) {}
+  constructor(public readonly request: CreateJobRequestDto) {}
 }
 
 @CommandHandler(CreateJobCommand)
-export class CreateJobHandler implements ICommandHandler<CreateJobCommand> {
+export class CreateJobHandler
+  implements ICommandHandler<CreateJobCommand, CreateJobResponseDto>
+{
   constructor(
-    @InjectModel(Job)
-    private jobModel: typeof Job,
+    private readonly jobRepository: JobRepository,
+    private readonly validator: CreateJobValidator,
   ) {}
 
-  async execute(command: CreateJobCommand): Promise<Job> {
-    const { createJobDto } = command;
+  async execute(command: CreateJobCommand): Promise<CreateJobResponseDto> {
+    const { request } = command;
 
-    // Logique métier
-    const job = await this.jobModel.create({
-      ...createJobDto,
+    if (!this.validator.validate(request)) {
+      throw new BadRequestException('Invalid data');
+    }
+
+    const job = await this.jobRepository.create({
+      ...request,
       id: uuidv4(),
     });
-
-    // Vous pourriez ajouter ici d'autres logiques métier
-    // Par exemple, envoyer des notifications, vérifier des conditions, etc.
 
     return job;
   }

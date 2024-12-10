@@ -9,7 +9,7 @@ import {
 } from 'sequelize-typescript';
 import { Role } from 'src/models/role.model';
 
-@Table({ tableName: 'user' })
+@Table({ tableName: 'users' })
 export class User extends Model {
   @Column({
     type: DataType.UUID,
@@ -18,57 +18,92 @@ export class User extends Model {
     allowNull: false,
   })
   id: string;
-  @Column
-  first_name?: string;
 
-  @Column
-  last_name?: string;
+  @Column({
+    type: DataType.STRING,
+    allowNull: false,
+  })
+  first_name: string;
 
-  @Column
-  email?: string;
+  @Column({
+    type: DataType.STRING,
+    allowNull: false,
+  })
+  last_name: string;
 
-  @Column
+  @Column({
+    type: DataType.STRING,
+    allowNull: false,
+    unique: true,
+  })
+  email: string;
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: false,
+  })
   @IsNotEmpty({ message: 'Le mot de passe ne peut pas être vide.' })
   @MinLength(6, {
     message: 'Le mot de passe doit contenir au moins 6 caractères.',
   })
   password: string;
 
-  @Column
+  @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
   profilePicture?: string;
 
-  @Column
+  @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
   cv?: string;
 
-  @Column(DataType.JSONB)
+  @Column({
+    type: DataType.JSONB,
+    allowNull: true,
+    defaultValue: [],
+  })
   skills: {
     language: string;
     experience_years: number;
     level?: number;
   }[];
 
-  @Column(DataType.JSONB)
-  desired_position: {
-    name: string;
-    description?: string;
-  };
+  @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
+  desired_position: string;
 
-  @Column(DataType.TEXT)
+  @Column({
+    type: DataType.TEXT,
+    allowNull: true,
+  })
   adminNotes?: string;
-
-  @Column
-  createdAt?: Date;
-
-  @Column
-  updatedAt?: Date;
 
   @ForeignKey(() => Role)
   @Column({
     type: DataType.UUID,
     allowNull: true,
   })
-  roleId?: string;
+  roleId: string;
 
   @BelongsTo(() => Role)
   role: Role;
+
+  @Column({
+    type: DataType.DATE,
+    allowNull: false,
+    defaultValue: DataType.NOW,
+  })
+  createdAt: Date;
+
+  @Column({
+    type: DataType.DATE,
+    allowNull: false,
+    defaultValue: DataType.NOW,
+  })
+  updatedAt: Date;
 }

@@ -4,17 +4,11 @@ import {
   IsEnum,
   IsNotEmpty,
   IsNumber,
-  IsOptional,
   IsString,
 } from 'class-validator';
 import { CompanyType, WorkCondition } from '../models/job.model';
 
-export class CreateJobDto {
-  @ApiProperty()
-  @IsOptional()
-  @IsString()
-  id?: string;
-
+export class CreateJobRequestDto {
   @ApiProperty()
   @IsNotEmpty()
   @IsString()

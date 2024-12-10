@@ -1,32 +1,35 @@
-import { NotFoundException } from '@nestjs/common';
+import { BadRequestException, NotFoundException } from '@nestjs/common';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { UpdateUserDto } from '../dto/update-user.dto';
-import { User } from '../models/user.model';
-import { UsersService } from '../users.service';
+import { UserRepository } from '../user.repository';
+import { UpdateUserRequestDto } from './update-user.command.request.dto';
+import { UpdateUserValidator } from './update-user.command.validator';
 
 export class UpdateUserCommand {
   constructor(
     public readonly id: string,
-    public updateUserDto: UpdateUserDto,
+    public readonly request: UpdateUserRequestDto,
   ) {}
 }
 
 @CommandHandler(UpdateUserCommand)
-export class UpdateUserCommandHandler
-  implements ICommandHandler<UpdateUserCommand>
-{
-  constructor(private usersService: UsersService) {}
+export class UpdateUserHandler implements ICommandHandler<UpdateUserCommand> {
+  constructor(
+    private readonly userRepository: UserRepository,
+    private readonly validator: UpdateUserValidator,
+  ) {}
 
-  async execute(command: UpdateUserCommand): Promise<User> {
-    const user = await this.usersService.findOne(command.id);
-    if (!user) {
-      throw new NotFoundException(`User with ID ${command.id} not found.`);
+  async execute(command: UpdateUserCommand) {
+    const { id, request } = command;
+
+    if (!this.validator.validate(request)) {
+      throw new BadRequestException('Invalid user data');
     }
-    await this.usersService.update(command.id, command.updateUserDto);
-    const updatedUser: User = {
-      ...user,
-      ...command.updateUserDto,
-    } as unknown as User;
+
+    const updatedUser = await this.userRepository.update(id, request);
+    if (!updatedUser) {
+      throw new NotFoundException(`User with ID ${id} not found`);
+    }
+
     return updatedUser;
   }
 }

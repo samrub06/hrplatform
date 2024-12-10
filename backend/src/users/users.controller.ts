@@ -18,12 +18,12 @@ import { PermissionGuard } from 'src/permission/permission.guard';
 import { PermissionService } from 'src/permission/permission.service';
 import { RequirePermission } from 'src/permission/require-permission.decorator';
 import { CreateUserCommand } from './commands/create-user.command';
+import { CreateUserRequestDto } from './commands/create-user.command.request.dto';
 import { RemoveUserCommand } from './commands/remove-user.command';
 import { UpdateUserCommand } from './commands/update-user.command';
-import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { FindAllUsersQuery } from './queries/getAllUser.query';
-import { FindUserByIdQuery } from './queries/getUserById.query';
+import { GetAllUsersQueryCommand } from './queries/getAllUser.query';
+import { GetUserByIdQueryCommand } from './queries/getUserById.query';
 
 @Controller('user')
 @UseGuards(AuthGuard, PermissionGuard)
@@ -36,25 +36,30 @@ export class UsersController {
   ) {}
 
   @Post()
-  create(@Body() createUserDto: CreateUserDto) {
+  createUser(@Body() createUserDto: CreateUserRequestDto) {
     return this.commandBus.execute(new CreateUserCommand(createUserDto));
   }
 
   @Get()
   @RequirePermission('User', 'read')
-  findAll() {
-    return this.queryBus.execute(new FindAllUsersQuery());
+  findAllUsers() {
+    return this.queryBus.execute(new GetAllUsersQueryCommand());
   }
 
   @Get(':id')
   @RequirePermission('User', 'read')
-  findOne(@Param('id') id: string) {
-    return this.queryBus.execute(new FindUserByIdQuery(id));
+  findOneUser(@Param('id') id: string) {
+    return this.queryBus.execute(new GetUserByIdQueryCommand(id));
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
+  updateUser(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
     return this.commandBus.execute(new UpdateUserCommand(id, updateUserDto));
+  }
+
+  @Delete(':id')
+  removeUser(@Param('id') id: string) {
+    return this.commandBus.execute(new RemoveUserCommand(id));
   }
 
   @Post('presigned-url')
@@ -69,14 +74,9 @@ export class UsersController {
     return { presignedUrl };
   }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.commandBus.execute(new RemoveUserCommand(+id));
-  }
-
   @Get('download/cv/:id')
   async downloadFile(@Param('id') id: string) {
-    const user = await this.queryBus.execute(new FindUserByIdQuery(id));
+    const user = await this.queryBus.execute(new GetUserByIdQueryCommand(id));
     if (!user || !user.cv) {
       throw new NotFoundException('File not found');
     }

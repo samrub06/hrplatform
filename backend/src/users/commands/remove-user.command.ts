@@ -1,22 +1,23 @@
 import { NotFoundException } from '@nestjs/common';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { UsersService } from '../users.service';
+import { UserRepository } from '../user.repository';
 
 export class RemoveUserCommand {
-  constructor(public readonly id: number) {}
+  constructor(public readonly id: string) {}
 }
 
 @CommandHandler(RemoveUserCommand)
-export class RemoveUserCommandHandler
-  implements ICommandHandler<RemoveUserCommand>
-{
-  constructor(private usersService: UsersService) {}
+export class RemoveUserHandler implements ICommandHandler<RemoveUserCommand> {
+  constructor(private readonly userRepository: UserRepository) {}
 
   async execute(command: RemoveUserCommand): Promise<string> {
-    const result = await this.usersService.delete(command.id);
-    if (result === 0) {
-      throw new NotFoundException(`User with ID ${command.id} not found.`);
+    const { id } = command;
+
+    const deleted = await this.userRepository.delete(id);
+    if (!deleted) {
+      throw new NotFoundException(`User with ID ${id} not found`);
     }
-    return `User with ID ${command.id} has been successfully removed.`;
+
+    return `User with ID ${id} has been successfully removed`;
   }
 }

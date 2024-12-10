@@ -6,12 +6,13 @@ import { SequelizeModule } from '@nestjs/sequelize';
 import { AwsModule } from 'src/aws/aws.module';
 import { PermissionService } from 'src/permission/permission.service';
 import { AuthModule } from '../auth/auth.module';
-import { CreateUserCommandHandler } from './commands/create-user.command';
-import { RemoveUserCommandHandler } from './commands/remove-user.command';
-import { UpdateUserCommandHandler } from './commands/update-user.command';
+import { CreateUserCommand } from './commands/create-user.command';
+import { UpdateUserCommand } from './commands/update-user.command';
 import { User } from './models/user.model';
-import { FindAllUsersQueryHandler } from './queries/getAllUser.query';
-import { FindUserByIdQueryHandler } from './queries/getUserById.query';
+
+import { RemoveUserCommand } from './commands/remove-user.command';
+import { GetAllUsersQueryCommand } from './queries/getAllUser.query';
+import { GetUserByIdQueryCommand } from './queries/getUserById.query';
 import { UsersController } from './users.controller';
 
 @Module({
@@ -23,11 +24,11 @@ import { UsersController } from './users.controller';
   ],
   controllers: [UsersController],
   providers: [
-    CreateUserCommandHandler,
-    RemoveUserCommandHandler,
-    FindUserByIdQueryHandler,
-    FindAllUsersQueryHandler,
-    UpdateUserCommandHandler,
+    CreateUserCommand,
+    RemoveUserCommand,
+    GetAllUsersQueryCommand,
+    GetUserByIdQueryCommand,
+    UpdateUserCommand,
     UsersService,
     PermissionService,
   ],

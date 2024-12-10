@@ -27,7 +27,7 @@ export class Job extends Model {
     autoIncrement: true,
     primaryKey: true,
   })
-  id: number;
+  id: string;
 
   @Column
   name: string;
@@ -73,6 +73,9 @@ export class Job extends Model {
 
   @Column
   email_address: string;
+
+  @Column
+  updatedAt: Date;
 
   @ForeignKey(() => User)
   @Column
