@@ -1,31 +1,24 @@
 import {
+  BelongsTo,
   Column,
-  DataType,
   ForeignKey,
   Model,
   Table,
 } from 'sequelize-typescript';
-import { Admin } from './admin.model';
+import { User } from 'src/users/models/user.model';
 
-@Table({ tableName: 'admin_note' })
+@Table({ tableName: 'admin_notes' })
 export class AdminNote extends Model {
-  @Column({
-    type: DataType.UUID,
-    defaultValue: DataType.UUIDV4,
-    primaryKey: true,
-  })
-  id: string;
+  @Column
+  content: string;
 
-  @ForeignKey(() => Admin)
+  @Column
+  createdBy: number; // ID de l'admin qui a créé la note
+
+  @ForeignKey(() => User)
   @Column
   userId: number;
 
-  @Column(DataType.TEXT)
-  note: string;
-
-  @Column
-  createdAt: Date;
-
-  @Column
-  updatedAt: Date;
+  @BelongsTo(() => User)
+  user: User;
 }

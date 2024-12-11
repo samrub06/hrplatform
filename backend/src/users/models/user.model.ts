@@ -7,9 +7,10 @@ import {
   Model,
   Table,
 } from 'sequelize-typescript';
+import { AdminNote } from 'src/admin/models/admin-note.model';
 import { Role } from 'src/models/role.model';
 
-@Table({ tableName: 'users' })
+@Table({ tableName: 'user' })
 export class User extends Model {
   @Column({
     type: DataType.UUID,
@@ -77,11 +78,12 @@ export class User extends Model {
   })
   desired_position: string;
 
-  @Column({
-    type: DataType.TEXT,
-    allowNull: true,
-  })
-  adminNotes?: string;
+  @ForeignKey(() => AdminNote)
+  @Column
+  adminNoteId: number;
+
+  @BelongsTo(() => AdminNote)
+  adminNote: AdminNote;
 
   @ForeignKey(() => Role)
   @Column({

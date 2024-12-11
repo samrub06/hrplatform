@@ -3,14 +3,13 @@ import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 
 import { ConfigService } from '@nestjs/config';
-import { Role } from 'src/enums/role.enum';
-import { UsersService } from '../users/users.service'; // Chemin relatif corrigé
+import { UserRepository } from '../users/user.repository';
 import { LoginDto, RegisterDto } from './auth.dto';
 
 @Injectable()
 export class AuthService {
   constructor(
-    private readonly usersService: UsersService,
+    private readonly userRepository: UserRepository,
     private readonly jwtService: JwtService,
     private readonly configService: ConfigService,
   ) {}
@@ -58,7 +57,7 @@ export class AuthService {
   }
 
   async validateUser(username: string, pass: string): Promise<any> {
-    const user = await this.usersService.findOneByName(username);
+    const user = await this.userRepository.findByEmail(username);
     if (user && user.password === pass) {
       const { ...result } = user;
       return result;
@@ -67,12 +66,8 @@ export class AuthService {
   }
 
   async register(registerDto: RegisterDto) {
-    const {
-      password,
-      password_confirmation,
-      email,
-      role = Role.CANDIDATE,
-    } = registerDto;
+    const { password, password_confirmation, email, first_name, last_name } =
+      registerDto;
 
     // Vérifier si le mot de passe et la confirmation du mot de passe sont identiques
     if (password !== password_confirmation) {
@@ -80,7 +75,7 @@ export class AuthService {
     }
 
     // Vérifier si l'utilisateur existe déjà
-    const existingUser = await this.usersService.findOneByName(email);
+    const existingUser = await this.userRepository.findByEmail(email);
     if (existingUser) {
       throw new UnauthorizedException('Email already exists');
     }
@@ -89,10 +84,11 @@ export class AuthService {
     const hashedPassword = await this.hashPassword(password);
 
     // Créer le nouvel utilisateur
-    const newUser = await this.usersService.create({
+    const newUser = await this.userRepository.create({
       email,
       password: hashedPassword,
-      role: role as Role,
+      first_name,
+      last_name,
     });
 
     // Générer le token
@@ -110,7 +106,7 @@ export class AuthService {
     const { email, password } = loginDto;
 
     // Trouver l'utilisateur
-    const user = await this.usersService.findOneByName(email);
+    const user = await this.userRepository.findByEmail(email);
     if (!user) {
       throw new UnauthorizedException('Invalid credentials');
     }

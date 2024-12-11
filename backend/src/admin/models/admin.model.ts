@@ -14,4 +14,10 @@ export class Admin extends Model {
 
   @Column
   password: string;
+
+  @Column
+  createdAt: Date;
+
+  @Column
+  updatedAt: Date;
 }

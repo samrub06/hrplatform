@@ -2,7 +2,8 @@ export class RegisterDto {
   password: string;
   password_confirmation: string;
   email: string;
-  role?: string;
+  first_name: string;
+  last_name: string;
 }
 
 export class LoginDto {

@@ -1,6 +1,10 @@
 import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
-import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import {
+  DocumentBuilder,
+  SwaggerDocumentOptions,
+  SwaggerModule,
+} from '@nestjs/swagger';
 import { AllExceptionsFilter } from './all-exceptions.filter';
 import { AppModule } from './app.module';
 
@@ -20,12 +24,23 @@ async function bootstrap() {
 
   const config = new DocumentBuilder()
     .setTitle('Hr Platform')
-    .setDescription('The API Hr Platform description')
+    .setDescription('The HR platform API documentation genrated by Swagger ')
     .setVersion('1.0')
-    .addTag('Hr Platform')
     .build();
-  const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('docs', app, document);
-  await app.listen(3000);
+
+  const options: SwaggerDocumentOptions = {
+    operationIdFactory: (controllerKey: string, methodKey: string) => methodKey,
+  };
+  const document = SwaggerModule.createDocument(app, config, options);
+  SwaggerModule.setup('swagger', app, document, {
+    jsonDocumentUrl: 'swagger/json',
+  });
+  await app.listen(process.env.PORT ?? 3000);
+  const port = process.env.PORT || 3000;
+  const address = app.getHttpServer().address();
+  const host = address.family === 'IPv6' ? 'localhost' : address.address; // Utiliser 'localhost' pour IPv6
+  const fullUrl = `http://${host}:${port}`; // Construire l'URL
+  console.log(`Application is running on: ${fullUrl}`); // Affiche
+  console.log(`Swagger is available on: ${fullUrl}/swagger`); // Afficher l'URL de Swagger
 }
 bootstrap();

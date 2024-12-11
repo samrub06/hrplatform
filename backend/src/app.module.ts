@@ -2,10 +2,9 @@ import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { APP_FILTER } from '@nestjs/core';
 import { SequelizeModule } from '@nestjs/sequelize';
+import { AdminModule } from './admin/admin.module';
 import { AdminNote } from './admin/models/admin-note.model';
 import { AllExceptionsFilter } from './all-exceptions.filter'; // Importez le filtre
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
 import { JobsModule } from './jobs/jobs.module';
 import { Job } from './jobs/models/job.model';
@@ -22,6 +21,7 @@ import { UsersModule } from './users/users.module';
     UsersModule,
     JobsModule,
     PermissionModule,
+    AdminModule,
     ConfigModule.forRoot({
       envFilePath: '.env',
       isGlobal: true,
@@ -39,12 +39,10 @@ import { UsersModule } from './users/users.module';
     }),
   ],
   providers: [
-    AppService,
     {
       provide: APP_FILTER,
       useClass: AllExceptionsFilter,
     },
   ],
-  controllers: [AppController],
 })
 export class AppModule {}

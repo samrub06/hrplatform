@@ -1,0 +1,30 @@
+{
+  "name": "@orensof/api-client-v2",
+  "version": "1.0.0",
+  "description": "API Client SDK",
+  "main": "./index.js",
+  "types": "./index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "prepare": "npm run build"
+  },
+  "files": [
+    "*.js",
+    "*.d.ts",
+    "models/*.js",
+    "models/*.d.ts",
+    "core/*.js",
+    "core/*.d.ts",
+    "services/*.js",
+    "services/*.d.ts"
+  ],
+  "dependencies": {
+    "axios": "^1.6.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.0.0"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}
