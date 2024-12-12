@@ -1,7 +1,9 @@
 import { Module } from '@nestjs/common';
 import { CqrsModule } from '@nestjs/cqrs';
 import { SequelizeModule } from '@nestjs/sequelize';
+import { AdminModule } from 'src/admin/admin.module';
 import { AuthModule } from 'src/auth/auth.module';
+import { CaslModule } from 'src/casl/casl.module';
 import { PermissionModule } from 'src/permission/permission.module';
 import { User } from 'src/users/models/user.model';
 import { UsersModule } from 'src/users/users.module';
@@ -20,7 +22,9 @@ const QueryHandlers = [GetJobsHandler];
   imports: [
     CqrsModule,
     PermissionModule,
+    CaslModule,
     AuthModule,
+    AdminModule,
     UsersModule,
     SequelizeModule.forFeature([Job, User]),
   ],

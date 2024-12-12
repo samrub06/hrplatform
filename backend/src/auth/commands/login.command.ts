@@ -44,7 +44,7 @@ export class LoginHandler
     const payload = {
       email: user.email,
       sub: user.id,
-      roleId: user.roleId,
+      role_id: user.role_id,
     };
 
     return {

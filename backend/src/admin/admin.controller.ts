@@ -15,9 +15,11 @@ import {
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
+import { Action } from 'src/app.enum';
 import { AuthGuard } from 'src/auth/auth.guards';
-import { PermissionGuard } from 'src/permission/permission.guard';
-import { RequirePermission } from 'src/permission/require-permission.decorator';
+import { AppAbility } from 'src/casl/casl-ability.factory';
+import { CheckPolicies } from 'src/casl/check-policies.decorator';
+import { PoliciesGuard } from 'src/casl/policies.guard';
 import { CreateAdminRequestDto } from './commands/create-admin-command.request.dto';
 import { CreateAdminNoteRequestDto } from './commands/create-admin-note-command.request.dto';
 import { CreateAdminNoteCommand } from './commands/create-admin-note.command';
@@ -27,12 +29,13 @@ import { DeleteAdminCommand } from './commands/delete-admin.command';
 import { UpdateAdminNoteCommand } from './commands/update-admin-note.command';
 import { UpdateAdminCommand } from './commands/update-admin.command';
 import { UpdateAdminDto } from './dto/update-admin.dto';
+import { Admin } from './models/admin.model';
 import { GetAdminNotesQuery } from './queries/get-admin-notes.query';
 
 @ApiTags('Admin')
 @ApiBearerAuth()
 @Controller('admin')
-@UseGuards(AuthGuard, PermissionGuard)
+@UseGuards(AuthGuard, PoliciesGuard)
 export class AdminController {
   constructor(
     private readonly commandBus: CommandBus,
@@ -42,7 +45,7 @@ export class AdminController {
   @Post()
   @ApiOperation({ summary: 'Create Admin' })
   @ApiResponse({ status: 403, description: 'Forbidden.' })
-  @RequirePermission('Admin', 'create')
+  @CheckPolicies((ability: AppAbility) => ability.can(Action.Create, Admin))
   createAdmin(@Body() createAdminDto: CreateAdminRequestDto) {
     return this.commandBus.execute(new CreateAdminCommand(createAdminDto));
   }
@@ -50,7 +53,7 @@ export class AdminController {
   @Patch(':id')
   @ApiOperation({ summary: 'Update Admin' })
   @ApiResponse({ status: 403, description: 'Forbidden.' })
-  @RequirePermission('Admin', 'edit')
+  @CheckPolicies((ability: AppAbility) => ability.can(Action.Update, Admin))
   updateAdmin(@Param('id') id: string, @Body() updateAdminDto: UpdateAdminDto) {
     return this.commandBus.execute(new UpdateAdminCommand(id, updateAdminDto));
   }
@@ -58,7 +61,7 @@ export class AdminController {
   @Delete(':id')
   @ApiOperation({ summary: 'Delete Admin' })
   @ApiResponse({ status: 403, description: 'Forbidden.' })
-  @RequirePermission('Admin', 'delete')
+  @CheckPolicies((ability: AppAbility) => ability.can(Action.Delete, Admin))
   deleteAdmin(@Param('id') id: string) {
     return this.commandBus.execute(new DeleteAdminCommand(id));
   }
@@ -66,7 +69,7 @@ export class AdminController {
   @Post('note')
   @ApiOperation({ summary: 'Create Admin Note' })
   @ApiResponse({ status: 403, description: 'Forbidden.' })
-  @RequirePermission('Admin', 'edit')
+  @CheckPolicies((ability: AppAbility) => ability.can(Action.Create, Admin))
   createAdminNote(@Body() createAdminNoteDto: CreateAdminNoteRequestDto) {
     return this.commandBus.execute(
       new CreateAdminNoteCommand(createAdminNoteDto),
@@ -76,7 +79,7 @@ export class AdminController {
   @Get('notes/:userId')
   @ApiOperation({ summary: 'Get Admin Notes' })
   @ApiResponse({ status: 403, description: 'Forbidden.' })
-  @RequirePermission('Admin', 'read')
+  @CheckPolicies((ability: AppAbility) => ability.can(Action.Read, Admin))
   getAdminNotes(@Param('userId') userId: string) {
     return this.queryBus.execute(new GetAdminNotesQuery(userId));
   }
@@ -84,7 +87,7 @@ export class AdminController {
   @Patch('note/:id')
   @ApiOperation({ summary: 'Update Admin Note' })
   @ApiResponse({ status: 403, description: 'Forbidden.' })
-  @RequirePermission('Admin', 'edit')
+  @CheckPolicies((ability: AppAbility) => ability.can(Action.Update, Admin))
   updateAdminNote(@Param('id') id: string, @Body('content') content: string) {
     return this.commandBus.execute(new UpdateAdminNoteCommand(id, content));
   }
@@ -92,7 +95,7 @@ export class AdminController {
   @Delete('note/:id')
   @ApiOperation({ summary: 'Delete Admin Note' })
   @ApiResponse({ status: 403, description: 'Forbidden.' })
-  @RequirePermission('Admin', 'delete')
+  @CheckPolicies((ability: AppAbility) => ability.can(Action.Delete, Admin))
   deleteAdminNote(@Param('id') id: string) {
     return this.commandBus.execute(new DeleteAdminNoteCommand(id));
   }

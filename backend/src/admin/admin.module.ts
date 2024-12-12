@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { CqrsModule } from '@nestjs/cqrs';
 import { SequelizeModule } from '@nestjs/sequelize';
 import { AuthModule } from 'src/auth/auth.module';
+import { CaslModule } from 'src/casl/casl.module';
 import { PermissionModule } from 'src/permission/permission.module';
 import { UsersModule } from 'src/users/users.module';
 import { AdminController } from './admin.controller';
@@ -21,6 +22,7 @@ const QueryHandlers = [GetAdminNotesHandler];
     AuthModule,
     PermissionModule,
     UsersModule,
+    CaslModule,
     SequelizeModule.forFeature([Admin, AdminNote]),
   ],
   controllers: [AdminController],

@@ -1,3 +1,4 @@
+import { NotFoundException } from '@nestjs/common';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import * as crypto from 'crypto';
 import { UserRepository } from '../user.repository';
@@ -13,20 +14,21 @@ export class GeneratePublicLinkHandler
   constructor(private readonly userRepository: UserRepository) {}
 
   async execute(command: GeneratePublicLinkCommand): Promise<string> {
-    // Générer un code court de 6 caractères
-    let publicLinkCode;
     const user = await this.userRepository.findById(command.userId);
-    publicLinkCode = user?.public_link_code;
-    if (!user) {
-      const code = crypto.randomBytes(3).toString('hex');
 
-      // Mettre à jour l'utilisateur avec le nouveau code
+    if (!user) {
+      throw new NotFoundException('Utilisateur non trouvé');
+    }
+
+    // Générer un nouveau code si l'utilisateur n'en a pas
+    if (!user.public_link_code) {
+      const code = crypto.randomBytes(3).toString('hex');
       await this.userRepository.update(command.userId, {
         public_link_code: code,
       });
-      publicLinkCode = code;
+      return `${process.env.FRONTEND_URL}/user/profile/public/${code}`;
     }
 
-    return `${process.env.FRONTEND_URL}/user/profile/public/${publicLinkCode}`;
+    return `${process.env.FRONTEND_URL}/user/profile/public/${user.public_link_code}`;
   }
 }

@@ -28,4 +28,9 @@ export class RegisterRequestDto {
   @IsString()
   @IsNotEmpty({ message: 'Le nom est requis' })
   last_name: string;
+
+  @ApiProperty({ description: 'role' })
+  @IsString()
+  @IsNotEmpty({ message: 'role is required' })
+  role: string;
 }

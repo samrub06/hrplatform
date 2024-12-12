@@ -4,6 +4,7 @@ import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { UserRepository } from '../../users/user.repository';
 
+import { Role } from 'src/models/role.model';
 import {
   RABBITMQ_EXCHANGES,
   RABBITMQ_ROUTING_KEYS,
@@ -32,12 +33,17 @@ export class RegisterHandler
     const { request } = command;
 
     if (!this.validator.validate(request)) {
-      throw new UnauthorizedException("Données d'inscription invalides");
+      throw new UnauthorizedException('Registration Invalid');
     }
 
     const existingUser = await this.userRepository.findByEmail(request.email);
     if (existingUser) {
       throw new ConflictException('Cet email est déjà utilisé');
+    }
+
+    const roleType = await Role.findOne({ where: { name: request.role } });
+    if (!roleType) {
+      throw new Error('Role Not Found');
     }
 
     const hashedPassword = await bcrypt.hash(request.password, 10);
@@ -47,6 +53,7 @@ export class RegisterHandler
       password: hashedPassword,
       first_name: request.first_name,
       last_name: request.last_name,
+      role_id: roleType.id,
     });
 
     await this.rabbitMQService.publishToExchange(
@@ -65,7 +72,7 @@ export class RegisterHandler
     const payload = {
       email: newUser.email,
       sub: newUser.id,
-      roleId: newUser.roleId,
+      role_id: newUser.role_id,
     };
 
     return {

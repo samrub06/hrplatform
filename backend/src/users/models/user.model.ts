@@ -96,7 +96,7 @@ export class User extends Model {
     type: DataType.UUID,
     allowNull: true,
   })
-  roleId: string;
+  role_id: string;
 
   @BelongsTo(() => Role)
   role: Role;

@@ -1,6 +1,8 @@
 import { forwardRef, Module } from '@nestjs/common';
 import { SequelizeModule } from '@nestjs/sequelize';
+import { AdminModule } from 'src/admin/admin.module';
 import { AuthModule } from 'src/auth/auth.module';
+import { CaslModule } from 'src/casl/casl.module';
 import { RolePermission } from 'src/models/role-permission.model';
 import { Role } from 'src/models/role.model';
 import { User } from 'src/users/models/user.model';
@@ -14,6 +16,8 @@ import { PermissionService } from './permission.service';
   imports: [
     SequelizeModule.forFeature([User, Role, Permission, RolePermission]),
     forwardRef(() => AuthModule),
+    forwardRef(() => AdminModule),
+    forwardRef(() => CaslModule),
   ],
   providers: [PermissionService, PermissionRepository, UserRepository],
   controllers: [PermissionController],

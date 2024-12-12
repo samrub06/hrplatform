@@ -15,19 +15,22 @@ import {
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
+import { Action } from 'src/app.enum';
 import { AuthGuard } from 'src/auth/auth.guards';
-import { PermissionGuard } from 'src/permission/permission.guard';
-import { RequirePermission } from 'src/permission/require-permission.decorator';
+import { AppAbility } from 'src/casl/casl-ability.factory';
+import { CheckPolicies } from 'src/casl/check-policies.decorator';
+import { PoliciesGuard } from 'src/casl/policies.guard';
 import { CreateJobCommand } from './commands/create-job.command';
 import { UpdateJobCommand } from './commands/update-job.command';
 import { CreateJobDto } from './dto/create-job-dto';
 import { UpdateJobDto } from './dto/update-job-dto';
+import { Job } from './models/job.model';
 import { GetJobsQuery } from './queries/get-jobs-query';
 
 @ApiTags('Jobs')
 @ApiBearerAuth()
 @Controller('jobs')
-@UseGuards(AuthGuard, PermissionGuard)
+@UseGuards(AuthGuard, PoliciesGuard)
 export class JobsController {
   constructor(
     private readonly commandBus: CommandBus,
@@ -37,7 +40,7 @@ export class JobsController {
   @Post()
   @ApiOperation({ summary: 'Create Job' })
   @ApiResponse({ status: 403, description: 'Forbidden.' })
-  @RequirePermission('Job', 'create')
+  @CheckPolicies((ability: AppAbility) => ability.can(Action.Create, Job))
   createJob(@Body() createJobDto: CreateJobDto) {
     return this.commandBus.execute(new CreateJobCommand(createJobDto));
   }
@@ -45,7 +48,7 @@ export class JobsController {
   @Get()
   @ApiOperation({ summary: 'Get All Jobs' })
   @ApiResponse({ status: 403, description: 'Forbidden.' })
-  @RequirePermission('Job', 'read')
+  @CheckPolicies((ability: AppAbility) => ability.can(Action.Read, Job))
   findAllJobs(@Query() filters?: any) {
     return this.queryBus.execute(new GetJobsQuery(filters));
   }
@@ -53,7 +56,7 @@ export class JobsController {
   @Patch(':id')
   @ApiOperation({ summary: 'Update Job By Id' })
   @ApiResponse({ status: 403, description: 'Forbidden.' })
-  @RequirePermission('Job', 'edit')
+  @CheckPolicies((ability: AppAbility) => ability.can(Action.Update, Job))
   updateJob(@Param('id') id: string, @Body() updateJobDto: UpdateJobDto) {
     return this.commandBus.execute(new UpdateJobCommand(id, updateJobDto));
   }

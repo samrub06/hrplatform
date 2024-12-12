@@ -30,7 +30,7 @@ export class CreateUserResponseDto {
   desired_position?: string;
 
   @ApiProperty()
-  roleId: string;
+  role_id: string;
 
   @ApiProperty()
   createdAt: Date;

@@ -16,12 +16,12 @@ import {
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
+import { Action } from 'src/app.enum';
 import { AuthGuard } from 'src/auth/auth.guards';
-import { PermissionGuard } from 'src/permission/permission.guard';
-import {
-  Public,
-  RequirePermission,
-} from 'src/permission/require-permission.decorator';
+import { AppAbility } from 'src/casl/casl-ability.factory';
+import { CheckPolicies } from 'src/casl/check-policies.decorator';
+import { PoliciesGuard } from 'src/casl/policies.guard';
+import { Public } from 'src/casl/public.decorator';
 import { CreateUserCommand } from './commands/create-user.command';
 import { CreateUserRequestDto } from './commands/create-user.command.request.dto';
 import { GeneratePresignedUrlCommand } from './commands/generate-presigned-url.command';
@@ -41,7 +41,6 @@ import { GetUserPermissionsQuery } from './queries/get-user-permissions.query';
 @ApiTags('User')
 @ApiBearerAuth()
 @Controller('user')
-@UseGuards(AuthGuard, PermissionGuard)
 export class UsersController {
   constructor(
     private readonly commandBus: CommandBus,
@@ -49,59 +48,68 @@ export class UsersController {
   ) {}
 
   @Post()
+  @UseGuards(AuthGuard, PoliciesGuard)
   @ApiOperation({ summary: 'Create User' })
   @ApiResponse({ status: 403, description: 'Forbidden.' })
-  @RequirePermission('User', 'create')
+  @CheckPolicies((ability: AppAbility) => ability.can(Action.Create, User))
   createUser(@Body() createUserDto: CreateUserRequestDto) {
     return this.commandBus.execute(new CreateUserCommand(createUserDto));
   }
 
   @Get()
+  @UseGuards(AuthGuard, PoliciesGuard)
   @ApiOperation({ summary: 'Get All Users' })
   @ApiResponse({ status: 403, description: 'Forbidden.' })
-  @RequirePermission('User', 'read')
+  @CheckPolicies((ability: AppAbility) => ability.can(Action.Read, User))
   findAllUsers() {
     return this.queryBus.execute(new GetAllUsersQueryCommand());
   }
 
   @Get(':id')
+  @UseGuards(AuthGuard, PoliciesGuard)
   @ApiOperation({ summary: 'Get User By Id' })
   @ApiResponse({
     status: 200,
     description: 'The found record',
     type: User,
   })
-  @RequirePermission('User', 'read')
+  @CheckPolicies((ability: AppAbility) => ability.can(Action.Read, User))
   findOneUser(@Param('id') id: string) {
     return this.queryBus.execute(new GetUserByIdQueryCommand(id));
   }
 
   @Patch(':id')
+  @UseGuards(AuthGuard, PoliciesGuard)
   @ApiOperation({ summary: 'Update User By Id' })
   @ApiResponse({ status: 403, description: 'Forbidden.' })
-  @RequirePermission('User', 'edit')
+  @CheckPolicies((ability: AppAbility) => ability.can(Action.Update, User))
   updateUser(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
     return this.commandBus.execute(new UpdateUserCommand(id, updateUserDto));
   }
 
   @Delete(':id')
+  @UseGuards(AuthGuard, PoliciesGuard)
   @ApiOperation({ summary: 'Delete User By Id' })
   @ApiResponse({ status: 403, description: 'Forbidden.' })
-  @RequirePermission('User', 'delete')
+  @CheckPolicies((ability: AppAbility) => ability.can(Action.Delete, User))
   removeUser(@Param('id') id: string) {
     return this.commandBus.execute(new RemoveUserCommand(id));
   }
 
   @Post('presigned-url')
+  @UseGuards(AuthGuard, PoliciesGuard)
   @ApiOperation({ summary: 'Get Presign-Url AWS' })
   @ApiResponse({ status: 403, description: 'Forbidden.' })
+  @CheckPolicies((ability: AppAbility) => ability.can(Action.Create, User))
   async getPresignedUrl(@Body() request: GeneratePresignedUrlRequestDto) {
     return this.commandBus.execute(new GeneratePresignedUrlCommand(request));
   }
 
   @Get('download/cv/:id')
+  @UseGuards(AuthGuard, PoliciesGuard)
   @ApiOperation({ summary: 'Download CV' })
   @ApiResponse({ status: 403, description: 'Forbidden.' })
+  @CheckPolicies((ability: AppAbility) => ability.can(Action.Read, User))
   async downloadFile(@Param('id') id: string) {
     return this.queryBus.execute(new GetCvDownloadUrlQuery(id));
   }

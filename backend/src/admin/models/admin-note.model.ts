@@ -7,18 +7,21 @@ import {
 } from 'sequelize-typescript';
 import { User } from 'src/users/models/user.model';
 
-@Table({ tableName: 'admin_notes' })
+@Table({ tableName: 'admin_note' })
 export class AdminNote extends Model {
   @Column
-  content: string;
-
-  @Column
-  createdBy: number; // ID de l'admin qui a créé la note
+  note: string;
 
   @ForeignKey(() => User)
   @Column
-  userId: number;
+  user_id: string;
 
   @BelongsTo(() => User)
   user: User;
+
+  @Column
+  createdAt: Date;
+
+  @Column
+  updatedAt: Date;
 }

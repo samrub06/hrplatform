@@ -95,7 +95,7 @@ export class AuthService {
     const payload = {
       email: newUser.email,
       sub: newUser.id,
-      roleId: newUser.roleId,
+      role_id: newUser.role_id,
     };
     return {
       access_token: this.jwtService.sign(payload),
@@ -122,7 +122,7 @@ export class AuthService {
     }
 
     // Générer le token
-    const payload = { email: user.email, sub: user.id, roleId: user.roleId };
+    const payload = { email: user.email, sub: user.id, role_id: user.role_id };
     return {
       access_token: this.jwtService.sign(payload),
     };

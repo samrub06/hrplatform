@@ -7,6 +7,7 @@ import { AdminNote } from './admin/models/admin-note.model';
 import { Admin } from './admin/models/admin.model';
 import { AllExceptionsFilter } from './all-exceptions.filter'; // Importez le filtre
 import { AuthModule } from './auth/auth.module';
+import { CaslModule } from './casl/casl.module';
 import { JobsModule } from './jobs/jobs.module';
 import { Job } from './jobs/models/job.model';
 import { Permission } from './models/permission.model';
@@ -23,6 +24,7 @@ import { UsersModule } from './users/users.module';
     UsersModule,
     JobsModule,
     PermissionModule,
+    CaslModule,
     AdminModule,
     NotificationsModule,
     ConfigModule.forRoot({

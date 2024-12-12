@@ -8,6 +8,8 @@ import { CreateUserHandler } from './commands/create-user.command';
 import { UpdateUserHandler } from './commands/update-user.command';
 import { User } from './models/user.model';
 
+import { AdminModule } from 'src/admin/admin.module';
+import { CaslModule } from 'src/casl/casl.module';
 import { PermissionModule } from 'src/permission/permission.module';
 import { CreateUserValidator } from './commands/create-user.commande.validator';
 import { GeneratePresignedUrlHandler } from './commands/generate-presigned-url.command';
@@ -28,7 +30,9 @@ import { UsersController } from './users.controller';
     SequelizeModule.forFeature([User]),
     CqrsModule,
     forwardRef(() => AuthModule),
+    forwardRef(() => AdminModule),
     AwsModule,
+    CaslModule,
     PermissionModule,
   ],
   controllers: [UsersController],
