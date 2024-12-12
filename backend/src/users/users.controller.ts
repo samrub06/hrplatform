@@ -18,11 +18,15 @@ import {
 } from '@nestjs/swagger';
 import { AuthGuard } from 'src/auth/auth.guards';
 import { PermissionGuard } from 'src/permission/permission.guard';
-import { RequirePermission } from 'src/permission/require-permission.decorator';
+import {
+  Public,
+  RequirePermission,
+} from 'src/permission/require-permission.decorator';
 import { CreateUserCommand } from './commands/create-user.command';
 import { CreateUserRequestDto } from './commands/create-user.command.request.dto';
 import { GeneratePresignedUrlCommand } from './commands/generate-presigned-url.command';
 import { GeneratePresignedUrlRequestDto } from './commands/generate-presigned-url.command.request.dto';
+import { GeneratePublicLinkCommand } from './commands/generate-public-link.command';
 import { GetCvDownloadUrlQuery } from './commands/get-cv-download-url-query';
 import { RemoveUserCommand } from './commands/remove-user.command';
 import { UpdateUserCommand } from './commands/update-user.command';
@@ -30,6 +34,7 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './models/user.model';
 import { CheckUserPermissionQuery } from './queries/check-user-permission.query';
 import { GetAllUsersQueryCommand } from './queries/get-all-user.query';
+import { GetPublicProfileQuery } from './queries/get-public-profile.query';
 import { GetUserByIdQueryCommand } from './queries/get-user-by-id.query';
 import { GetUserPermissionsQuery } from './queries/get-user-permissions.query';
 
@@ -46,6 +51,7 @@ export class UsersController {
   @Post()
   @ApiOperation({ summary: 'Create User' })
   @ApiResponse({ status: 403, description: 'Forbidden.' })
+  @RequirePermission('User', 'create')
   createUser(@Body() createUserDto: CreateUserRequestDto) {
     return this.commandBus.execute(new CreateUserCommand(createUserDto));
   }
@@ -73,6 +79,7 @@ export class UsersController {
   @Patch(':id')
   @ApiOperation({ summary: 'Update User By Id' })
   @ApiResponse({ status: 403, description: 'Forbidden.' })
+  @RequirePermission('User', 'edit')
   updateUser(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
     return this.commandBus.execute(new UpdateUserCommand(id, updateUserDto));
   }
@@ -80,6 +87,7 @@ export class UsersController {
   @Delete(':id')
   @ApiOperation({ summary: 'Delete User By Id' })
   @ApiResponse({ status: 403, description: 'Forbidden.' })
+  @RequirePermission('User', 'delete')
   removeUser(@Param('id') id: string) {
     return this.commandBus.execute(new RemoveUserCommand(id));
   }
@@ -116,5 +124,16 @@ export class UsersController {
     return this.queryBus.execute(
       new CheckUserPermissionQuery(userId, domain, action),
     );
+  }
+
+  @Post(':id/public-link')
+  async generatePublicLink(@Param('id') userId: string) {
+    return this.commandBus.execute(new GeneratePublicLinkCommand(userId));
+  }
+
+  @Public()
+  @Get('profile/public/:token')
+  async getPublicProfile(@Param('token') token: string) {
+    return this.queryBus.execute(new GetPublicProfileQuery(token));
   }
 }

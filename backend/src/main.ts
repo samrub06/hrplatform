@@ -1,5 +1,6 @@
 import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
+import { MicroserviceOptions, Transport } from '@nestjs/microservices';
 import {
   DocumentBuilder,
   SwaggerDocumentOptions,
@@ -11,6 +12,24 @@ import { AppModule } from './app.module';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
+  app.connectMicroservice<MicroserviceOptions>({
+    transport: Transport.RMQ,
+    options: {
+      urls: ['amqp://guest:guest@localhost:5672'], // Configuration simplifiée pour localhost
+      queue: 'hr_platform',
+      queueOptions: {
+        durable: true,
+      },
+    },
+  });
+
+  try {
+    await app.startAllMicroservices();
+    console.log('RabbitMQ connecté avec succès sur le port 5672');
+  } catch (error) {
+    console.error('Erreur de connexion RabbitMQ:', error.message);
+    process.exit(1); // Arrêter l'application si RabbitMQ n'est pas disponible
+  }
   // Activer CORS
   app.enableCors({
     origin: 'http://localhost:3001', // Remplacez par l'origine de votre client

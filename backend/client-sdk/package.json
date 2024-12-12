@@ -1,30 +1,23 @@
 {
-  "name": "@orensof/api-client-v2",
+  "name": "@orensof/api-client",
   "version": "1.0.0",
-  "description": "API Client SDK",
-  "main": "./index.js",
-  "types": "./index.d.ts",
-  "scripts": {
-    "build": "tsc",
-    "prepare": "npm run build"
-  },
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "files": [
-    "*.js",
-    "*.d.ts",
-    "models/*.js",
-    "models/*.d.ts",
-    "core/*.js",
-    "core/*.d.ts",
-    "services/*.js",
-    "services/*.d.ts"
+    "dist"
   ],
-  "dependencies": {
-    "axios": "^1.6.0"
+  "scripts": {
+    "clean": "rm -rf dist",
+    "build": "tsc",
+    "prepare": "npm run build",
+    "prepublishOnly": "npm run build"
   },
+  "dependencies": {},
   "devDependencies": {
-    "typescript": "^5.0.0"
+    "@types/node": "^18.0.0",
+    "typescript": "^4.9.5"
   },
-  "publishConfig": {
-    "access": "public"
+  "peerDependencies": {
+    "typescript": "^4.0.0"
   }
 }

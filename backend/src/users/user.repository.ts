@@ -33,6 +33,10 @@ export class UserRepository {
     return this.userModel.findByPk(id);
   }
 
+  async findByPublicToken(code: string): Promise<User | null> {
+    return this.userModel.findOne({ where: { public_link_code: code } });
+  }
+
   async update(
     id: string,
     updateUserDto: UpdateUserRequestDto,

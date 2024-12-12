@@ -8,6 +8,7 @@ export class UpdateUserDto extends PartialType(CreateUserDto) {
   last_name: string;
   password: string;
   password_confirmation?: string;
+  public_link_code?: string;
   role: Role;
   skills: string[];
   cv: string;

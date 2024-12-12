@@ -3,9 +3,11 @@
     "target": "es2015",
     "module": "commonjs",
     "declaration": true,
-    "outDir": "./",
+    "outDir": "./dist",
     "strict": true,
-    "esModuleInterop": true
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true
   },
   "include": ["./**/*"],
   "exclude": ["node_modules", "dist"]

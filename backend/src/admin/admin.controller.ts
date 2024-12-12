@@ -6,6 +6,7 @@ import {
   Param,
   Patch,
   Post,
+  UseGuards,
 } from '@nestjs/common';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import {
@@ -14,6 +15,9 @@ import {
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
+import { AuthGuard } from 'src/auth/auth.guards';
+import { PermissionGuard } from 'src/permission/permission.guard';
+import { RequirePermission } from 'src/permission/require-permission.decorator';
 import { CreateAdminRequestDto } from './commands/create-admin-command.request.dto';
 import { CreateAdminNoteRequestDto } from './commands/create-admin-note-command.request.dto';
 import { CreateAdminNoteCommand } from './commands/create-admin-note.command';
@@ -28,6 +32,7 @@ import { GetAdminNotesQuery } from './queries/get-admin-notes.query';
 @ApiTags('Admin')
 @ApiBearerAuth()
 @Controller('admin')
+@UseGuards(AuthGuard, PermissionGuard)
 export class AdminController {
   constructor(
     private readonly commandBus: CommandBus,
@@ -37,6 +42,7 @@ export class AdminController {
   @Post()
   @ApiOperation({ summary: 'Create Admin' })
   @ApiResponse({ status: 403, description: 'Forbidden.' })
+  @RequirePermission('Admin', 'create')
   createAdmin(@Body() createAdminDto: CreateAdminRequestDto) {
     return this.commandBus.execute(new CreateAdminCommand(createAdminDto));
   }
@@ -44,6 +50,7 @@ export class AdminController {
   @Patch(':id')
   @ApiOperation({ summary: 'Update Admin' })
   @ApiResponse({ status: 403, description: 'Forbidden.' })
+  @RequirePermission('Admin', 'edit')
   updateAdmin(@Param('id') id: string, @Body() updateAdminDto: UpdateAdminDto) {
     return this.commandBus.execute(new UpdateAdminCommand(id, updateAdminDto));
   }
@@ -51,6 +58,7 @@ export class AdminController {
   @Delete(':id')
   @ApiOperation({ summary: 'Delete Admin' })
   @ApiResponse({ status: 403, description: 'Forbidden.' })
+  @RequirePermission('Admin', 'delete')
   deleteAdmin(@Param('id') id: string) {
     return this.commandBus.execute(new DeleteAdminCommand(id));
   }
@@ -58,6 +66,7 @@ export class AdminController {
   @Post('note')
   @ApiOperation({ summary: 'Create Admin Note' })
   @ApiResponse({ status: 403, description: 'Forbidden.' })
+  @RequirePermission('Admin', 'edit')
   createAdminNote(@Body() createAdminNoteDto: CreateAdminNoteRequestDto) {
     return this.commandBus.execute(
       new CreateAdminNoteCommand(createAdminNoteDto),
@@ -67,6 +76,7 @@ export class AdminController {
   @Get('notes/:userId')
   @ApiOperation({ summary: 'Get Admin Notes' })
   @ApiResponse({ status: 403, description: 'Forbidden.' })
+  @RequirePermission('Admin', 'read')
   getAdminNotes(@Param('userId') userId: string) {
     return this.queryBus.execute(new GetAdminNotesQuery(userId));
   }
@@ -74,6 +84,7 @@ export class AdminController {
   @Patch('note/:id')
   @ApiOperation({ summary: 'Update Admin Note' })
   @ApiResponse({ status: 403, description: 'Forbidden.' })
+  @RequirePermission('Admin', 'edit')
   updateAdminNote(@Param('id') id: string, @Body('content') content: string) {
     return this.commandBus.execute(new UpdateAdminNoteCommand(id, content));
   }
@@ -81,6 +92,7 @@ export class AdminController {
   @Delete('note/:id')
   @ApiOperation({ summary: 'Delete Admin Note' })
   @ApiResponse({ status: 403, description: 'Forbidden.' })
+  @RequirePermission('Admin', 'delete')
   deleteAdminNote(@Param('id') id: string) {
     return this.commandBus.execute(new DeleteAdminNoteCommand(id));
   }

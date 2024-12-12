@@ -4,6 +4,7 @@ import { Button, Checkbox, Form, Grid, Input, theme, Typography } from "antd";
 import { LockOutlined, MailOutlined } from "@ant-design/icons";
 import { useContext, useState } from "react";
 import { UseAuthContext } from "../context/AuthContext";
+import { testSDK } from "../services/testApi";
 
 const { useToken } = theme;
 const { useBreakpoint } = Grid;
@@ -15,10 +16,12 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false);
 	const { login } = useContext(UseAuthContext);
 
+
 	const onFinish = async (values: any) => {
     setLoading(true);
     try {
-			 await login(values); 
+      await testSDK();
+			 //await login(values); 
 			
     } catch (error) {
       console.error(error);

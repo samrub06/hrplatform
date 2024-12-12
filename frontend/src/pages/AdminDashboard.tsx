@@ -40,7 +40,7 @@ const AdminDashboard = () => {
 		user.email?.toLowerCase().includes(userSearchText.toLowerCase())
 	);
 
-	const filteredJobs = (jobs || []).filter(job =>
+	const filteredJobs = (jobs || []).filter((job: any) =>
 		job.name?.toLowerCase().includes(jobSearchText.toLowerCase()) ||
 		job.description?.toLowerCase().includes(jobSearchText.toLowerCase())
 	);

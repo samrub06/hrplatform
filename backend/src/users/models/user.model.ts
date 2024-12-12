@@ -78,9 +78,15 @@ export class User extends Model {
   })
   desired_position: string;
 
+  @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
+  public_link_code?: string;
+
   @ForeignKey(() => AdminNote)
   @Column
-  adminNoteId: number;
+  admin_note_id: string;
 
   @BelongsTo(() => AdminNote)
   adminNote: AdminNote;

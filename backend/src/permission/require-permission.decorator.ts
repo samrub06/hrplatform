@@ -10,3 +10,5 @@ export const RequirePermission = (
   domain: string,
   action: 'create' | 'read' | 'edit' | 'delete',
 ) => SetMetadata(PERMISSION_KEY, { domain, action });
+
+export const Public = () => SetMetadata('isPublic', true);

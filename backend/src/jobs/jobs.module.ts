@@ -1,6 +1,10 @@
 import { Module } from '@nestjs/common';
 import { CqrsModule } from '@nestjs/cqrs';
 import { SequelizeModule } from '@nestjs/sequelize';
+import { AuthModule } from 'src/auth/auth.module';
+import { PermissionModule } from 'src/permission/permission.module';
+import { User } from 'src/users/models/user.model';
+import { UsersModule } from 'src/users/users.module';
 import { CreateJobHandler } from './commands/create-job.command';
 import { CreateJobValidator } from './commands/create-job.command.validator';
 import { UpdateJobHandler } from './commands/update-job.command';
@@ -13,7 +17,13 @@ const CommandHandlers = [CreateJobHandler, UpdateJobHandler];
 const QueryHandlers = [GetJobsHandler];
 
 @Module({
-  imports: [CqrsModule, SequelizeModule.forFeature([Job])],
+  imports: [
+    CqrsModule,
+    PermissionModule,
+    AuthModule,
+    UsersModule,
+    SequelizeModule.forFeature([Job, User]),
+  ],
   controllers: [JobsController],
   providers: [
     JobRepository,

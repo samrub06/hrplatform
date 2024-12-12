@@ -6,7 +6,6 @@ export const GetUserById = async (id: any) => {
 };
 
 export const updateUser = async (id: any, updateUserDto :any) => {
-  console.log(updateUserDto);
   const response = await axiosInstance.patch(`/user/${id}`, updateUserDto, 
   );
   return response.data;

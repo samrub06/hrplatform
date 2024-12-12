@@ -52,7 +52,12 @@ export class UpdateUserRequestDto {
   @ApiProperty()
   @IsOptional()
   @IsString()
-  adminNotes?: string;
+  public_link_code?: string;
+
+  @ApiProperty()
+  @IsOptional()
+  @IsString()
+  admin_note_id?: string;
 
   @ApiProperty()
   @IsOptional()
