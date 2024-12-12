@@ -31,14 +31,30 @@ export class NotificationService implements OnModuleInit {
   }
 
   private async handleUserNotification(message: any) {
-    console.log('Notification reçue:', message);
-    if (message.event === 'NEW_USER_REGISTERED') {
-      await this.sendWelcomeEmail(message);
+    switch (message.event) {
+      case 'NEW_USER_REGISTERED':
+        await this.sendWelcomeEmail(message);
+        await this.logUserRegistration(message);
+        break;
+      case 'USER_UPDATED':
+        await this.handleUserUpdate(message);
+        break;
+      // Autres cas d'utilisation
     }
   }
 
   private async sendWelcomeEmail(userData: any) {
-    console.log(`Envoi d'un email de bienvenue à ${userData.email}`);
-    // Implémentez ici l'envoi d'email réel
+    // Envoi d'email via un service d'email (SendGrid, AWS SES, etc.)
+    console.log(`Email de bienvenue envoyé à ${userData.email}`);
+  }
+
+  private async logUserRegistration(userData: any) {
+    // Logging dans une base de données ou un service externe
+    console.log(`Nouvel utilisateur enregistré: ${userData.email}`);
+  }
+
+  private async handleUserUpdate(userData: any) {
+    // Traitement des mises à jour utilisateur
+    console.log(`Utilisateur mis à jour: ${userData.email}`);
   }
 }

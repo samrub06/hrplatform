@@ -4,6 +4,7 @@ import { APP_FILTER } from '@nestjs/core';
 import { SequelizeModule } from '@nestjs/sequelize';
 import { AdminModule } from './admin/admin.module';
 import { AdminNote } from './admin/models/admin-note.model';
+import { Admin } from './admin/models/admin.model';
 import { AllExceptionsFilter } from './all-exceptions.filter'; // Importez le filtre
 import { AuthModule } from './auth/auth.module';
 import { JobsModule } from './jobs/jobs.module';
@@ -35,7 +36,7 @@ import { UsersModule } from './users/users.module';
       username: process.env.DB_USER || 'samuel',
       password: process.env.DB_PASSWORD || 'root',
       database: process.env.DB_NAME || 'hrplatform',
-      models: [User, Job, AdminNote, Permission, Role, RolePermission],
+      models: [User, Job, Admin, AdminNote, Permission, Role, RolePermission],
       synchronize: true, // should not use in production
       schema: 'public',
     }),

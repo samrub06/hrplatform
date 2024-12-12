@@ -30,5 +30,6 @@ const QueryHandlers = [GetAdminNotesHandler];
     CreateAdminValidator,
     ...QueryHandlers,
   ],
+  exports: [AdminRepository],
 })
 export class AdminModule {}

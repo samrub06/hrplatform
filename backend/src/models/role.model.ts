@@ -21,7 +21,7 @@ export class Role extends Model {
   users: User[];
 
   @HasMany(() => RolePermission, {
-    foreignKey: 'roleId',
+    foreignKey: 'role_id',
     as: 'rolePermissions',
   })
   rolePermissions: RolePermission[];

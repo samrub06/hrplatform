@@ -9,10 +9,23 @@ export class Admin extends Model {
   })
   id: string;
 
-  @Column
+  @Column({
+    type: DataType.STRING,
+    allowNull: false,
+  })
   name: string;
 
-  @Column
+  @Column({
+    type: DataType.STRING,
+    allowNull: false,
+    unique: true,
+  })
+  email: string;
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: false,
+  })
   password: string;
 
   @Column

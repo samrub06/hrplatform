@@ -9,3 +9,11 @@ export enum UserType {
   ADMIN = 'admin',
   USER = 'user',
 }
+
+export enum Action {
+  Manage = 'manage', // any
+  Create = 'create',
+  Read = 'read',
+  Update = 'update',
+  Delete = 'delete',
+}

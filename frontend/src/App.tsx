@@ -1,10 +1,13 @@
+import { ConfigProvider, theme } from 'antd';
 import { lazy, Suspense } from 'react';
 import { Navigate, Route, RouteObject, Routes } from 'react-router-dom';
 import { ProtectedRoute } from './component/ProtectedRoute';
+import { ThemeProvider } from './context/ThemeContext';
 import { AuthenticationLayout } from './layout/AuthenticationLayout';
 import { DashboardLayout } from './layout/DashboardLayout';
 import Login from './pages/Login';
 import SignUp from './pages/SignUp';
+import { darkTheme, lightTheme } from './theme/theme.config';
 
 const Loadable = (Component: React.LazyExoticComponent<any>) => (props: any) => {
   return (
@@ -39,7 +42,7 @@ export const privateRoutes: RouteObject[] = [
   {
     path: '/',
     element: 
-    <ProtectedRoute requiredRole="user">
+    <ProtectedRoute requiredRole="">
       <DashboardLayout />
     </ProtectedRoute>,
     children: [
@@ -65,29 +68,40 @@ export const adminRoutes: RouteObject[] = [
 
 const App = () => {
   return (
-    <Routes>
-      {publicRoutes.map((route) => (
-        <Route key={route.path} path={route.path} element={route.element}>
-          {route.children?.map((child) => (
-            <Route key={child.path} path={child.path} element={child.element} />
-          ))}
-        </Route>
-      ))}
-      {privateRoutes.map((route) => (
-        <Route key={route.path} path={route.path} element={route.element}>
-          {route.children?.map((child) => (
-            <Route key={child.path} path={child.path} element={child.element} />
-          ))}
-        </Route>
-      ))}
-      {adminRoutes.map((route) => (
-        <Route key={route.path} path={route.path} element={route.element}>
-          {route.children?.map((child) => (
-            <Route key={child.path} path={child.path} element={child.element} />
-          ))}
-        </Route>
-      ))}
-    </Routes>
+    <ThemeProvider>
+      {({ isDarkMode }) => (
+        <ConfigProvider
+          theme={{
+            ...isDarkMode ? darkTheme : lightTheme,
+            algorithm: isDarkMode ? theme.darkAlgorithm : theme.defaultAlgorithm,
+          }}
+        >
+          <Routes>
+            {publicRoutes.map((route) => (
+              <Route key={route.path} path={route.path} element={route.element}>
+                {route.children?.map((child) => (
+                  <Route key={child.path} path={child.path} element={child.element} />
+                ))}
+              </Route>
+            ))}
+            {privateRoutes.map((route) => (
+              <Route key={route.path} path={route.path} element={route.element}>
+                {route.children?.map((child) => (
+                  <Route key={child.path} path={child.path} element={child.element} />
+                ))}
+              </Route>
+            ))}
+            {adminRoutes.map((route) => (
+              <Route key={route.path} path={route.path} element={route.element}>
+                {route.children?.map((child) => (
+                  <Route key={child.path} path={child.path} element={child.element} />
+                ))}
+              </Route>
+            ))}
+          </Routes>
+        </ConfigProvider>
+      )}
+    </ThemeProvider>
   );
 };
 

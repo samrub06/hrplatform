@@ -5,12 +5,16 @@ export class CreateAdminRequestDto {
   @ApiProperty()
   @IsNotEmpty()
   @IsUUID()
-  id: string;
+  id?: string;
 
   @ApiProperty()
   @IsNotEmpty()
   @IsUUID()
   name: string;
+
+  @ApiProperty()
+  @IsNotEmpty()
+  email: string;
 
   @ApiProperty()
   @IsNotEmpty()

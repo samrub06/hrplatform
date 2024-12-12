@@ -1,10 +1,14 @@
 import { Body, Controller, Post } from '@nestjs/common';
 import { CommandBus } from '@nestjs/cqrs';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { LoginAdminCommand } from './commands/login-admin.command';
 import { LoginCommand } from './commands/login.command';
+import { RegisterAdminCommand } from './commands/register-admin.command';
 import { RegisterCommand } from './commands/register.command';
+import { LoginAdminRequestDto } from './dto/login-admin.request.dto';
 import { LoginRequestDto } from './dto/login.request.dto';
 import { LoginResponseDto } from './dto/login.response.dto';
+import { RegisterAdminRequestDto } from './dto/register-admin.request.dto';
 import { RegisterRequestDto } from './dto/register.request.dto';
 import { RegisterResponseDto } from './dto/register.response.dto';
 
@@ -38,5 +42,31 @@ export class AuthController {
   @ApiResponse({ status: 401, description: 'Information Invalid' })
   async login(@Body() loginDto: LoginRequestDto): Promise<LoginResponseDto> {
     return this.commandBus.execute(new LoginCommand(loginDto));
+  }
+
+  @Post('admin/login')
+  @ApiOperation({ summary: 'Login Admin' })
+  @ApiResponse({
+    status: 200,
+    description: 'Login Success',
+    type: LoginResponseDto,
+  })
+  @ApiResponse({ status: 401, description: 'Information Invalid' })
+  async loginAdmin(
+    @Body() loginDto: LoginAdminRequestDto,
+  ): Promise<LoginResponseDto> {
+    return this.commandBus.execute(new LoginAdminCommand(loginDto));
+  }
+
+  @Post('admin/register')
+  @ApiOperation({ summary: 'Create Admin' })
+  @ApiResponse({
+    status: 201,
+    description: 'Administrateur créé avec succès',
+  })
+  @ApiResponse({ status: 401, description: 'Code secret invalide' })
+  @ApiResponse({ status: 409, description: 'Email déjà utilisé' })
+  async RegisterAdmin(@Body() registerAdminDto: RegisterAdminRequestDto) {
+    return this.commandBus.execute(new RegisterAdminCommand(registerAdminDto));
   }
 }

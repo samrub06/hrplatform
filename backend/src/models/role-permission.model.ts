@@ -23,14 +23,14 @@ export class RolePermission extends Model {
     type: DataType.UUID,
     allowNull: false,
   })
-  roleId: string;
+  role_id: string;
 
   @ForeignKey(() => Permission)
   @Column({
     type: DataType.UUID,
     allowNull: false,
   })
-  permissionId: string;
+  permission_id: string;
 
   @BelongsTo(() => Role)
   role: Role;

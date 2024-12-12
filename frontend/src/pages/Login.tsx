@@ -4,7 +4,6 @@ import { Button, Checkbox, Form, Grid, Input, theme, Typography } from "antd";
 import { LockOutlined, MailOutlined } from "@ant-design/icons";
 import { useContext, useState } from "react";
 import { UseAuthContext } from "../context/AuthContext";
-import { testSDK } from "../services/testApi";
 
 const { useToken } = theme;
 const { useBreakpoint } = Grid;
@@ -20,8 +19,8 @@ export default function LoginPage() {
 	const onFinish = async (values: any) => {
     setLoading(true);
     try {
-      await testSDK();
-			 //await login(values); 
+      //await testSDK();
+			 await login(values); 
 			
     } catch (error) {
       console.error(error);
@@ -54,7 +53,6 @@ export default function LoginPage() {
       alignItems: "center",
       backgroundColor: token.colorBgContainer,
       display: "flex",
-      height: screens.sm ? "100vh" : "auto",
       padding: screens.md ? `${token.sizeXXL}px 0px` : "0px"
     },
     text: {

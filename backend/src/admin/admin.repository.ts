@@ -51,6 +51,10 @@ export class AdminRepository {
     return this.adminModel.findByPk(id);
   }
 
+  async findAdminByEmail(email: string): Promise<Admin | null> {
+    return this.adminModel.findOne({ where: { email } });
+  }
+
   async deleteAdmin(id: string): Promise<boolean> {
     const result = await this.adminModel.destroy({ where: { id } });
     return result > 0;
