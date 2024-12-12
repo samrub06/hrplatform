@@ -4,6 +4,11 @@ import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { UserRepository } from '../../users/user.repository';
 
+import {
+  RABBITMQ_EXCHANGES,
+  RABBITMQ_ROUTING_KEYS,
+} from 'src/rabbitmq/rabbitmq.config';
+import { RabbitMQService } from 'src/rabbitmq/rabbitmq.service';
 import { RegisterRequestDto } from '../dto/register.request.dto';
 import { RegisterResponseDto } from '../dto/register.response.dto';
 import { RegisterValidator } from './register.command.validator';
@@ -20,6 +25,7 @@ export class RegisterHandler
     private readonly userRepository: UserRepository,
     private readonly jwtService: JwtService,
     private readonly validator: RegisterValidator,
+    private readonly rabbitMQService: RabbitMQService,
   ) {}
 
   async execute(command: RegisterCommand): Promise<RegisterResponseDto> {
@@ -43,12 +49,18 @@ export class RegisterHandler
       last_name: request.last_name,
     });
 
-    /*   await this.rabbitMQService.publishMessage('user_registration', {
-      userId: newUser.id,
-      email: newUser.email,
-      event: 'NEW_USER_REGISTERED',
-      timestamp: new Date().toISOString(),
-    }); */
+    await this.rabbitMQService.publishToExchange(
+      RABBITMQ_EXCHANGES.USER_EVENTS,
+      RABBITMQ_ROUTING_KEYS.USER_CREATED,
+      {
+        userId: newUser.id,
+        email: newUser.email,
+        event: 'NEW_USER_REGISTERED',
+        timestamp: new Date().toISOString(),
+        firstName: newUser.first_name,
+        lastName: newUser.last_name,
+      },
+    );
 
     const payload = {
       email: newUser.email,
