@@ -2,8 +2,9 @@
 import { Button, Checkbox, Form, Grid, Input, theme, Typography } from "antd";
 
 import { LockOutlined, MailOutlined } from "@ant-design/icons";
-import { useContext, useState } from "react";
-import { UseAuthContext } from "../context/AuthContext";
+import { useState } from "react";
+import { useNavigate } from "react-router";
+import { login } from "../services/auth.service";
 
 const { useToken } = theme;
 const { useBreakpoint } = Grid;
@@ -13,15 +14,14 @@ export default function LoginPage() {
   const { token } = useToken();
   const screens = useBreakpoint();
   const [loading, setLoading] = useState(false);
-	const { login } = useContext(UseAuthContext);
+  const navigate = useNavigate();
 
-
-	const onFinish = async (values: any) => {
+  const onFinish = async (values: any) => {
     setLoading(true);
     try {
       //await testSDK();
-			 await login(values); 
-			
+      await login(values);
+      navigate("/dashboard");
     } catch (error) {
       console.error(error);
       // Gérez l'erreur (affichez un message, etc.)
@@ -37,11 +37,11 @@ export default function LoginPage() {
       width: "380px"
     },
     footer: {
-			footer: {
-				marginTop: token.marginLG,
-				textAlign: 'center' as 'center', // Ajoutez 'as' pour indiquer le type
-				width: '100%',
-			},
+      footer: {
+        marginTop: token.marginLG,
+        textAlign: 'center' as 'center', // Ajoutez 'as' pour indiquer le type
+        width: '100%',
+      },
     },
     forgotPassword: {
       float: "right"
@@ -138,7 +138,7 @@ export default function LoginPage() {
             <Form.Item name="remember" valuePropName="checked" noStyle>
               <Checkbox>Remember me</Checkbox>
             </Form.Item>
-            <a  href="/forgot-password">
+            <a href="/forgot-password">
               Forgot password?
             </a>
           </Form.Item>

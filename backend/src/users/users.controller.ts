@@ -7,6 +7,7 @@ import {
   Patch,
   Post,
   Query,
+  Request,
   UseGuards,
 } from '@nestjs/common';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
@@ -114,10 +115,12 @@ export class UsersController {
     return this.queryBus.execute(new GetCvDownloadUrlQuery(id));
   }
 
-  @Get(':id/permissions')
+  @Get('me/permissions')
+  @UseGuards(AuthGuard)
   @ApiOperation({ summary: 'Get User Permissions' })
   @ApiResponse({ status: 403, description: 'Forbidden.' })
-  async getUserPermissions(@Param('id') userId: string) {
+  async getUserPermissions(@Request() req) {
+    const userId = req.user.id; // L'ID de l'utilisateur est extrait du token par AuthGuard
     return this.queryBus.execute(new GetUserPermissionsQuery(userId));
   }
 

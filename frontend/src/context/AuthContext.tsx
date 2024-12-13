@@ -1,91 +1,62 @@
-import { jwtDecode, JwtPayload } from "jwt-decode";
-import { createContext, useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { IUserLoginRequest, User } from '../interface/auth.interface';
-import { Login, Register } from '../services/auth.service';
+import { createContext, useContext, useEffect, useState } from 'react';
+import { AuthUser } from '../interface/auth.interface';
 
-interface IAuthContext {
-  isAuthenticated?: boolean;
-  user: User | null
-  role?: string;
-  login: (credentials: IUserLoginRequest) => Promise<void>;
-  register: (userData: any) => Promise<void>;
+interface AuthContextType {
+  user: AuthUser | null;
+  setUser: (user: AuthUser | null) => void;
   logout: () => void;
+  checkPermission: (domain: string, action: 'create' | 'read' | 'edit' | 'delete') => boolean;
 }
 
-export const UseAuthContext = createContext<IAuthContext>({} as IAuthContext);
+const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
-  const navigate = useNavigate();
-  const token = localStorage.getItem('token');
-  const initialUser: User | null = token ? jwtDecode<JwtPayload>(token) as User : null;
-  
-  const [isAuthenticated, setIsAuthenticated] = useState(!!token);
-  const [user, setUser] = useState<User | null>(initialUser);
-
-  const login = async (userData: IUserLoginRequest) => {
-    try {
-      const response = await Login(userData);
-      const { access_token } = response;
-      
-      localStorage.setItem('token', access_token);
-      const decoded: any = jwtDecode(access_token);
-      setUser(decoded);
-      setIsAuthenticated(true);
-      
-      if (decoded.role === 'admin') {
-        navigate('/admin/dashboard');
-      } else {
-        navigate('/dashboard');
-      }
-    } catch (error) {
-      console.error('Login failed:', error);
-      throw error;
-    }
-  };
-
-  const register = async (userData: any) => {
-    try {
-      const response = await Register(userData);
-      const { access_token } = response;
-
-      localStorage.setItem('token', access_token);
-      const decoded: any = jwtDecode(access_token);
-      setUser(decoded);
-      setIsAuthenticated(true);
-
-      if (decoded.role === 'admin') {
-        navigate('/admin/dashboard');
-      } else {
-        navigate('/dashboard');
-      }
-    } catch (error) {
-      console.error('Registration failed:', error);
-      throw error;
-    }
-  };
-
-  const logout = () => {
-    localStorage.removeItem('token');
-    setUser(null);
-    setIsAuthenticated(false);
-    navigate('/auth/login');
-  };
+  const [user, setUser] = useState<AuthUser | null>(() => {
+    const savedUser = localStorage.getItem('user');
+    return savedUser ? JSON.parse(savedUser) : null;
+  });
 
   useEffect(() => {
-    const token = localStorage.getItem('token');
-    if (token) {
-      const decoded: any = jwtDecode(token);
-      setUser(decoded);
-      setIsAuthenticated(true);
+    if (user) {
+      localStorage.setItem('user', JSON.stringify(user));
+    } else {
+      localStorage.removeItem('user');
     }
-  }, []);
+  }, [user]);
+
+  const logout = () => {
+    setUser(null);
+    localStorage.removeItem('user');
+  };
+
+  const checkPermission = (domain: string, action: 'create' | 'read' | 'edit' | 'delete') => {
+    if (!user) return false;
+    if (user.role === 'admin') return true;
+    const permission = user.permissions?.find(p => p.domain === domain);
+
+    if (!permission) return false;
+    switch (action) {
+      case 'create': return permission.can_create;
+      case 'read': return permission.can_read;
+      case 'edit': return permission.can_edit;
+      case 'delete': return permission.can_delete;
+      default: return false;
+    }
+  };
 
   return (
-    <UseAuthContext.Provider value={{ user, isAuthenticated, login, register, logout }}>
+    <AuthContext.Provider value={{ user, setUser, logout, checkPermission }}>
       {children}
-    </UseAuthContext.Provider>
+    </AuthContext.Provider>
   );
+};
+
+export const useAuth = () => {
+  const context = useContext(AuthContext);
+  if (!context) {
+    throw new Error('useAuth must be used within an AuthProvider');
+  }
+  return context;
 };
 
 

@@ -1,13 +1,13 @@
 import { useQuery } from '@tanstack/react-query';
 import { Modal } from 'antd';
-import { useContext, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useDropzone } from 'react-dropzone';
-import { UseAuthContext } from '../context/AuthContext';
+import { useAuth } from '../context/AuthContext';
 import { downloadFileFromS3, getPresignedUrl, uploadFileToS3 } from '../services/upload.service';
 import { GetUserById, updateUser } from '../services/user.service';
 
 const Profile = () => {
-	const { user } = useContext(UseAuthContext);
+	const { user } = useAuth();
 	const [isModalVisible, setIsModalVisible] = useState(false);
 	const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
 

@@ -1,17 +1,16 @@
 import { useQuery } from '@tanstack/react-query';
 import { Button, Col, Input, message, Row, Space, Typography } from 'antd';
-import { useContext, useState } from 'react';
+import { useState } from 'react';
 import JobTable from '../component/JobTable';
 import UserTable from '../component/userTable';
 import JobFormModal from '../components/JobFormModal';
 import UserFormModal from '../components/UserFormModal';
-import { UseAuthContext } from '../context/AuthContext';
+import { useAuth } from '../context/AuthContext';
 import { Job } from '../interface/job.interface';
 import { UserData } from '../interface/user.interface';
 import { deleteJob, getAllJobs } from '../services/job.service';
 import { downloadFileFromS3 } from '../services/upload.service';
 import { deleteUser, getAllUsers } from '../services/user.service';
-
 const { Title } = Typography;
 const { Search } = Input;
 
@@ -22,7 +21,7 @@ const AdminDashboard = () => {
 	const [selectedJob, setSelectedJob] = useState<Job | undefined>();
 	const [userSearchText, setUserSearchText] = useState('');
 	const [jobSearchText, setJobSearchText] = useState('');
-	const { user } = useContext(UseAuthContext);
+	const { user } = useAuth();
 
 	const { data: users, isLoading: isLoadingUsers, refetch: refetchUsers } = useQuery({
 		queryKey: ['users'],
@@ -135,7 +134,7 @@ const AdminDashboard = () => {
 					isLoading={isLoadingJobs}
 					onEdit={handleEditJob}
 					onDelete={handleDeleteJob}
-					canEdit={user?.role === 'admin' || user?.role === 'manager'}
+					canEdit={user?.role === 'admin'}
 					canDelete={user?.role === 'admin'}
 				/>
 

@@ -52,7 +52,7 @@ export class AuthGuard implements CanActivate {
     const token = this.extractTokenFromHeader(request);
     if (!token) {
       if (isPublic) return true;
-      throw new UnauthorizedException('Token manquant');
+      throw new UnauthorizedException('Token Missing');
     }
 
     try {

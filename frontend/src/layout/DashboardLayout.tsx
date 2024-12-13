@@ -1,23 +1,28 @@
 import { Layout, Menu, Space, Switch } from 'antd';
-import { useContext } from 'react';
 import { Outlet, useNavigate } from 'react-router-dom';
-import { UseAuthContext } from '../context/AuthContext';
+import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
+import { logout } from '../services/auth.service';
 
 const { Header, Content } = Layout;
 
 export const DashboardLayout = () => {
-  const { user, logout } = useContext(UseAuthContext);
+  const { user } = useAuth();
   const { isDarkMode, toggleTheme } = useTheme();
   const navigate = useNavigate();
+  const { checkPermission } = useAuth();
+  const canEditUser = checkPermission('User', 'edit');
 
+  const handleLogout = () => {
+    logout();
+  };
   const menuItems = [
     {
       key: 'dashboard',
       label: 'Dashboard',
       onClick: () => navigate(user?.role === 'admin' ? '/admin/dashboard' : '/dashboard'),
     },
-    ...(user?.role === 'user' ? [{
+    ...(canEditUser ? [{
       key: 'profile',
       label: 'Profile',
       onClick: () => navigate('/profile'),
@@ -25,7 +30,7 @@ export const DashboardLayout = () => {
     {
       key: 'logout',
       label: 'Logout',
-      onClick: logout,
+      onClick: handleLogout,
     },
   ];
 

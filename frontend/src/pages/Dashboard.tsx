@@ -1,11 +1,10 @@
 import { useQuery } from "@tanstack/react-query";
-import { useContext } from "react";
 import JobTable from "../component/JobTable";
-import { UseAuthContext } from "../context/AuthContext";
+import { useAuth } from "../context/AuthContext";
 import { getAllJobs } from "../services/job.service";
 
 const Dashboard = () => {
-	const { user } = useContext(UseAuthContext);
+	const { user } = useAuth();
 
 	const { data: jobs, isLoading: isLoadingJobs, refetch: refetchJobs } = useQuery({
 		queryKey: ['jobs'],
@@ -16,10 +15,10 @@ const Dashboard = () => {
 	}
 	return (
 		<div className="p-4">
-			<h1 className="text-2xl font-bold mb-4">Tableau de bord</h1>
+			<h1 className="text-2xl font-bold mb-4">Jobs</h1>
 			<JobTable
 				jobs={jobs || []}
-				canEdit={user?.role === 'admin' || user?.role === 'manager'}
+				canEdit={user?.role === 'admin'}
 				canDelete={user?.role === 'admin'}
 			/>
 		</div>

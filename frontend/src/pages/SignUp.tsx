@@ -1,8 +1,8 @@
 import { LockOutlined, MailOutlined } from "@ant-design/icons";
 import { Button, Checkbox, Form, Grid, Input, theme, Typography } from "antd";
-import { useContext, useState } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { UseAuthContext } from "../context/AuthContext";
+import { register } from "../services/auth.service";
 
 const { useToken } = theme;
 const { useBreakpoint } = Grid;
@@ -10,7 +10,6 @@ const { Text, Title, Link } = Typography;
 
 const SignUp = () => {
 	const { token } = useToken();
-	const { register } = useContext(UseAuthContext);
 	const screens = useBreakpoint();
   const [loading, setLoading] = useState(false);
 	const navigate = useNavigate(); 

@@ -34,3 +34,31 @@ export const USER_ROLES = {
   USER: 'user',
   ADMIN: 'admin',
 };
+
+export interface Permission {
+  id: string;
+  name: string;
+  domain: string;
+  can_read: boolean;
+  can_create: boolean;
+  can_edit: boolean;
+  can_delete: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface AuthUser {
+  id: string;
+  email?: string;
+  role?: 'admin' | 'publisher' | 'candidate' | 'viewer';
+  permissions: Permission[];
+}
+
+
+export interface RegisterDto {
+  email: string;
+  password: string;
+  password_confirmation: string;
+  first_name: string;
+  last_name: string;
+}
