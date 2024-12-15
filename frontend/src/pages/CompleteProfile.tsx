@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import JobOfferModal from '../components/JobOfferModal';
 import { SignUpStepperModal } from '../components/SignUpStepperModal';
 import { useAuth } from '../context/AuthContext';
 import { GetUserById } from '../services/user.service';
@@ -16,19 +17,24 @@ const CompleteProfile = () => {
     enabled: !!user?.id,
   });
 
-
   const handleClose = () => {
     setIsModalVisible(false);
-    navigate('/profile');
+    navigate(user?.role === 'publisher' ? '/jobs' : '/profile');
   };
 
+  if (!userData) return <div>Chargement...</div>;
 
-  return (
+  return user?.role === 'publisher' ? (
+    <JobOfferModal
+      isVisible={isModalVisible}
+      onClose={handleClose}
+      userId={userData.id}
+    />
+  ) : (
     <SignUpStepperModal
       isVisible={isModalVisible}
       onClose={handleClose}
       initialData={userData}
-
     />
   );
 };

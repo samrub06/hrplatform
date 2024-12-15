@@ -56,6 +56,8 @@ export class RegisterHandler
       role_id: roleType.id,
     });
 
+    const role = await Role.findByPk(newUser.role_id);
+
     await this.rabbitMQService.publishToExchange(
       RABBITMQ_EXCHANGES.USER_EVENTS,
       RABBITMQ_ROUTING_KEYS.USER_CREATED,
@@ -72,7 +74,7 @@ export class RegisterHandler
     const payload = {
       email: newUser.email,
       sub: newUser.id,
-      role_id: newUser.role_id,
+      role: role.name,
     };
 
     return {
