@@ -10,6 +10,12 @@ import {
 import { AdminNote } from 'src/admin/models/admin-note.model';
 import { Role } from 'src/models/role.model';
 
+interface SkillDto {
+  language: string;
+  experience_years: number;
+  level?: number;
+}
+
 @Table({ tableName: 'user' })
 export class User extends Model {
   @Column({
@@ -56,27 +62,35 @@ export class User extends Model {
   profilePicture?: string;
 
   @Column({
+    type: DataType.JSON, // Changé de STRING à JSON
+    allowNull: true,
+    get() {
+      const rawValue = this.getDataValue('skills');
+      return rawValue ? JSON.parse(rawValue) : [];
+    },
+    set(value: any) {
+      this.setDataValue('skills', JSON.stringify(value));
+    },
+  })
+  skills?: SkillDto[];
+
+  @Column({
     type: DataType.STRING,
     allowNull: true,
   })
   cv?: string;
 
   @Column({
-    type: DataType.JSONB,
+    type: DataType.STRING,
     allowNull: true,
-    defaultValue: [],
   })
-  skills: {
-    language: string;
-    experience_years: number;
-    level?: number;
-  }[];
+  desired_position?: string;
 
   @Column({
     type: DataType.STRING,
     allowNull: true,
   })
-  desired_position: string;
+  salary_expectation?: string;
 
   @Column({
     type: DataType.STRING,
@@ -100,6 +114,23 @@ export class User extends Model {
 
   @BelongsTo(() => Role)
   role: Role;
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
+  phone_number?: string;
+  @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
+  github_link?: string;
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
+  linkedin_link?: string;
 
   @Column({
     type: DataType.DATE,

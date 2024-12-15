@@ -1,12 +1,12 @@
 import { useQuery } from "@tanstack/react-query";
-import JobTable from "../component/JobTable";
+import JobTable from "../components/JobTable";
 import { useAuth } from "../context/AuthContext";
 import { getAllJobs } from "../services/job.service";
 
 const Dashboard = () => {
 	const { user } = useAuth();
 
-	const { data: jobs, isLoading: isLoadingJobs, refetch: refetchJobs } = useQuery({
+	const { data: jobs, isLoading: isLoadingJobs } = useQuery({
 		queryKey: ['jobs'],
 		queryFn: getAllJobs
 	});

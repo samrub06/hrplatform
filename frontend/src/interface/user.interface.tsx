@@ -2,18 +2,22 @@ import { Skill } from "./skill.interface";
 
 export interface UserData {
   id: number;
-  first_name:string
-  last_name:string
+  first_name: string;
+  last_name: string;
   email: string;
-  cv?: string | null; // Ajoutez la propriété cv ici
-  role?: string; // Ajoutez cette ligne pour inclure le rôle
+  phone_number?: string;
+  github_link?: string;
+  linkedin_link?: string;
+  public_profile_url?: string;
+  cv?: string | null;
+  role?: string;
   adminNotes?: string;
   profilePicture?: string;
   skills: Skill[];
   desired_position?: string;  
+  salary_expectation?: string;  
   createdAt: Date;
-  updatedAt:Date;
-  // Ajoutez d'autres propriétés si nécessaire
+  updatedAt: Date;
 }
 
 export enum Role {

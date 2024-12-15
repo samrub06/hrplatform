@@ -1,10 +1,15 @@
-import axiosInstance from '../utils/axiosInstance';
+import axiosInstance from "../utils/axiosInstance";
 
-export const getPresignedUrl = async (fileName: string, fileType: string,folderUserId: string) => {
+export enum FileType {
+  CV = 'cv',
+  PROFILE_PICTURE = 'profile-picture'
+}
+
+export const getPresignedUrl = async (userId: any, fileName: string, fileType: FileType) => {
   const response = await axiosInstance.post('/user/presigned-url', {
+    folderUserId:userId,
     fileName,
     fileType,
-    folderUserId,
   });
   return response.data.presignedUrl;
 };
@@ -19,8 +24,7 @@ export const uploadFileToS3 = async (presignedUrl: string, file: File) => {
   });
 };
 
-export const downloadFileFromS3 = async (id: string) => {
-  const response = await axiosInstance.get(`/user/download/cv/${id}`);
-  return response.data;
+export const getFileUrl = async (userId: string, fileName: string, fileType: FileType) => {
+  const response = await axiosInstance.get(`/user/file/${userId}/${fileType}/${fileName}`);
+  return response.data.url;
 };
-

@@ -1,7 +1,8 @@
 import { LockOutlined, MailOutlined } from "@ant-design/icons";
-import { Button, Checkbox, Form, Grid, Input, theme, Typography } from "antd";
+import { Button, Col, Form, Grid, Input, message, Radio, Row, theme, Typography } from "antd";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
 import { register } from "../services/auth.service";
 
 const { useToken } = theme;
@@ -13,13 +14,15 @@ const SignUp = () => {
 	const screens = useBreakpoint();
   const [loading, setLoading] = useState(false);
 	const navigate = useNavigate(); 
-	
+	const { setUser } = useAuth();
+
 	const onFinish = async (values: any) => {
     setLoading(true);
     try {
-      await register(values); 
-			navigate("/dashboard"); 
-			
+      const userData = await register(values);
+			setUser(userData); 
+			navigate("/complete-profile"); 
+			message.success("Inscription réussie ! Vous pouvez maintenant compléter votre profil.");
     } catch (error) {
       console.error(error);
       // Gérez l'erreur (affichez un message, etc.)
@@ -60,86 +63,85 @@ const SignUp = () => {
 		<section style={styles.section}>
 			<div style={styles.container}>
 				<div style={styles.header}>
-					<Title style={styles.title}>Sign Up</Title>
+					<Title style={styles.title}>Inscription</Title>
 					<Text style={styles.text}>
-						Create your account to get started.
+						Créez votre compte pour commencer.
 					</Text>
 				</div>
 				<Form
 					name="normal_signup"
-					initialValues={{
-						remember: true,
-					}}
+					initialValues={{ remember: true }}
 					onFinish={onFinish}
 					layout="vertical"
 					requiredMark="optional"
 				>
+					<Row gutter={16}>
+						<Col span={12}>
+							<Form.Item
+								name="first_name"
+								rules={[{ required: true, message: 'Veuillez saisir votre prénom' }]}
+							>
+								<Input placeholder="First Name" />
+							</Form.Item>
+						</Col>
+						<Col span={12}>
+							<Form.Item
+								name="last_name"
+								rules={[{ required: true, message: 'Veuillez saisir votre nom' }]}
+							>
+								<Input placeholder="Last Name" />
+							</Form.Item>
+						</Col>
+					</Row>
+
 					<Form.Item
 						name="email"
-						rules={[
-							{
-								type: "email",
-								required: true,
-								message: "Please input your Email!",
-							},
-						]}
+						rules={[{ required: true, type: 'email', message: 'Email invalide' }]}
 					>
-						<Input
-							prefix={<MailOutlined />}
-							placeholder="Email"
-						/>
+						<Input prefix={<MailOutlined />} placeholder="Email" />
 					</Form.Item>
+					<Col span={12}>
+					
+					</Col>
+					<Form.Item
+					
+						name="role"
+						rules={[{ required: true, message: 'Veuillez choisir un rôle' }]}
+					>
+						<Radio.Group buttonStyle="solid" style={{ display: 'flex', width: '100%' }}>
+							<Radio.Button value="candidate" style={{ flex: 1, textAlign: 'center' }}>Candidat</Radio.Button>
+							<Radio.Button value="publisher" style={{ flex: 1, textAlign: 'center' }}>Recruteur</Radio.Button>
+						</Radio.Group>
+					</Form.Item>
+
 					<Form.Item
 						name="password"
-						rules={[
-							{
-								required: true,
-								message: "Please input your Password!",
-							},
-						]}
+						rules={[{ required: true, message: 'Mot de passe requis' }]}
 					>
-						<Input.Password
-							prefix={<LockOutlined />}
-							type="password"
-							placeholder="Password"
-						/>
+						<Input.Password prefix={<LockOutlined />} placeholder="Mot de passe" />
 					</Form.Item>
+
 					<Form.Item
 						name="password_confirmation"
 						rules={[
-							{
-								required: true,
-								message: "Please confirm your Password!",
-							},
+							{ required: true, message: 'Confirmation requise' },
 							({ getFieldValue }) => ({
 								validator(_, value) {
 									if (!value || getFieldValue('password') === value) {
 										return Promise.resolve();
 									}
-									return Promise.reject(new Error('The two passwords do not match!'));
+									return Promise.reject('Les mots de passe ne correspondent pas');
 								},
 							}),
 						]}
 					>
-						<Input.Password
-							prefix={<LockOutlined />}
-							type="password"
-							placeholder="Confirm Password"
-						/>
+						<Input.Password prefix={<LockOutlined />} placeholder="Confirmer le mot de passe" />
 					</Form.Item>
+
 					<Form.Item>
-						<Form.Item name="remember" valuePropName="checked" noStyle>
-							<Checkbox>Remember me</Checkbox>
-						</Form.Item>
-					</Form.Item>
-					<Form.Item style={{ marginBottom: "0px" }}>
-						<Button block type="primary" htmlType="submit"  loading={loading}>
-							Sign Up
+						<Button block type="primary" htmlType="submit" loading={loading}>
+							S'inscrire
 						</Button>
-						<div style={styles.footer}>
-							<Text style={styles.text}>Already have an account?</Text>{" "}
-							<Link href="/auth/login">Log in now</Link>
-						</div>
 					</Form.Item>
 				</Form>
 			</div>

@@ -3,7 +3,7 @@ import { Button, Form, Input, InputNumber, message, Modal, Select, Space, Upload
 import React, { useState } from 'react';
 import { Job } from '../interface/job.interface';
 import { Role, UserData } from '../interface/user.interface';
-import { getPresignedUrl, uploadFileToS3 } from '../services/upload.service';
+import { FileType, getPresignedUrl, uploadFileToS3 } from '../services/upload.service';
 
 const { Dragger } = Upload;
 
@@ -29,7 +29,7 @@ const FormModal: React.FC<FormModalProps> = ({
     try {
       setUploading(true);
       const userId = initialData?.id?.toString() || '';
-      const presignedUrl = await getPresignedUrl(file.name, file.type, userId);
+      const presignedUrl = await getPresignedUrl(userId, file.name, type === 'cv' ? FileType.CV : FileType.PROFILE_PICTURE);
       await uploadFileToS3(presignedUrl, file);
       form.setFieldsValue({ [type]: file.name });
       message.success(`${type === 'cv' ? 'CV' : 'Profile picture'} uploaded successfully`);

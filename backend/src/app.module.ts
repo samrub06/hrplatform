@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { APP_FILTER } from '@nestjs/core';
 import { SequelizeModule } from '@nestjs/sequelize';
@@ -8,6 +8,7 @@ import { Admin } from './admin/models/admin.model';
 import { AllExceptionsFilter } from './all-exceptions.filter'; // Importez le filtre
 import { AuthModule } from './auth/auth.module';
 import { CaslModule } from './casl/casl.module';
+import { JsonValidatorMiddleware } from './common/middleware/json-validator.middleware';
 import { JobsModule } from './jobs/jobs.module';
 import { Job } from './jobs/models/job.model';
 import { Permission } from './models/permission.model';
@@ -50,4 +51,8 @@ import { UsersModule } from './users/users.module';
     },
   ],
 })
-export class AppModule {}
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(JsonValidatorMiddleware).forRoutes('*');
+  }
+}

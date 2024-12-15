@@ -1,15 +1,15 @@
 import { useQuery } from '@tanstack/react-query';
 import { Button, Col, Input, message, Row, Space, Typography } from 'antd';
 import { useState } from 'react';
-import JobTable from '../component/JobTable';
-import UserTable from '../component/userTable';
 import JobFormModal from '../components/JobFormModal';
+import JobTable from '../components/JobTable';
 import UserFormModal from '../components/UserFormModal';
+import UserTable from '../components/userTable';
 import { useAuth } from '../context/AuthContext';
 import { Job } from '../interface/job.interface';
 import { UserData } from '../interface/user.interface';
 import { deleteJob, getAllJobs } from '../services/job.service';
-import { downloadFileFromS3 } from '../services/upload.service';
+import { FileType, getFileUrl } from '../services/upload.service';
 import { deleteUser, getAllUsers } from '../services/user.service';
 const { Title } = Typography;
 const { Search } = Input;
@@ -81,8 +81,8 @@ const AdminDashboard = () => {
 
 	const handleDownloadCv = async (id: number) => {
 		try {
-			const response = await downloadFileFromS3(id.toString());
-			window.open(response.presignedUrl, '_blank');
+			const presignedUrl = await getFileUrl(id.toString(), 'cv', FileType.CV);
+			window.open(presignedUrl, '_blank');
 		} catch (error) {
 			console.error('Failed to download CV:', error);
 		}

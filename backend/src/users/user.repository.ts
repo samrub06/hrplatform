@@ -43,7 +43,9 @@ export class UserRepository {
   ): Promise<User | null> {
     const user = await this.findById(id);
     if (!user) return null;
-    return user.update(updateUserDto);
+
+    await user.update(updateUserDto);
+    return user.reload();
   }
 
   async delete(id: string): Promise<boolean> {

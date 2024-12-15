@@ -19,6 +19,7 @@ import {
 } from '@nestjs/swagger';
 import { Action } from 'src/app.enum';
 import { AuthGuard } from 'src/auth/auth.guards';
+import { AwsService, FileType } from 'src/aws/aws.service';
 import { AppAbility } from 'src/casl/casl-ability.factory';
 import { CheckPolicies } from 'src/casl/check-policies.decorator';
 import { PoliciesGuard } from 'src/casl/policies.guard';
@@ -31,7 +32,7 @@ import { GeneratePublicLinkCommand } from './commands/generate-public-link.comma
 import { GetCvDownloadUrlQuery } from './commands/get-cv-download-url-query';
 import { RemoveUserCommand } from './commands/remove-user.command';
 import { UpdateUserCommand } from './commands/update-user.command';
-import { UpdateUserDto } from './dto/update-user.dto';
+import { UpdateUserRequestDto } from './commands/update-user.command.request.dto';
 import { User } from './models/user.model';
 import { CheckUserPermissionQuery } from './queries/check-user-permission.query';
 import { GetAllUsersQueryCommand } from './queries/get-all-user.query';
@@ -46,6 +47,7 @@ export class UsersController {
   constructor(
     private readonly commandBus: CommandBus,
     private readonly queryBus: QueryBus,
+    private readonly awsService: AwsService,
   ) {}
 
   @Post()
@@ -84,7 +86,10 @@ export class UsersController {
   @ApiOperation({ summary: 'Update User By Id' })
   @ApiResponse({ status: 403, description: 'Forbidden.' })
   @CheckPolicies((ability: AppAbility) => ability.can(Action.Update, User))
-  updateUser(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
+  updateUser(
+    @Param('id') id: string,
+    @Body() updateUserDto: UpdateUserRequestDto,
+  ) {
     return this.commandBus.execute(new UpdateUserCommand(id, updateUserDto));
   }
 
@@ -101,7 +106,7 @@ export class UsersController {
   @UseGuards(AuthGuard, PoliciesGuard)
   @ApiOperation({ summary: 'Get Presign-Url AWS' })
   @ApiResponse({ status: 403, description: 'Forbidden.' })
-  @CheckPolicies((ability: AppAbility) => ability.can(Action.Create, User))
+  @CheckPolicies((ability: AppAbility) => ability.can(Action.Update, User))
   async getPresignedUrl(@Body() request: GeneratePresignedUrlRequestDto) {
     return this.commandBus.execute(new GeneratePresignedUrlCommand(request));
   }
@@ -110,7 +115,7 @@ export class UsersController {
   @UseGuards(AuthGuard, PoliciesGuard)
   @ApiOperation({ summary: 'Download CV' })
   @ApiResponse({ status: 403, description: 'Forbidden.' })
-  @CheckPolicies((ability: AppAbility) => ability.can(Action.Read, User))
+  @CheckPolicies((ability: AppAbility) => ability.can(Action.Update, User))
   async downloadFile(@Param('id') id: string) {
     return this.queryBus.execute(new GetCvDownloadUrlQuery(id));
   }
@@ -146,5 +151,23 @@ export class UsersController {
   @Get('profile/public/:token')
   async getPublicProfile(@Param('token') token: string) {
     return this.queryBus.execute(new GetPublicProfileQuery(token));
+  }
+
+  @Get('file/:userId/:fileType/:fileName')
+  @UseGuards(AuthGuard, PoliciesGuard)
+  @ApiOperation({ summary: 'Get File URL' })
+  @ApiResponse({ status: 403, description: 'Forbidden.' })
+  @CheckPolicies((ability: AppAbility) => ability.can(Action.Read, User))
+  async getFileUrl(
+    @Param('userId') userId: string,
+    @Param('fileType') fileType: FileType,
+    @Param('fileName') fileName: string,
+  ) {
+    const url = await this.awsService.generateDownloadUrl(
+      fileName,
+      userId,
+      fileType,
+    );
+    return { url };
   }
 }

@@ -6,6 +6,11 @@ import {
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import { Injectable } from '@nestjs/common';
 
+export enum FileType {
+  CV = 'cv',
+  PROFILE_PICTURE = 'profile-picture',
+}
+
 @Injectable()
 export class AwsService {
   private s3Client: S3Client;
@@ -21,49 +26,58 @@ export class AwsService {
     });
   }
 
+  private getFilePath(
+    userId: string,
+    fileType: FileType,
+    fileName: string,
+  ): string {
+    return `${userId}/${fileType}/${fileName}`;
+  }
+
   /**
    * Génère une URL présignée pour l'upload d'un fichier.
    * @param fileName Nom du fichier.
-   * @param fileType Type MIME du fichier.
+   * @param userId ID de l'utilisateur.
+   * @param fileType Type de fichier.
+   * @param contentType Type MIME du fichier.
    * @returns URL présignée valide pour 1 heure (3600 secondes).
    */
   async generatePresignedUrl(
     fileName: string,
-    folderUserId: string,
-    fileType: string,
+    userId: string,
+    fileType: FileType,
+    contentType: string,
   ): Promise<string> {
+    const filePath = this.getFilePath(userId, fileType, fileName);
+
     const command = new PutObjectCommand({
       Bucket: this.bucketName,
-      Key: `${folderUserId}/${fileName}`,
-      ContentType: fileType,
+      Key: filePath,
+      ContentType: contentType,
     });
 
-    const presignedUrl = await getSignedUrl(this.s3Client, command, {
-      expiresIn: 3600,
-    });
-
-    return presignedUrl;
+    return await getSignedUrl(this.s3Client, command, { expiresIn: 3600 });
   }
 
   /**
    * Génère une URL présignée pour le téléchargement d'un fichier.
    * @param fileName Nom du fichier.
-   * @param folderUserId ID du dossier utilisateur.
+   * @param userId ID de l'utilisateur.
+   * @param fileType Type de fichier.
    * @returns URL présignée valide pour 1 heure (3600 secondes).
    */
-  async generateDownloadPresignedUrl(
+  async generateDownloadUrl(
     fileName: string,
-    folderUserId: string,
+    userId: string,
+    fileType: FileType,
   ): Promise<string> {
+    const filePath = this.getFilePath(userId, fileType, fileName);
+
     const command = new GetObjectCommand({
       Bucket: this.bucketName,
-      Key: `${folderUserId}/${fileName}`,
+      Key: filePath,
     });
 
-    const presignedUrl = await getSignedUrl(this.s3Client, command, {
-      expiresIn: 3600,
-    });
-
-    return presignedUrl;
+    return await getSignedUrl(this.s3Client, command, { expiresIn: 3600 });
   }
 }

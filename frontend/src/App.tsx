@@ -1,11 +1,13 @@
 import { ConfigProvider, theme } from 'antd';
 import { lazy, Suspense } from 'react';
 import { Navigate, Route, RouteObject, Routes } from 'react-router-dom';
-import { ProtectedRoute } from './component/ProtectedRoute';
+import { ProtectedRoute } from './components/ProtectedRoute';
 import { ThemeProvider } from './context/ThemeContext';
 import { AuthenticationLayout } from './layout/AuthenticationLayout';
 import { DashboardLayout } from './layout/DashboardLayout';
+import CompleteProfile from './pages/CompleteProfile';
 import Login from './pages/Login';
+import PublicProfile from './pages/PublicProfile';
 import SignUp from './pages/SignUp';
 import { darkTheme, lightTheme } from './theme/theme.config';
 
@@ -36,18 +38,27 @@ export const publicRoutes: RouteObject[] = [
       { path: '*', element: <Navigate to="/auth/login" /> },
     ],
   },
+  {
+    path: 'user/profile/public/:token',
+    element: <PublicProfile />
+  }
 ];
 
 export const privateRoutes: RouteObject[] = [
   {
     path: '/',
-    element: 
-    <ProtectedRoute requiredRole="">
-      <DashboardLayout />
-    </ProtectedRoute>,
+    element:
+      <ProtectedRoute requiredRole="">
+        <DashboardLayout />
+      </ProtectedRoute>,
     children: [
       { path: 'dashboard', element: <Dashboard /> },
       { path: 'profile', element: <Profile /> },
+      {
+        path: '/complete-profile',
+        element: <CompleteProfile />,
+
+      },
       { path: '*', element: <Navigate to="/dashboard" /> },
     ],
   },

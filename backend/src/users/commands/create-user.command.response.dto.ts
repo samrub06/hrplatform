@@ -14,22 +14,6 @@ export class CreateUserResponseDto {
   email: string;
 
   @ApiProperty()
-  profilePicture?: string;
-
-  @ApiProperty()
-  cv?: string;
-
-  @ApiProperty()
-  skills: {
-    language: string;
-    experience_years: number;
-    level?: number;
-  }[];
-
-  @ApiProperty()
-  desired_position?: string;
-
-  @ApiProperty()
   role_id: string;
 
   @ApiProperty()

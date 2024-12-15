@@ -18,7 +18,15 @@ async function bootstrap() {
     credentials: true, // Si vous avez besoin d'envoyer des cookies
   });
 
-  app.useGlobalPipes(new ValidationPipe());
+  app.useGlobalPipes(
+    new ValidationPipe({
+      transform: true,
+      transformOptions: {
+        enableImplicitConversion: true,
+      },
+      whitelist: true,
+    }),
+  );
   app.useGlobalFilters(new AllExceptionsFilter());
   app.setGlobalPrefix('api');
 

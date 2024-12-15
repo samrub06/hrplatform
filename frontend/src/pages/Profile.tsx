@@ -1,105 +1,216 @@
+import { DownloadOutlined } from '@ant-design/icons';
 import { useQuery } from '@tanstack/react-query';
-import { Modal } from 'antd';
-import { useEffect, useState } from 'react';
-import { useDropzone } from 'react-dropzone';
-import { useAuth } from '../context/AuthContext';
-import { downloadFileFromS3, getPresignedUrl, uploadFileToS3 } from '../services/upload.service';
-import { GetUserById, updateUser } from '../services/user.service';
+import { Avatar, Button, Col, Row, Space, Typography } from 'antd';
+import { useEffect, useRef, useState } from 'react';
+import SkillCard from '../components/SkillCard';
+import { Skill } from '../interface/skill.interface';
+import { UserData } from '../interface/user.interface';
 
+import LinksDisplay from '../components/LinksDisplay';
+import ProfileSection from '../components/ProfileSection';
+import UserForm from '../components/UserForm';
+import { useAuth } from '../context/AuthContext';
+import { FileType, getFileUrl } from '../services/upload.service';
+import { GetUserById } from '../services/user.service';
+
+const { Title, Text } = Typography;
+
+const PersonalInfoDisplay = ({ userData }: { userData: UserData }) => {
+	const [imageUrl, setImageUrl] = useState<string | null>(null);
+
+	useEffect(() => {
+		const loadProfilePicture = async () => {
+			if (userData?.profilePicture && userData?.id) {
+				const url = await getFileUrl(
+					userData.id.toString(),
+					userData.profilePicture,
+					FileType.PROFILE_PICTURE
+				);
+				if (url) {
+					setImageUrl(url);
+				}
+			}
+		};
+		
+
+		loadProfilePicture();
+	}, [userData?.profilePicture, userData?.id]);
+
+	return (
+		<div style={{ textAlign: 'center' }}>
+			<Avatar size={200} src={imageUrl} style={{ marginBottom: '20px' }} />
+			<Title level={2}>{userData?.first_name} {userData?.last_name}</Title>
+			<Text type="secondary">{userData?.desired_position}</Text>
+			<div style={{ marginTop: '10px' }}>
+				<Text>Expected Salary: {userData?.salary_expectation}€</Text>
+			</div>
+		</div>
+	);
+};
+
+// frontend/src/components/profile/DocumentsDisplay.tsx
+const DocumentsDisplay = ({ userData, onDownloadCv }: { userData: UserData; onDownloadCv: () => void }) => (
+	<Space direction="vertical" size="large" style={{ width: '100%' }}>
+		<Button type="primary" onClick={onDownloadCv} icon={<DownloadOutlined />} block>
+			Télécharger CV
+		</Button>
+		{userData?.cv && (
+			<Text type="secondary">CV actuel : {userData.cv}</Text>
+		)}
+	</Space>
+);
+
+// frontend/src/components/profile/SkillsDisplay.tsx
+const SkillsDisplay = ({ skills }: { skills: Skill[] }) => (
+	<Row gutter={[16, 16]}>
+		{skills?.map((skill, index) => (
+			<Col xs={24} sm={12} md={8} lg={6} key={index}>
+				<SkillCard skill={skill} />
+			</Col>
+		))}
+	</Row>
+);
 const Profile = () => {
 	const { user } = useAuth();
-	const [isModalVisible, setIsModalVisible] = useState(false);
-	const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
-
-	const { data: userData, isLoading, isError } = useQuery({
+	const [editingSection, setEditingSection] = useState<'personal' | 'skills' | 'documents' | 'links' | null>(null);
+	const [isUploading, setIsUploading] = useState(false);
+	const formRef = useRef<any>();
+	const { data: userData, isLoading, refetch } = useQuery({
 		queryKey: ['user', user?.id],
 		queryFn: () => GetUserById(user?.id),
 			enabled: !!user?.id,
 	});
 
-	useEffect(() => {
-		if (userData && !userData.cv) {
-			setIsModalVisible(true);
-		}
-	}, [userData]);
-
-	const onDrop = (acceptedFiles: File[]) => {
-		const file = acceptedFiles[0];
-
-		getPresignedUrl(file.name, file.type, user?.id.toString() || "")
-			.then(presignedUrlResponse => {
-				return uploadFileToS3(presignedUrlResponse, file).then(() => presignedUrlResponse);
-			})
-			.then(() => {
-				const updateUserDto = {
-					cv: file.name,
-				};
-				return updateUser(user?.id, updateUserDto);
-			})
-			.then((updatedUserResponse) => {
-				console.log('User updated successfully:', updatedUserResponse);
-				setIsModalVisible(false);
-			})
-			.catch(error => {
-				console.error('Error uploading file:', error);
-			});
+	const handleSectionEdit = (section: 'personal' | 'skills' | 'documents' | 'links') => {
+		setEditingSection(section);
 	};
 
-	const { getRootProps, getInputProps } = useDropzone({ onDrop });
-
-	const handleOk = () => {
-		setIsModalVisible(false);
+	const handleUpdateSuccess = () => {
+		refetch();
+		setEditingSection(null);
 	};
 
 	const handleCancel = () => {
-		setIsModalVisible(false);
-		setUploadedFiles([]);
+		setEditingSection(null);
 	};
+
+	const handleValidate = () => {
+		formRef.current?.submit();
+	};
+
+	const renderEditActions = () => (
+		<Space>
+			<Button onClick={handleCancel}>
+				Annuler
+			</Button>
+			<Button 
+				type="primary" 
+				onClick={handleValidate}
+				loading={isUploading}
+			>
+				Valider
+			</Button>
+		</Space>
+	);
 
 	const downloadCv = async () => {
 		if (userData?.cv) {
-			const presignedUrl = await downloadFileFromS3(userData.id.toString());
+			const presignedUrl = await getFileUrl(
+				userData.id.toString(),
+				userData.cv,
+				FileType.CV
+			);
 			window.open(presignedUrl, '_blank');
 		}
 	};
 
-	if (!user) {
-		return <p>Please log in to view your profile.</p>;
-	}
-
-	if (isLoading) return <p>Loading...</p>;
-
-	if (isError) {
-		return <p>Error fetching user data.</p>;
-	}
-
-	const fileName = userData?.cv;
+	if (isLoading) return <div>Chargement...</div>;
 
 	return (
-		<div>
-			<h1>Profile</h1>
-			{fileName ? (
-				<div>
-					<p>Your CV: <button onClick={downloadCv}>Télécharger le CV</button></p>
-				</div>
-			) : (
-				<p>No CV uploaded.</p>
-			)}
-			<Modal
-				title="Upload Your CV"
-				visible={isModalVisible}
-				onOk={handleOk}
-				onCancel={handleCancel}
-			>
-				<div {...getRootProps()} style={{ border: '2px dashed #ccc', padding: '20px', textAlign: 'center' }}>
-					<input {...getInputProps()} />
-					<p>
-						{uploadedFiles.length > 0
-							? `Files ready to upload: ${uploadedFiles.map(file => file.name).join(', ')}`
-							: "Drag 'n' drop some files here, or click to select files"}
-					</p>
-				</div>
-			</Modal>
+		<div style={{ padding: '24px' }}>
+			<Row gutter={[24, 24]}>
+				<Col xs={24} md={8}>
+					<ProfileSection
+						title="Informations personnelles"
+						onEdit={() => handleSectionEdit('personal')}
+						extra={editingSection === 'personal' && renderEditActions()}
+					>
+						{editingSection === 'personal' ? (
+							<UserForm
+								ref={formRef}
+								initialData={userData}
+								onSuccess={handleUpdateSuccess}
+								onClose={handleCancel}
+								setUploading={setIsUploading}
+								partialForm="personal"
+							/>
+						) : (
+							<PersonalInfoDisplay userData={userData} />
+						)}
+					</ProfileSection>
+				</Col>
+
+				<Col xs={24} md={16}>
+					<Space direction="vertical" style={{ width: '100%' }} size="large">
+						<ProfileSection
+							title="Documents"
+							onEdit={() => handleSectionEdit('documents')}
+							extra={editingSection === 'documents' && renderEditActions()}
+						>
+							{editingSection === 'documents' ? (
+								<UserForm
+									ref={formRef}
+									initialData={userData}
+									onSuccess={handleUpdateSuccess}
+									onClose={handleCancel}
+									setUploading={setIsUploading}
+									partialForm="documents"
+								/>
+							) : (
+								<DocumentsDisplay userData={userData} onDownloadCv={downloadCv} />
+							)}
+						</ProfileSection>
+
+						<ProfileSection
+							title="Links"
+							onEdit={() => handleSectionEdit('links')}
+							extra={editingSection === 'links' && renderEditActions()}
+						>
+							{editingSection === 'links' ? (
+								<UserForm
+									ref={formRef}
+									initialData={userData}
+									onSuccess={handleUpdateSuccess}
+									onClose={handleCancel}
+									setUploading={setIsUploading}
+									partialForm="links"
+								/>
+							) : (
+								<LinksDisplay userData={userData} />
+							)}
+						</ProfileSection>
+
+						<ProfileSection
+							title="Compétences"
+							onEdit={() => handleSectionEdit('skills')}
+							extra={editingSection === 'skills' && renderEditActions()}
+						>
+							{editingSection === 'skills' ? (
+								<UserForm
+									ref={formRef}
+									initialData={userData}
+									onSuccess={handleUpdateSuccess}
+									onClose={handleCancel}
+									setUploading={setIsUploading}
+									partialForm="skills"
+								/>
+							) : (
+								<SkillsDisplay skills={userData?.skills} />
+							)}
+						</ProfileSection>
+					</Space>
+				</Col>
+			</Row>
 		</div>
 	);
 };

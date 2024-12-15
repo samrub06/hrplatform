@@ -4,7 +4,9 @@ const api = new HRPlatformApi({
   WITH_CREDENTIALS: true,
   TOKEN: async () => localStorage.getItem('access_token') || '',
   HEADERS: {
-    'Content-Type': 'application/json'
+    'Content-Type': 'application/json',
+    'Accept': 'application/json'
+
   }
 });
 

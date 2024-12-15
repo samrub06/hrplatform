@@ -18,6 +18,7 @@ export class GeneratePresignedUrlHandler
       fileName,
       folderUserId,
       fileType,
+      'application/octet-stream',
     );
     return { presignedUrl };
   }
