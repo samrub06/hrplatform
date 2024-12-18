@@ -6,12 +6,14 @@ import { AdminModule } from 'src/admin/admin.module';
 import { RabbitMQModule } from 'src/rabbitmq/rabbitmq.module';
 import { UsersModule } from '../users/users.module';
 import { AuthController } from './auth.controller';
+import { AuthService } from './auth.service';
 import { LoginAdminHandler } from './commands/login-admin.command';
 import { LoginHandler } from './commands/login.command';
 import { LoginValidator } from './commands/login.command.validator';
 import { RegisterAdminHandler } from './commands/register-admin.command';
 import { RegisterHandler } from './commands/register.command';
 import { RegisterValidator } from './commands/register.command.validator';
+import { GoogleStrategy } from './strategies/google.strategy';
 
 const CommandHandlers = [
   LoginHandler,
@@ -38,7 +40,7 @@ const Validators = [LoginValidator, RegisterValidator];
     }),
   ],
   controllers: [AuthController],
-  providers: [...CommandHandlers, ...Validators],
+  providers: [GoogleStrategy, AuthService, ...CommandHandlers, ...Validators],
   exports: [JwtModule],
 })
 export class AuthModule {}

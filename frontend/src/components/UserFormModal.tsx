@@ -6,7 +6,7 @@ import UserForm from './UserForm';
 interface UserFormModalProps {
   isVisible: boolean;
   onClose: () => void;
-  initialData?: UserData;
+  initialData?: UserData | null;
   onSuccess: () => void;
 }
 

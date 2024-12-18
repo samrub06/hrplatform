@@ -18,6 +18,7 @@ export class CreateJobResponseDto {
   skills: {
     name: string;
     years_required: number;
+    level: string;
   }[];
 
   @ApiProperty()
@@ -31,6 +32,9 @@ export class CreateJobResponseDto {
 
   @ApiProperty()
   company_name: string;
+
+  @ApiProperty()
+  userId: string;
 
   @ApiProperty()
   company_type: CompanyType;

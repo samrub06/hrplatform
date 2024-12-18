@@ -6,6 +6,7 @@ import { ThemeProvider } from './context/ThemeContext';
 import { AuthenticationLayout } from './layout/AuthenticationLayout';
 import { DashboardLayout } from './layout/DashboardLayout';
 import CompleteProfile from './pages/CompleteProfile';
+import GoogleCallback from './pages/GoogleCallback';
 import Login from './pages/Login';
 import PublicProfile from './pages/PublicProfile';
 import SignUp from './pages/SignUp';
@@ -41,6 +42,10 @@ export const publicRoutes: RouteObject[] = [
   {
     path: 'user/profile/public/:token',
     element: <PublicProfile />
+  },
+  {
+    path: '/auth/google/callback',
+    element: <GoogleCallback />
   }
 ];
 

@@ -127,4 +127,31 @@ export class AuthService {
       access_token: this.jwtService.sign(payload),
     };
   }
+
+  async validateGoogleUser(profile: any) {
+    console.log('Profile:', profile);
+    const { email, given_name, family_name } = profile?._json;
+    let user = await this.userRepository.findByEmail(email);
+    // todo: do the loggin only with google
+    if (!user) {
+      // Créer un nouvel utilisateur
+      user = await this.userRepository.create({
+        email,
+        first_name: given_name,
+        last_name: family_name,
+        role_id: 'cbbb0287-66b5-44d4-8ab4-d882e97421ea', // Définir le rôle approprié
+        password: 'paswword',
+      });
+    }
+
+    const payload = {
+      email: user.email,
+      sub: user.id,
+      role_id: user.role_id,
+    };
+
+    return {
+      access_token: this.jwtService.sign(payload),
+    };
+  }
 }

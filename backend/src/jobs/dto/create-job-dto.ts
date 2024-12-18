@@ -1,13 +1,31 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { Type } from 'class-transformer';
 import {
+  IsArray,
   IsEmail,
   IsEnum,
   IsNotEmpty,
   IsNumber,
   IsOptional,
   IsString,
+  ValidateNested,
 } from 'class-validator';
-import { CompanyType, WorkCondition } from '../models/job.model';
+import { CompanyType, SkillLevel, WorkCondition } from '../models/job.model';
+
+class SkillDto {
+  @IsString()
+  @IsNotEmpty()
+  name: string;
+
+  @IsNumber()
+  @IsNotEmpty()
+  years_required: number;
+
+  @IsString()
+  @IsNotEmpty()
+  @IsEnum(SkillLevel)
+  level: string;
+}
 
 export class CreateJobDto {
   @ApiProperty()
@@ -32,10 +50,14 @@ export class CreateJobDto {
 
   @ApiProperty()
   @IsNotEmpty()
-  skills: {
-    name: string;
-    years_required: number;
-  }[];
+  @IsString()
+  userId: string;
+
+  @ApiProperty({ type: [SkillDto] })
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => SkillDto)
+  skills: SkillDto[];
 
   @ApiProperty()
   @IsNotEmpty()

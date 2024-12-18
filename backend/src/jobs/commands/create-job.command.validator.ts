@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { SkillLevel } from '../models/job.model';
 import { CreateJobRequestDto } from './create-job-command.request.dto';
 
 @Injectable()
@@ -14,6 +15,13 @@ export class CreateJobValidator {
 
     if (!request.skills?.length) {
       return false;
+    }
+
+    // Validation du level pour chaque skill
+    for (const skill of request.skills) {
+      if (!Object.values(SkillLevel).includes(skill.level)) {
+        return false;
+      }
     }
 
     return true;

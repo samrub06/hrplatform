@@ -25,7 +25,6 @@ export class CreateJobHandler
     if (!this.validator.validate(request)) {
       throw new BadRequestException('Invalid data');
     }
-
     const job = await this.jobRepository.create({
       ...request,
       id: uuidv4(),

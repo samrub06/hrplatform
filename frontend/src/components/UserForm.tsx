@@ -8,7 +8,7 @@ import { updateUser } from '../services/user.service';
 const { Dragger } = Upload;
 
 interface UserFormProps {
-  initialData?: UserData;
+  initialData?: UserData | null;
   onSuccess: () => void;
   onClose: () => void;
   setUploading: (loading: boolean) => void;

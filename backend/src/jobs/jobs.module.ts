@@ -9,13 +9,14 @@ import { User } from 'src/users/models/user.model';
 import { UsersModule } from 'src/users/users.module';
 import { CreateJobHandler } from './commands/create-job.command';
 import { CreateJobValidator } from './commands/create-job.command.validator';
+import { DeleteJobHandler } from './commands/delete-job.command';
 import { UpdateJobHandler } from './commands/update-job.command';
 import { JobRepository } from './job.repository';
 import { JobsController } from './jobs.controller';
 import { Job } from './models/job.model';
 import { GetJobsHandler } from './queries/get-jobs-query';
 
-const CommandHandlers = [CreateJobHandler, UpdateJobHandler];
+const CommandHandlers = [CreateJobHandler, UpdateJobHandler, DeleteJobHandler];
 const QueryHandlers = [GetJobsHandler];
 
 @Module({

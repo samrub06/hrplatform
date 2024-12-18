@@ -28,7 +28,7 @@ const CompleteProfile = () => {
     <JobOfferModal
       isVisible={isModalVisible}
       onClose={handleClose}
-      userId={userData.id}
+      userId={user?.id}
     />
   ) : (
     <SignUpStepperModal

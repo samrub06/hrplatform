@@ -1,4 +1,5 @@
 import {
+  BelongsTo,
   Column,
   DataType,
   ForeignKey,
@@ -20,6 +21,13 @@ export enum CompanyType {
   CONSULTING = 'consulting',
 }
 
+export enum SkillLevel {
+  BEGINNER = 'beginner',
+  INTERMEDIATE = 'intermediate',
+  ADVANCED = 'advanced',
+  EXPERT = 'expert',
+}
+
 @Table({ tableName: 'job' })
 export class Job extends Model {
   @Column({
@@ -38,10 +46,14 @@ export class Job extends Model {
   @Column(DataType.DECIMAL)
   salary_offered: number;
 
-  @Column(DataType.JSONB)
+  @Column({
+    type: DataType.JSONB,
+    defaultValue: [],
+  })
   skills: {
     name: string;
     years_required: number;
+    level: string;
   }[];
 
   @Column
@@ -78,6 +90,12 @@ export class Job extends Model {
   updatedAt: Date;
 
   @ForeignKey(() => User)
-  @Column
-  userId: number;
+  @Column({
+    type: DataType.UUID,
+    allowNull: false,
+  })
+  userId: string;
+
+  @BelongsTo(() => User)
+  user: User;
 }

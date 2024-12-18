@@ -57,7 +57,7 @@ export class RegisterHandler
     });
 
     const role = await Role.findByPk(newUser.role_id);
-
+    // todo rabbit envoyer les donnees du cv + skilss ensuite manoua va toujours chercher les skills dans la base de donnee il va trouver un match de job avec les skills et sur le queue en reponse il renvoie une notfication qu il a trouve un match et au candidat il envoie un mail avec le job et le cv
     await this.rabbitMQService.publishToExchange(
       RABBITMQ_EXCHANGES.USER_EVENTS,
       RABBITMQ_ROUTING_KEYS.USER_CREATED,

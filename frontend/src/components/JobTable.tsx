@@ -11,9 +11,10 @@ interface JobTableProps {
   canDelete: boolean;
   onEdit?: (job: Job) => void;
   onDelete?: (jobId: number) => void;
+  currentUserId?: string;
 }
 
-const JobTable: React.FC<JobTableProps> = ({ jobs, isLoading, onEdit, onDelete, canEdit, canDelete }) => {
+const JobTable: React.FC<JobTableProps> = ({ jobs, isLoading, onEdit, onDelete, canEdit, canDelete, currentUserId }) => {
   const getBadgeColor = (yearsRequired: number) => {
     if (yearsRequired <= 2) return 'green';
     if (yearsRequired <= 5) return 'blue';
@@ -40,8 +41,8 @@ const JobTable: React.FC<JobTableProps> = ({ jobs, isLoading, onEdit, onDelete, 
       render: (skills: { name: string; years_required: number }[]) => (
         <Space className='flex flex-wrap min-w-40' >
           {skills?.map((skill, index) => (
-            <Tag key={index} color={getBadgeColor(skill.years_required)}>
-              {skill.name} ({skill.years_required} ans)
+            <Tag key={index} color={getBadgeColor(skill?.years_required)}>
+              {skill?.name} ({skill?.years_required} years)
             </Tag>
           ))}
         </Space>
@@ -79,8 +80,12 @@ const JobTable: React.FC<JobTableProps> = ({ jobs, isLoading, onEdit, onDelete, 
       key: 'actions',
       render: (_: any, record: Job) => (
         <Space>
-          {canEdit && onEdit && <Button icon={<EditOutlined />} onClick={() => onEdit(record)} />}
-          {canDelete && onDelete && <Button icon={<DeleteOutlined />} danger onClick={() => onDelete(record.id)} />}
+          {canEdit && onEdit && record.userId === currentUserId && 
+            <Button icon={<EditOutlined />} onClick={() => onEdit(record)} />
+          }
+          {canDelete && onDelete && record.userId === currentUserId && 
+            <Button icon={<DeleteOutlined />} danger onClick={() => onDelete(record.id)} />
+          }
         </Space>
       ),
     }] : []),

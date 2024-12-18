@@ -31,6 +31,10 @@ export const login = async (credentials: LoginRequestDto): Promise<AuthUser> => 
     return userWithPermissions;
 };
 
+export const loginGoogle = async (): Promise<void> => {
+  // Redirection directe vers l'endpoint Google du backend
+  window.location.href = 'http://localhost:3000/api/auth/google';
+};
 
 export const register = async (data: RegisterDto): Promise<AuthUser> => {
   const response = await axiosInstance.post('/auth/register', data);
@@ -54,4 +58,21 @@ export const logout = () => {
   localStorage.removeItem('token');
   localStorage.removeItem('user');
   window.location.href = '/auth/login';
+};
+
+export const handleGoogleCallback = async (token: string): Promise<AuthUser> => {
+  localStorage.setItem('token', token);
+  
+  const decodedToken = jwtDecode(token) as { sub: string, email: string };
+  const permissionsResponse = await axiosInstance.get('/user/me/permissions');
+  
+  const userWithPermissions: AuthUser = {
+    id: decodedToken.sub,
+    email: decodedToken.email,
+    role: 'candidate',
+    permissions: permissionsResponse.data
+  };
+
+  localStorage.setItem('user', JSON.stringify(userWithPermissions));
+  return userWithPermissions;
 };

@@ -1,10 +1,8 @@
-
-import { Button, Checkbox, Form, Grid, Input, theme, Typography } from "antd";
-
 import { LockOutlined, MailOutlined } from "@ant-design/icons";
+import { Button, Checkbox, Form, Grid, Input, theme, Typography } from "antd";
 import { useState } from "react";
 import { useNavigate } from "react-router";
-import { login } from "../services/auth.service";
+import { login, loginGoogle } from "../services/auth.service";
 
 const { useToken } = theme;
 const { useBreakpoint } = Grid;
@@ -19,8 +17,7 @@ export default function LoginPage() {
   const onFinish = async (values: any) => {
     setLoading(true);
     try {
-      //await testSDK();
-      await login(values);
+      await login(values); 
       navigate("/dashboard");
     } catch (error) {
       console.error(error);
@@ -30,6 +27,10 @@ export default function LoginPage() {
     }
   };
 
+  const handleGoogleLogin = () => {
+    loginGoogle();
+  };
+
   const styles = {
     container: {
       margin: "0 auto",
@@ -37,11 +38,11 @@ export default function LoginPage() {
       width: "380px"
     },
     footer: {
-      footer: {
-        marginTop: token.marginLG,
-        textAlign: 'center' as 'center', // Ajoutez 'as' pour indiquer le type
-        width: '100%',
-      },
+			footer: {
+				marginTop: token.marginLG,
+				textAlign: 'center' as 'center', // Ajoutez 'as' pour indiquer le type
+				width: '100%',
+			},
     },
     forgotPassword: {
       float: "right"
@@ -138,13 +139,16 @@ export default function LoginPage() {
             <Form.Item name="remember" valuePropName="checked" noStyle>
               <Checkbox>Remember me</Checkbox>
             </Form.Item>
-            <a href="/forgot-password">
+            <a  href="/forgot-password">
               Forgot password?
             </a>
           </Form.Item>
           <Form.Item style={{ marginBottom: "0px" }}>
             <Button block type="primary" htmlType="submit" loading={loading}>
               Log in
+            </Button>
+            <Button onClick={handleGoogleLogin}>
+              Se connecter avec Google
             </Button>
             <div >
               <Text style={styles.text}>Don't have an account?</Text>{" "}

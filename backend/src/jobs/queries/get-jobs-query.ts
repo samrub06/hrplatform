@@ -14,8 +14,9 @@ export class GetJobsQuery {
 @QueryHandler(GetJobsQuery)
 export class GetJobsHandler implements IQueryHandler<GetJobsQuery> {
   constructor(private readonly jobRepository: JobRepository) {}
-
   async execute(query: GetJobsQuery) {
+    //todo: RAW QUERY improve skills in SQL
+    // matchmaking between jobs and user skilss in raw query
     const { filters } = query;
     return this.jobRepository.findAll(filters);
   }

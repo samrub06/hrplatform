@@ -5,6 +5,7 @@
   "dependencies": {
     "@ant-design/icons": "^5.5.2",
     "@orensof/api-client": "file:../backend/client-sdk/orensof-api-client-1.0.0.tgz",
+    "@react-oauth/google": "^0.12.1",
     "@tanstack/react-query": "^5.62.2",
     "@testing-library/jest-dom": "^5.17.0",
     "@testing-library/react": "^13.4.0",

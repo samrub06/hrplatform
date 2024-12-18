@@ -1,3 +1,4 @@
+import { GoogleOAuthProvider } from '@react-oauth/google';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import React from 'react';
 import ReactDOM from 'react-dom/client';
@@ -13,6 +14,7 @@ const root = ReactDOM.createRoot(
 );
 root.render(
   <React.StrictMode>
+    <GoogleOAuthProvider clientId="943124244414-t5vcb8fbhml4877m0h52q29l168ndeod.apps.googleusercontent.com">
     <QueryClientProvider client={queryClient}>
       <BrowserRouter>
         <AuthProvider>
@@ -20,6 +22,7 @@ root.render(
         </AuthProvider>
       </BrowserRouter>
     </QueryClientProvider>
+    </GoogleOAuthProvider>
   </React.StrictMode>
 );
 
