@@ -8,7 +8,7 @@
 
 [Github Link](https://github.com/samrub06/hrplatform)
 
-[Notion Link]([https://www.notion.so/Notes-NodeJS-1519653b1ac1802a8da8d86fcedd3799?pvs=21](https://befitting-print-b6c.notion.site/Project-HR-platform-1509653b1ac1809f922dede0873e12e3?pvs=74)
+[Notion Link](https://befitting-print-b6c.notion.site/Project-HR-platform-1509653b1ac1809f922dede0873e12e3?pvs=74)
 
 
 
