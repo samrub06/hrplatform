@@ -8,7 +8,7 @@ export const getAllJobs = async (): Promise<Job[]> => {
   return response.data as Job[];
 };
 
-export const getJobById = async (id: number): Promise<Job> => {
+export const getJobById = async (id: string): Promise<Job> => {
   const response = await axiosInstance.get<Job>(`${API_URL}/${id}`);
   return response.data;
 };
@@ -18,11 +18,11 @@ export const createJob = async (jobData: Job): Promise<Job> => {
   return response.data;
 };
 
-export const updateJob = async (id: number, jobData: Partial<Job>): Promise<Job> => {
+export const updateJob = async (id: string, jobData: Partial<Job>): Promise<Job> => {
   const response = await axiosInstance.patch<Job>(`${API_URL}/${id}`, jobData);
   return response.data;
 };
 
-export const deleteJob = async (id: number): Promise<void> => {
+export const deleteJob = async (id: string): Promise<void> => {
   await axiosInstance.delete(`${API_URL}/${id}`);
 }; 

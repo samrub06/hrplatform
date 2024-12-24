@@ -23,7 +23,7 @@ const JobFormModal: React.FC<JobFormModalProps> = ({
   const handleSubmit = async (values: any) => {
     try {
       if (isEditMode) {
-        await updateJob(initialData.id, values);
+        await updateJob(initialData.id.toString(), values);
         message.success('Job updated successfully');
       } else {
         await createJob(values);

@@ -52,10 +52,10 @@ const PersonalInfoDisplay = ({ userData }: { userData: UserData }) => {
 const DocumentsDisplay = ({ userData, onDownloadCv }: { userData: UserData; onDownloadCv: () => void }) => (
 	<Space direction="vertical" size="large" style={{ width: '100%' }}>
 		<Button type="primary" onClick={onDownloadCv} icon={<DownloadOutlined />} block>
-			Télécharger CV
+		Download CV
 		</Button>
 		{userData?.cv && (
-			<Text type="secondary">CV actuel : {userData.cv}</Text>
+			<Text type="secondary">Current CV : {userData.cv}</Text>
 		)}
 	</Space>
 );
@@ -101,14 +101,14 @@ const Profile = () => {
 	const renderEditActions = () => (
 		<Space>
 			<Button onClick={handleCancel}>
-				Annuler
+				Cancel
 			</Button>
 			<Button 
 				type="primary" 
 				onClick={handleValidate}
 				loading={isUploading}
 			>
-				Valider
+				Validate	
 			</Button>
 		</Space>
 	);
@@ -131,7 +131,7 @@ const Profile = () => {
 			<Row gutter={[24, 24]}>
 				<Col xs={24} md={8}>
 					<ProfileSection
-						title="Informations personnelles"
+						title="Personal informations"
 						onEdit={() => handleSectionEdit('personal')}
 						extra={editingSection === 'personal' && renderEditActions()}
 					>
@@ -191,7 +191,7 @@ const Profile = () => {
 						</ProfileSection>
 
 						<ProfileSection
-							title="Compétences"
+							title="Skills"
 							onEdit={() => handleSectionEdit('skills')}
 							extra={editingSection === 'skills' && renderEditActions()}
 						>

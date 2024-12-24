@@ -1,5 +1,3 @@
-# HR platform
-
 ### **Links**
 
 [Postman Link](https://www.postman.com/satellite-technologist-64110848/workspace/hr-platforn)
@@ -136,45 +134,19 @@ Users can register, manage their profiles, upload documents, and track skills. A
 
 ### **Data Model**
 
-**Jobs**:
-
-- id
-- name
-- description
-- salary_offered
-- skills:  [language]:{name , years_required}
-- global_year_experience
-- work_condition
-- city
-- company_name
-- contact_name
-- phone_number
-- email_address
-
-**User**:
-
-- id
-- first_name ( varchar )
-- last_name ( varchar )
-- email ( varchar )
-- password ( varchar )
-- cv ( varchar )
-- profilePicture ( varchar )
-- Skills ( Object ex: {Javascript: {years: 2, level :3}, React: {years: 1, level :1})
-- role (enum: USER, ADMIN, VIEWER )
-- adminNotes (varchar)
+![Capture d’écran 2024-12-16 à 15.43.34.png](https://prod-files-secure.s3.us-west-2.amazonaws.com/820e438d-e3f1-42c9-9577-2ed1e0068a82/d2215641-d718-4ad7-890b-98df9fbaee0a/Capture_decran_2024-12-16_a_15.43.34.png)
 
 ## Architecture Modules
 
-![Module_Architecture.jpeg](asset/Module_Architecture.jpeg)
+![Capture d’écran 2024-12-16 à 15.49.26.png](https://prod-files-secure.s3.us-west-2.amazonaws.com/820e438d-e3f1-42c9-9577-2ed1e0068a82/e6225818-4228-4a1e-ad54-6edd896e5203/Capture_decran_2024-12-16_a_15.49.26.png)
 
 ## Architecture UserModule
 
-![UserModule.drawio.png](asset/Module_Architecture.jpeg)
+![UserModule.drawio.png](https://prod-files-secure.s3.us-west-2.amazonaws.com/820e438d-e3f1-42c9-9577-2ed1e0068a82/f79c4785-dcdd-4e9f-893c-23f13f532fff/UserModule.drawio.png)
 
 ## Architecture Auth Flow
 
-![ClientFlow.drawio.png](asset/ClientFlow.drawio.png)
+![ClientFlow.drawio.png](https://prod-files-secure.s3.us-west-2.amazonaws.com/820e438d-e3f1-42c9-9577-2ed1e0068a82/81b8d393-fe53-4c61-bfc5-5757b3fa3807/ClientFlow.drawio.png)
 
 ## **File Management**
 
@@ -185,7 +157,7 @@ Users can register, manage their profiles, upload documents, and track skills. A
 
 - **Phase 1**: Authentication & Profile Management
 - **Phase 2**: RabbitMQ Integration
-- **Phase 3**: Redis Caching
+- **Phase 3**: Redis Caching // ce que je recois en getquery si j ai deja la reponse auparavant que cette reponse soit renvoyer par le redis ( timeto live 1min )
 - **Phase 4**: Candidate Matching AI
 
 ---

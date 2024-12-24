@@ -56,12 +56,12 @@ const JobOfferModal = ({ isVisible, onClose, userId, initialData }: JobOfferModa
   });
 
   const updateJobMutation = useMutation({
-    mutationFn: ({ id, data }: { id: number; data: Partial<Job> }) =>
+    mutationFn: ({ id, data }: { id: string; data: Partial<Job> }) =>
       updateJob(id, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['jobs'] });
       onClose();
-    },
+    },  
   });
 
   const handleSubmit = async (values: any) => {
@@ -74,7 +74,7 @@ const JobOfferModal = ({ isVisible, onClose, userId, initialData }: JobOfferModa
       
       if (initialData?.id) {
         await updateJobMutation.mutateAsync({
-          id: initialData.id,
+          id: initialData.id.toString(),
           data: formattedValues,
         });
       } else {

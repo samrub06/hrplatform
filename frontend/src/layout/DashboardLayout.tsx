@@ -35,13 +35,25 @@ export const DashboardLayout = () => {
   ];
 
   return (
-    <Layout style={{ minHeight: '100vh' }}>
-      <Header style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+    <Layout style={{ minHeight: '100vh', color: "white" }}>
+      <Header 
+        style={{ 
+          display: 'flex', 
+          justifyContent: 'space-between', 
+          alignItems: 'center',
+          background: '#1677ff' // Nouvelle couleur bleue d'Ant Design
+        }}
+      >
         <Menu 
-          theme="dark" 
           mode="horizontal" 
           items={menuItems} 
-          style={{ flex: 1 }}
+          style={{ 
+            flex: 1,
+            background: '#1677ff',
+            color: 'white',
+            borderBottom: 'none'
+          }}
+          theme="dark"
         />
         <Space style={{ marginLeft: 16 }}>
           <Switch

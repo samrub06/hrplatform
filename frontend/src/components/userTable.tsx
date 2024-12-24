@@ -8,8 +8,8 @@ interface UserTableProps {
   users: UserData[];
   isLoading: boolean;
   onEdit: (user: UserData) => void;
-  onDelete: (userId: number) => void;
-  onDownloadCv: (id: number) => void;
+  onDelete: (userId: string) => void;
+  onDownloadCv: (id: string) => void;
 }
 
 const UserTable: React.FC<UserTableProps> = ({ users, isLoading, onEdit, onDelete, onDownloadCv }) => {
@@ -34,7 +34,7 @@ const UserTable: React.FC<UserTableProps> = ({ users, isLoading, onEdit, onDelet
       title: 'Id',
       dataIndex: 'id',
       key: 'id',
-      sorter: (a: UserData, b: UserData) => a.id - b.id,
+      sorter: (a: UserData, b: UserData) => a.id.toString().localeCompare(b.id.toString()),
     },
     {
       title: 'First Name',

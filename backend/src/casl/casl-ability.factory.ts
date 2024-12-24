@@ -9,12 +9,15 @@ import { Injectable } from '@nestjs/common';
 import { Action } from 'src/app.enum';
 import { Permission } from 'src/models/permission.model';
 import { Admin } from '../admin/models/admin.model';
+import { CV } from '../cv/models/cv.model';
 import { Job } from '../jobs/models/job.model';
 import { PermissionService } from '../permission/permission.service';
 import { User } from '../users/models/user.model';
 
 type Subjects =
-  | InferSubjects<typeof User | typeof Admin | typeof Job | typeof Permission>
+  | InferSubjects<
+      typeof User | typeof Admin | typeof Job | typeof Permission | typeof CV
+    >
   | 'all';
 
 export type AppAbility = PureAbility<[Action, Subjects]>;
@@ -28,6 +31,7 @@ export class CaslAbilityFactory {
     Admin: Admin,
     Job: Job,
     Permision: Permission,
+    CV: CV,
     // Ajoutez d'autres mappings selon vos domaines
   };
 

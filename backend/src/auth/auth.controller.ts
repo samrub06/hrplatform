@@ -87,9 +87,7 @@ export class AuthController {
   @UseGuards(AuthGuard('google'))
   @ApiOperation({ summary: 'Google Authentication' })
   googleAuth() {
-    console.log('Démarrage auth Google'); // Pour debug
-
-    // La redirection est gérée par Passport
+    // The redirection is handled by Passport
   }
 
   @Get('google/callback')
@@ -97,9 +95,11 @@ export class AuthController {
   @ApiOperation({ summary: 'Google Auth Callback' })
   async googleAuthCallback(@Req() req, @Res() res) {
     try {
-      // todo : on appelle deux validateuser google
-      //const redirectUrl = `${process.env.FRONTEND_URL}/auth/google/callback?token=${result.access_token}`;
-      //return res.redirect(redirectUrl);
+      const { access_token } = await this.authService.validateGoogleUser(
+        req.user,
+      );
+      const redirectUrl = `${process.env.FRONTEND_URL}/auth/google/callback?token=${access_token}`;
+      return res.redirect(redirectUrl);
     } catch (error) {
       console.error('Erreur Google Auth:', error);
       return res.redirect(

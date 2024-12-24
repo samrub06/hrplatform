@@ -9,19 +9,12 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
     super({
       clientID: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-      callbackURL: 'http://localhost:3000/api/auth/google/callback',
+      callbackURL: `${process.env.GOOGLE_CALLBACK_URL}`,
       scope: ['email', 'profile'],
-      passReqToCallback: true,
     });
   }
 
-  async validate(
-    request: any,
-    accessToken: string,
-    refreshToken: string,
-    profile: any,
-  ) {
-    console.log('Google Profile:', profile); // Debug
-    return this.authService.validateGoogleUser(profile);
+  async validate(accessToken: string, refreshToken: string, profile: any) {
+    return profile;
   }
 }

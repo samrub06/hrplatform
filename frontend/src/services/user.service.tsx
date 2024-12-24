@@ -21,7 +21,7 @@ export const updateUserNotes = async (userId: any, notes: string) => {
   return response.data;
 };
 
-export const deleteUser = async (userId: number) => {
+export const deleteUser = async (userId: string) => {
   const response = await axiosInstance.delete(`/user/${userId}`);
   return response.data;
 };
