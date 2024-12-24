@@ -10,7 +10,7 @@ interface JobTableProps {
   canEdit: boolean;
   canDelete: boolean;
   onEdit?: (job: Job) => void;
-  onDelete?: (jobId: number) => void;
+  onDelete?: (jobId: string) => void;
   currentUserId?: string;
 }
 
@@ -84,10 +84,10 @@ const JobTable: React.FC<JobTableProps> = ({ jobs, isLoading, onEdit, onDelete, 
             <Button icon={<EditOutlined />} onClick={() => onEdit(record)} />
           }
           {canDelete && onDelete && record.userId === currentUserId && 
-            <Button icon={<DeleteOutlined />} danger onClick={() => onDelete(record.id)} />
+            <Button icon={<DeleteOutlined />} danger onClick={() => onDelete(record.id.toString())} />
           }
         </Space>
-      ),
+      ),  
     }] : []),
   ];
 

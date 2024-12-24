@@ -7,7 +7,7 @@ import { register } from "../services/auth.service";
 
 const { useToken } = theme;
 const { useBreakpoint } = Grid;
-const { Text, Title, Link } = Typography;
+const { Text, Title } = Typography;
 
 const SignUp = () => {
 	const { token } = useToken();
@@ -22,7 +22,7 @@ const SignUp = () => {
       const userData = await register(values);
 			setUser(userData); 
 			navigate("/complete-profile"); 
-			message.success("Inscription réussie ! Vous pouvez maintenant compléter votre profil.");
+			message.success("Registration Success");
     } catch (error) {
       console.error(error);
       // Gérez l'erreur (affichez un message, etc.)
@@ -65,7 +65,7 @@ const SignUp = () => {
 				<div style={styles.header}>
 					<Title style={styles.title}>Inscription</Title>
 					<Text style={styles.text}>
-						Créez votre compte pour commencer.
+						Create your account to start.
 					</Text>
 				</div>
 				<Form
@@ -79,7 +79,7 @@ const SignUp = () => {
 						<Col span={12}>
 							<Form.Item
 								name="first_name"
-								rules={[{ required: true, message: 'Veuillez saisir votre prénom' }]}
+								rules={[{ required: true, message: 'Please enter your first name' }]}
 							>
 								<Input placeholder="First Name" />
 							</Form.Item>
@@ -87,7 +87,7 @@ const SignUp = () => {
 						<Col span={12}>
 							<Form.Item
 								name="last_name"
-								rules={[{ required: true, message: 'Veuillez saisir votre nom' }]}
+								rules={[{ required: true, message: 'Please enter your last name' }]}
 							>
 								<Input placeholder="Last Name" />
 							</Form.Item>
@@ -96,7 +96,7 @@ const SignUp = () => {
 
 					<Form.Item
 						name="email"
-						rules={[{ required: true, type: 'email', message: 'Email invalide' }]}
+						rules={[{ required: true, type: 'email', message: 'Invalid email' }]}
 					>
 						<Input prefix={<MailOutlined />} placeholder="Email" />
 					</Form.Item>
@@ -106,41 +106,41 @@ const SignUp = () => {
 					<Form.Item
 					
 						name="role"
-						rules={[{ required: true, message: 'Veuillez choisir un rôle' }]}
+						rules={[{ required: true, message: 'Please choose a role' }]}
 					>
 						<Radio.Group buttonStyle="solid" style={{ display: 'flex', width: '100%' }}>
-							<Radio.Button value="candidate" style={{ flex: 1, textAlign: 'center' }}>Candidat</Radio.Button>
-							<Radio.Button value="publisher" style={{ flex: 1, textAlign: 'center' }}>Recruteur</Radio.Button>
+							<Radio.Button value="candidate" style={{ flex: 1, textAlign: 'center' }}>Candidate</Radio.Button>
+							<Radio.Button value="publisher" style={{ flex: 1, textAlign: 'center' }}>Publisher</Radio.Button>
 						</Radio.Group>
 					</Form.Item>
 
 					<Form.Item
 						name="password"
-						rules={[{ required: true, message: 'Mot de passe requis' }]}
+						rules={[{ required: true, message: 'Password required' }]}
 					>
-						<Input.Password prefix={<LockOutlined />} placeholder="Mot de passe" />
+						<Input.Password prefix={<LockOutlined />} placeholder="Password" />
 					</Form.Item>
 
 					<Form.Item
 						name="password_confirmation"
 						rules={[
-							{ required: true, message: 'Confirmation requise' },
+							{ required: true, message: 'Confirmation required' },
 							({ getFieldValue }) => ({
 								validator(_, value) {
 									if (!value || getFieldValue('password') === value) {
 										return Promise.resolve();
 									}
-									return Promise.reject('Les mots de passe ne correspondent pas');
+									return Promise.reject('Passwords do not match');
 								},
 							}),
 						]}
 					>
-						<Input.Password prefix={<LockOutlined />} placeholder="Confirmer le mot de passe" />
+						<Input.Password prefix={<LockOutlined />} placeholder="Confirm password" />
 					</Form.Item>
 
 					<Form.Item>
 						<Button block type="primary" htmlType="submit" loading={loading}>
-							S'inscrire
+							Sign up
 						</Button>
 					</Form.Item>
 				</Form>

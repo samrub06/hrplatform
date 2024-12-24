@@ -59,7 +59,7 @@ const AdminDashboard = () => {
 		setIsJobModalVisible(true);
 	};
 
-	const handleDeleteUser = async (userId: number) => {
+	const handleDeleteUser = async (userId: string) => {
 		try {
 			await deleteUser(userId);
 			message.success('User deleted successfully');
@@ -69,7 +69,7 @@ const AdminDashboard = () => {
 		}
 	};
 
-	const handleDeleteJob = async (jobId: number) => {
+	const handleDeleteJob = async (jobId: string) => {
 		try {
 			await deleteJob(jobId);
 			message.success('Job deleted successfully');
@@ -79,9 +79,9 @@ const AdminDashboard = () => {
 		}
 	};
 
-	const handleDownloadCv = async (id: number) => {
+		const handleDownloadCv = async (id: string) => {
 		try {
-			const presignedUrl = await getFileUrl(id.toString(), 'cv', FileType.CV);
+			const presignedUrl = await getFileUrl(id, 'cv', FileType.CV);
 			window.open(presignedUrl, '_blank');
 		} catch (error) {
 			console.error('Failed to download CV:', error);

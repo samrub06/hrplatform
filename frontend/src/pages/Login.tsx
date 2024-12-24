@@ -1,5 +1,5 @@
-import { LockOutlined, MailOutlined } from "@ant-design/icons";
-import { Button, Checkbox, Form, Grid, Input, theme, Typography } from "antd";
+import { GoogleOutlined, LockOutlined, MailOutlined } from "@ant-design/icons";
+import { Button, Checkbox, Form, Grid, Input, Space, theme, Typography } from "antd";
 import { useState } from "react";
 import { useNavigate } from "react-router";
 import { login, loginGoogle } from "../services/auth.service";
@@ -61,6 +61,25 @@ export default function LoginPage() {
     },
     title: {
       fontSize: screens.md ? token.fontSizeHeading2 : token.fontSizeHeading3
+    },
+    googleButton: {
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      gap: '8px',
+      width: '100%',
+      border: '1px solid #ddd',
+      borderRadius: '6px',
+    
+      color: '#757575',
+      fontSize: '14px',
+      fontWeight: 500,
+      cursor: 'pointer',
+    
+    },
+    googleIcon: {
+      fontSize: '20px',
+      color: '#4285f4'
     }
   };
 
@@ -143,14 +162,21 @@ export default function LoginPage() {
               Forgot password?
             </a>
           </Form.Item>
-          <Form.Item style={{ marginBottom: "0px" }}>
-            <Button block type="primary" htmlType="submit" loading={loading}>
-              Log in
-            </Button>
-            <Button onClick={handleGoogleLogin}>
-              Se connecter avec Google
-            </Button>
-            <div >
+          <Form.Item >
+            <Space style={{ width: "100%" }} direction="vertical" size={16}>
+              <Button block type="primary" htmlType="submit" loading={loading}>
+                Log in
+              </Button>
+              <Button 
+                block 
+                onClick={handleGoogleLogin}
+                icon={<GoogleOutlined style={styles.googleIcon} />}
+                style={styles.googleButton}
+              >
+                Continue with Google
+              </Button>
+            </Space>
+            <div style={{marginTop: "10px"}}>
               <Text style={styles.text}>Don't have an account?</Text>{" "}
               <Link href="/auth/signup">Sign up now</Link>
             </div>

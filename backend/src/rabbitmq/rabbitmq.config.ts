@@ -4,11 +4,13 @@ export const RABBITMQ_QUEUES = {
   EMAIL_NOTIFICATION: 'email_notification',
   JOB_CREATED: 'job_created',
   JOB_UPDATED: 'job_updated',
+  CV_EXTRACTED: 'cv_extracted',
 };
 
 export const RABBITMQ_EXCHANGES = {
   USER_EVENTS: 'user_events',
   JOB_EVENTS: 'job_events',
+  CV_EVENTS: 'cv_events',
 };
 
 export const RABBITMQ_ROUTING_KEYS = {
@@ -16,4 +18,5 @@ export const RABBITMQ_ROUTING_KEYS = {
   USER_UPDATED: 'user.updated',
   JOB_CREATED: 'job.created',
   JOB_UPDATED: 'job.updated',
+  CV_EXTRACTED: 'cv.extracted',
 };

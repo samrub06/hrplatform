@@ -12,12 +12,12 @@ export class RegisterRequestDto {
   @MinLength(6, {
     message: 'Le mot de passe doit contenir au moins 6 caractères',
   })
-  password: string;
+  password?: string;
 
   @ApiProperty({ description: 'Confirmation du mot de passe' })
   @IsNotEmpty({ message: 'La confirmation du mot de passe est requise' })
   @MinLength(6)
-  password_confirmation: string;
+  password_confirmation?: string;
 
   @ApiProperty({ description: "Le prénom de l'utilisateur" })
   @IsString()

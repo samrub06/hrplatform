@@ -24,6 +24,8 @@ import { AppAbility } from 'src/casl/casl-ability.factory';
 import { CheckPolicies } from 'src/casl/check-policies.decorator';
 import { PoliciesGuard } from 'src/casl/policies.guard';
 import { Public } from 'src/casl/public.decorator';
+import { RateLimit } from 'src/rate-limit/rate-limit.decorator';
+import { RateLimitGuard } from 'src/rate-limit/rate-limit.guard';
 import { CreateUserCommand } from './commands/create-user.command';
 import { CreateUserRequestDto } from './commands/create-user.command.request.dto';
 import { GeneratePresignedUrlCommand } from './commands/generate-presigned-url.command';
@@ -51,10 +53,15 @@ export class UsersController {
   ) {}
 
   @Post()
-  @UseGuards(AuthGuard, PoliciesGuard)
+  @UseGuards(AuthGuard, PoliciesGuard, RateLimitGuard)
   @ApiOperation({ summary: 'Create User' })
   @ApiResponse({ status: 403, description: 'Forbidden.' })
   @CheckPolicies((ability: AppAbility) => ability.can(Action.Create, User))
+  @RateLimit({
+    ttl: 60, // 1 minute window
+    limit: 10, // 10 requests per minute
+    keyPrefix: 'api', // Optional prefix for Redis key
+  })
   createUser(@Body() createUserDto: CreateUserRequestDto) {
     return this.commandBus.execute(new CreateUserCommand(createUserDto));
   }
@@ -76,7 +83,7 @@ export class UsersController {
     description: 'The found record',
     type: User,
   })
-  @CheckPolicies((ability: AppAbility) => ability.can(Action.Read, User))
+  @CheckPolicies((ability: AppAbility) => ability.can(Action.Update, User))
   findOneUser(@Param('id') id: string) {
     return this.queryBus.execute(new GetUserByIdQueryCommand(id));
   }
@@ -157,7 +164,7 @@ export class UsersController {
   @UseGuards(AuthGuard, PoliciesGuard)
   @ApiOperation({ summary: 'Get File URL' })
   @ApiResponse({ status: 403, description: 'Forbidden.' })
-  @CheckPolicies((ability: AppAbility) => ability.can(Action.Read, User))
+  @CheckPolicies((ability: AppAbility) => ability.can(Action.Update, User))
   async getFileUrl(
     @Param('userId') userId: string,
     @Param('fileType') fileType: FileType,

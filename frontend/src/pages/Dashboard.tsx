@@ -25,15 +25,30 @@ const Dashboard = () => {
 	const [isJobModalVisible, setIsJobModalVisible] = useState(false);
 	const [isUserModalVisible, setIsUserModalVisible] = useState(false);
 	const queryClient = useQueryClient();
+
+	const hasJobPermission = (action: 'read' | 'create' | 'edit' | 'delete'): boolean => {
+		return user?.permissions?.some(
+			perm => perm.domain === 'Job' && perm[`can_${action}`]
+		) ?? false;
+	};
+
+	const hasUserPermission = (action: 'read' | 'create' | 'edit' | 'delete'): boolean => {
+		return user?.permissions?.some(
+			perm => perm.domain === 'User' && perm[`can_${action}`]
+		) ?? false;
+	};
+
 	const { data: jobs, isLoading: isLoadingJobs } = useQuery({
 		queryKey: ['jobs'],
-		queryFn: getAllJobs
+		queryFn: getAllJobs,
+		enabled: hasJobPermission('read')
 	});
 
 	const { data: users, isLoading: isLoadingUsers } = useQuery({
 		queryKey: ['users'],
 		queryFn: getAllUsers,
-		select: (data) => data.filter((user :any )=> user.role === 'candidate')
+		enabled: hasUserPermission('read'),
+		select: (data) => data.filter((user: any) => user.role === 'candidate')
 	});
 
 	const deleteJobMutation = useMutation({
@@ -63,7 +78,7 @@ const Dashboard = () => {
 		setIsJobModalVisible(true);
 	};
 
-	const handleDeleteJob = async (jobId: number) => {
+	const handleDeleteJob = async (jobId: string) => {
 		if (window.confirm('Êtes-vous sûr de vouloir supprimer cette offre ?')) {
 			await deleteJobMutation.mutateAsync(jobId);
 		}
@@ -79,36 +94,33 @@ const Dashboard = () => {
 		setIsUserModalVisible(true);
 	};
 
-	const handleDeleteUser = async (userId: number) => {
+	const handleDeleteUser = async (userId: string) => {
 		if (window.confirm('Êtes-vous sûr de vouloir supprimer cet utilisateur ?')) {
 			await deleteUserMutation.mutateAsync(userId);
 		}
 	};
 
-	const filteredJobs = jobs?.filter(job => 
+	const filteredJobs = jobs?.filter(job =>
 		job.name.toLowerCase().includes(jobSearchTerm.toLowerCase()) ||
 		job.description.toLowerCase().includes(jobSearchTerm.toLowerCase()) ||
 		job.company_name.toLowerCase().includes(jobSearchTerm.toLowerCase()) ||
 		job.city.toLowerCase().includes(jobSearchTerm.toLowerCase())
 	);
 
-	const filteredUsers = users?.filter((user :any )=> 
+	const filteredUsers = users?.filter((user: any) =>
 		user.first_name?.toLowerCase().includes(userSearchTerm.toLowerCase()) ||
 		user.last_name?.toLowerCase().includes(userSearchTerm.toLowerCase()) ||
 		user.email?.toLowerCase().includes(userSearchTerm.toLowerCase())
 	);
 
-	const handleDownloadCv = async (id: number) => {
+	const handleDownloadCv = async (id: string) => {
 		try {
-			const presignedUrl = await getFileUrl(id.toString(), 'cv', FileType.CV);
+			const presignedUrl = await getFileUrl(id, 'cv', FileType.CV);
 			window.open(presignedUrl, '_blank');
 		} catch (error) {
 			message.error('Erreur lors du téléchargement du CV');
 		}
 	};
-
-	const canManageJobs = user?.role === 'publisher' || user?.role === 'admin';
-	const canManageUsers = user?.role === 'admin';
 
 	if (isLoadingJobs) {
 		return <>Loading</>;
@@ -117,33 +129,35 @@ const Dashboard = () => {
 	return (
 		<div className="p-4">
 			<Space direction="vertical" size="large" style={{ width: '100%' }}>
-				{canManageJobs && (
+				{hasJobPermission('read') && (
 					<div>
 						<Title level={2}>Jobs Referral</Title>
 						<Row gutter={16} style={{ marginBottom: 16 }}>
 							<Col flex="auto">
 								<Search
-									placeholder="Rechercher un job..."
+									placeholder="Search a job..."
 									allowClear
 									enterButton
 									style={{ width: '100%' }}
 									onChange={(e) => setJobSearchTerm(e.target.value)}
 								/>
 							</Col>
-							<Col flex="none">
-								<Button 
-									type="primary" 
-									icon={<PlusOutlined />}
-									onClick={() => setIsJobModalVisible(true)}
-								>
-									Ajouter une offre
-								</Button>
-							</Col>
+							{hasJobPermission('create') && (
+								<Col flex="none">
+									<Button
+										type="primary"
+										icon={<PlusOutlined />}
+										onClick={() => setIsJobModalVisible(true)}
+									>
+										Add a job
+									</Button>
+								</Col>
+							)}
 						</Row>
 						<JobTable
 							jobs={filteredJobs || []}
-							canEdit={true}
-							canDelete={true}
+							canEdit={hasJobPermission('edit')}
+							canDelete={hasJobPermission('delete')}
 							currentUserId={user?.id}
 							onEdit={handleEditJob}
 							onDelete={handleDeleteJob}
@@ -151,28 +165,30 @@ const Dashboard = () => {
 					</div>
 				)}
 
-				{canManageUsers && (
+				{hasUserPermission('read') && (
 					<div>
-						<Title level={2}>Candidats</Title>
+						<Title level={2}>Candidates</Title>
 						<Row gutter={16} style={{ marginBottom: 16 }}>
 							<Col flex="auto">
 								<Search
-									placeholder="Rechercher un candidat..."
+									placeholder="Search a candidate..."
 									allowClear
 									enterButton
 									style={{ width: '100%' }}
 									onChange={(e) => setUserSearchTerm(e.target.value)}
 								/>
 							</Col>
-							<Col flex="none">
-								<Button 
-									type="primary" 
-									icon={<PlusOutlined />}
-									onClick={() => setIsUserModalVisible(true)}
-								>
-									Add a candidate
-								</Button>
-							</Col>
+							{hasUserPermission('create') && (
+								<Col flex="none">
+									<Button
+										type="primary"
+										icon={<PlusOutlined />}
+										onClick={() => setIsUserModalVisible(true)}
+									>
+										Add a candidate
+									</Button>
+								</Col>
+							)}
 						</Row>
 						<UserTable
 							users={filteredUsers || []}
@@ -203,7 +219,7 @@ const Dashboard = () => {
 						setSelectedUser(null);
 					}}
 					initialData={selectedUser || null}
-					onSuccess={() => {}}
+					onSuccess={() => { }}
 				/>
 			)}
 		</div>

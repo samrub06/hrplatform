@@ -1,14 +1,16 @@
-import { IsNotEmpty, MinLength } from 'class-validator';
+import { MinLength } from 'class-validator';
 import {
   BelongsTo,
   Column,
   DataType,
   ForeignKey,
+  HasOne,
   Model,
   Table,
 } from 'sequelize-typescript';
-import { AdminNote } from 'src/admin/models/admin-note.model';
-import { Role } from 'src/models/role.model';
+import { AdminNote } from '../../admin/models/admin-note.model';
+import { CV } from '../../cv/models/cv.model';
+import { Role } from '../../models/role.model';
 
 interface SkillDto {
   language: string;
@@ -47,13 +49,12 @@ export class User extends Model {
 
   @Column({
     type: DataType.STRING,
-    allowNull: false,
+    allowNull: true,
   })
-  @IsNotEmpty({ message: 'Le mot de passe ne peut pas être vide.' })
   @MinLength(6, {
     message: 'Le mot de passe doit contenir au moins 6 caractères.',
   })
-  password: string;
+  password?: string;
 
   @Column({
     type: DataType.STRING,
@@ -145,4 +146,7 @@ export class User extends Model {
     defaultValue: DataType.NOW,
   })
   updatedAt: Date;
+
+  @HasOne(() => CV)
+  cv_id: CV;
 }

@@ -16,9 +16,9 @@ const LinksDisplay = ({ userData }: { userData: UserData }) => {
     try {
       const publicUrl = await generatePublicLink(userData.id.toString());
       await navigator.clipboard.writeText(publicUrl);
-      message.success('Lien public copié dans le presse-papiers !');
+      message.success('Public link copied to clipboard !');
     } catch (error) {
-      message.error('Erreur lors de la génération du lien public');
+      message.error('Error generating public link');
     } finally {
       setIsGenerating(false);
     }
@@ -62,7 +62,7 @@ const LinksDisplay = ({ userData }: { userData: UserData }) => {
         <LinkOutlined style={{ marginRight: '8px' }} />
         {userData?.public_profile_url ? (
           <Button type="link" onClick={() => navigator.clipboard.writeText(userData.public_profile_url!)}>
-            Copier le lien public
+            Copy public link
           </Button>
         ) : (
           <Button 
@@ -70,7 +70,7 @@ const LinksDisplay = ({ userData }: { userData: UserData }) => {
             onClick={handleGeneratePublicLink}
             loading={isGenerating}
           >
-            Générer un lien public
+            Generate public link
           </Button>
         )}
       </div>

@@ -14,6 +14,6 @@ export enum Action {
   Manage = 'manage', // any
   Create = 'create',
   Read = 'read',
-  Update = 'update',
+  Update = 'edit',
   Delete = 'delete',
 }

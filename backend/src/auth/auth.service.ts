@@ -3,6 +3,7 @@ import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 
 import { ConfigService } from '@nestjs/config';
+import { Role } from 'src/models/role.model';
 import { UserRepository } from '../users/user.repository';
 import { LoginDto, RegisterDto } from './auth.dto';
 
@@ -129,18 +130,20 @@ export class AuthService {
   }
 
   async validateGoogleUser(profile: any) {
-    console.log('Profile:', profile);
     const { email, given_name, family_name } = profile?._json;
     let user = await this.userRepository.findByEmail(email);
-    // todo: do the loggin only with google
+
     if (!user) {
-      // Créer un nouvel utilisateur
+      const roleType = await Role.findOne({ where: { name: 'candidate' } });
+      if (!roleType) {
+        throw new Error('Role candidate not found');
+      }
+
       user = await this.userRepository.create({
         email,
         first_name: given_name,
-        last_name: family_name,
-        role_id: 'cbbb0287-66b5-44d4-8ab4-d882e97421ea', // Définir le rôle approprié
-        password: 'paswword',
+        last_name: family_name || '',
+        role_id: roleType.id,
       });
     }
 

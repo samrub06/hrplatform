@@ -2,7 +2,7 @@ import { FilePdfOutlined, GithubOutlined, InboxOutlined, LinkedinOutlined, MailO
 import { Button, Col, Form, Input, InputNumber, message, Row, Select, Space, Upload } from 'antd';
 import React, { useEffect, useState } from 'react';
 import { UserData } from '../interface/user.interface';
-import { FileType, getPresignedUrl, uploadFileToS3 } from '../services/upload.service';
+import { extractCVData, FileType, getPresignedUrl, uploadFileToS3 } from '../services/upload.service';
 import { updateUser } from '../services/user.service';
 
 const { Dragger } = Upload;
@@ -43,7 +43,7 @@ console.log(initialData);
         case 'personal':
           if (fileToUpload) {
             const presignedUrl = await getPresignedUrl(
-              initialData?.id,
+              initialData?.id || '',
               fileToUpload.name,
               FileType.PROFILE_PICTURE
             );
@@ -73,7 +73,7 @@ console.log(initialData);
         case 'documents':
           if (fileToUpload) {
             const presignedUrl = await getPresignedUrl(
-              initialData?.id?.toString() || '',
+              initialData?.id|| '',
               fileToUpload.name,
               FileType.CV
             );
@@ -81,6 +81,9 @@ console.log(initialData);
             dataToSubmit = { 
               cv: fileToUpload.name,
             };
+            const extractedData = await extractCVData(initialData?.id || "", fileToUpload.name);
+            console.log(extractedData);
+
           }
           break;
 
@@ -218,7 +221,7 @@ console.log(initialData);
                   {initialData?.cv ? <FilePdfOutlined /> : <InboxOutlined />}
                 </p>
                 <p className="ant-upload-text">
-                  {initialData?.cv ? `Fichier: ${initialData?.cv}` : "Cliquez ou déposez votre CV"}
+                  {initialData?.cv ? `File: ${initialData?.cv}` : "Click or drop your CV"}
                 </p>
               </Dragger>
             </Form.Item>
@@ -228,17 +231,17 @@ console.log(initialData);
 
       case 'skills':
         return (
-          <Form.Item name="skills" label="Compétences">
+          <Form.Item name="skills" label="Skills">
             <Form.List name="skills">
               {(fields, { add, remove }) => (
                 <>
                   {fields.map(({ key, name, ...restField }) => (
                     <Space key={key} align="baseline">
                       <Form.Item {...restField} name={[name, 'name']}>
-                        <Input placeholder="Nom de la compétence" />
+                        <Input placeholder="Skill name" />
                       </Form.Item>
                       <Form.Item {...restField} name={[name, 'level']}>
-                        <Select placeholder="Niveau">
+                        <Select placeholder="Level">
                           <Select.Option value="beginner">Débutant</Select.Option>
                           <Select.Option value="intermediate">Intermédiaire</Select.Option>
                           <Select.Option value="advanced">Avancé</Select.Option>
@@ -246,13 +249,13 @@ console.log(initialData);
                         </Select>
                       </Form.Item>
                       <Form.Item {...restField} name={[name, 'years_of_experience']}>
-                        <InputNumber min={0} placeholder="Années" />
+                        <InputNumber min={0} placeholder="Years" />
                       </Form.Item>
                       <MinusCircleOutlined onClick={() => remove(name)} />
                     </Space>
                   ))}
                   <Button type="dashed" onClick={() => add()} block icon={<PlusOutlined />}>
-                    Ajouter une compétence
+                    Add a skill
                   </Button>
                 </>
               )}
