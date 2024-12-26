@@ -1,7 +1,7 @@
 import { NotFoundException } from '@nestjs/common';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { InjectModel } from '@nestjs/sequelize';
-import { Job } from '../models/job.model';
+import { Job } from '../../models/job.model';
 
 export class RemoveJobCommand {
   constructor(public readonly id: string) {}

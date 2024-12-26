@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
+import { Job } from '../models/job.model';
 import { CreateJobDto } from './dto/create-job-dto';
 import { UpdateJobDto } from './dto/update-job-dto';
-import { Job } from './models/job.model';
 
 @Injectable()
 export class JobRepository {

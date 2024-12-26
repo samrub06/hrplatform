@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { SkillLevel } from '../models/job.model';
+import { SkillLevel } from '../../models/job.model';
 import { CreateJobRequestDto } from './create-job-command.request.dto';
 
 @Injectable()

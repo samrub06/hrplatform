@@ -10,6 +10,7 @@ import {
 import { CommandBus } from '@nestjs/cqrs';
 import { AuthGuard } from '@nestjs/passport';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { Public } from 'src/casl/public.decorator';
 import { AuthService } from './auth.service';
 import { LoginAdminCommand } from './commands/login-admin.command';
 import { LoginCommand } from './commands/login.command';
@@ -30,6 +31,7 @@ export class AuthController {
     private readonly authService: AuthService,
   ) {}
 
+  @Public()
   @Post('register')
   @ApiOperation({ summary: 'Register User' })
   @ApiResponse({
@@ -37,7 +39,7 @@ export class AuthController {
     description: 'Register Sucess',
     type: RegisterResponseDto,
   })
-  @ApiResponse({ status: 400, description: 'Données invalides' })
+  @ApiResponse({ status: 400, description: 'Invalid data' })
   @ApiResponse({ status: 409, description: 'Email Already Used' })
   async register(
     @Body() registerDto: RegisterRequestDto,
@@ -45,6 +47,7 @@ export class AuthController {
     return this.commandBus.execute(new RegisterCommand(registerDto));
   }
 
+  @Public()
   @Post('login')
   @ApiOperation({ summary: 'Login User' })
   @ApiResponse({
@@ -57,6 +60,7 @@ export class AuthController {
     return this.commandBus.execute(new LoginCommand(loginDto));
   }
 
+  @Public()
   @Post('admin/login')
   @ApiOperation({ summary: 'Login Admin' })
   @ApiResponse({
@@ -71,6 +75,7 @@ export class AuthController {
     return this.commandBus.execute(new LoginAdminCommand(loginDto));
   }
 
+  @Public()
   @Post('admin/register')
   @ApiOperation({ summary: 'Create Admin' })
   @ApiResponse({
@@ -83,6 +88,7 @@ export class AuthController {
     return this.commandBus.execute(new RegisterAdminCommand(registerAdminDto));
   }
 
+  @Public()
   @Get('google')
   @UseGuards(AuthGuard('google'))
   @ApiOperation({ summary: 'Google Authentication' })
@@ -90,6 +96,7 @@ export class AuthController {
     // The redirection is handled by Passport
   }
 
+  @Public()
   @Get('google/callback')
   @UseGuards(AuthGuard('google'))
   @ApiOperation({ summary: 'Google Auth Callback' })

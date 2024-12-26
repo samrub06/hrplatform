@@ -11,8 +11,8 @@ import { AuthGuard } from 'src/auth/auth.guards';
 import { AppAbility } from 'src/casl/casl-ability.factory';
 import { CheckPolicies } from 'src/casl/check-policies.decorator';
 import { PoliciesGuard } from 'src/casl/policies.guard';
+import { CV } from 'src/models/cv.model';
 import { ExtractCVDataCommand } from './commands/extract-cv-data.command';
-import { CV } from './models/cv.model';
 
 @ApiTags('CV')
 @ApiBearerAuth()

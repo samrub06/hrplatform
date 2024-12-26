@@ -38,7 +38,7 @@ export class RegisterHandler
 
     const existingUser = await this.userRepository.findByEmail(request.email);
     if (existingUser) {
-      throw new ConflictException('Cet email est déjà utilisé');
+      throw new ConflictException('This email is already used');
     }
 
     const roleType = await Role.findOne({ where: { name: request.role } });
@@ -74,6 +74,7 @@ export class RegisterHandler
     const payload = {
       email: newUser.email,
       sub: newUser.id,
+      role_id: newUser.role_id,
       role: role.name,
     };
 

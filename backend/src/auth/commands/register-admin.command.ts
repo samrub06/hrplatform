@@ -1,8 +1,10 @@
 import { UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
+import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { AdminRepository } from 'src/admin/admin.repository';
+import { LoginAdminResponseDto } from '../dto/login-admin-response.dto';
 import { RegisterAdminRequestDto } from '../dto/register-admin.request.dto';
 
 export class RegisterAdminCommand {
@@ -11,14 +13,15 @@ export class RegisterAdminCommand {
 
 @CommandHandler(RegisterAdminCommand)
 export class RegisterAdminHandler
-  implements ICommandHandler<RegisterAdminCommand>
+  implements ICommandHandler<RegisterAdminCommand, LoginAdminResponseDto>
 {
   constructor(
     private readonly adminRepository: AdminRepository,
     private readonly configService: ConfigService,
+    private readonly jwtService: JwtService,
   ) {}
 
-  async execute(command: RegisterAdminCommand) {
+  async execute(command: RegisterAdminCommand): Promise<LoginAdminResponseDto> {
     const { request } = command;
     const adminSecretCode = this.configService.get<string>('ADMIN_SECRET_CODE');
 
@@ -35,10 +38,17 @@ export class RegisterAdminHandler
 
     const hashedPassword = await bcrypt.hash(request.password, 10);
 
-    return this.adminRepository.createAdmin({
+    const admin = await this.adminRepository.createAdmin({
       name: request.name,
       email: request.email,
       password: hashedPassword,
     });
+
+    const accessToken = this.jwtService.sign({
+      id: admin.id,
+      email: admin.email,
+    });
+
+    return { accessToken };
   }
 }

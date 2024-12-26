@@ -1,14 +1,12 @@
-import { Module, forwardRef } from '@nestjs/common';
+import { Module } from '@nestjs/common';
 
 import { CqrsModule } from '@nestjs/cqrs';
 import { SequelizeModule } from '@nestjs/sequelize';
 import { AwsModule } from 'src/aws/aws.module';
-import { AuthModule } from '../auth/auth.module';
+import { User } from '../models/user.model';
 import { CreateUserHandler } from './commands/create-user.command';
 import { UpdateUserHandler } from './commands/update-user.command';
-import { User } from './models/user.model';
 
-import { AdminModule } from 'src/admin/admin.module';
 import { CaslModule } from 'src/casl/casl.module';
 import { PermissionModule } from 'src/permission/permission.module';
 import { CreateUserValidator } from './commands/create-user.commande.validator';
@@ -29,11 +27,9 @@ import { UsersController } from './users.controller';
   imports: [
     SequelizeModule.forFeature([User]),
     CqrsModule,
-    forwardRef(() => AuthModule),
-    forwardRef(() => AdminModule),
     AwsModule,
-    CaslModule,
     PermissionModule,
+    CaslModule,
   ],
   controllers: [UsersController],
   providers: [

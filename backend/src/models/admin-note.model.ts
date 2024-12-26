@@ -6,15 +6,16 @@ import {
   Model,
   Table,
 } from 'sequelize-typescript';
-import { User } from '../../users/models/user.model';
 import { Admin } from './admin.model';
+import { User } from './user.model';
 
-@Table({ tableName: 'admin_notes' })
+@Table({ tableName: 'admin_note' })
 export class AdminNote extends Model {
   @Column({
     type: DataType.UUID,
     defaultValue: DataType.UUIDV4,
     primaryKey: true,
+    allowNull: false,
   })
   id: string;
 

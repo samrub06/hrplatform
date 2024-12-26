@@ -2,13 +2,13 @@ import { getModelToken } from '@nestjs/sequelize';
 import { Test } from '@nestjs/testing';
 import { Op } from 'sequelize';
 import { Sequelize } from 'sequelize-typescript';
-import { AdminNote } from '../admin/models/admin-note.model';
-import { Admin } from '../admin/models/admin.model';
+import { AdminNote } from '../models/admin-note.model';
+import { Admin } from '../models/admin.model';
 import { Permission } from '../models/permission.model';
 import { RolePermission } from '../models/role-permission.model';
 import { Role } from '../models/role.model';
+import { User } from '../models/user.model';
 import { CreateUserRequestDto } from './commands/create-user.command.request.dto';
-import { User } from './models/user.model';
 import { UserRepository } from './user.repository';
 
 describe('UserRepository Integration Tests', () => {

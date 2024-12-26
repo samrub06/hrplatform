@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
+import { AdminNote } from '../models/admin-note.model';
+import { Admin } from '../models/admin.model';
 import { CreateAdminRequestDto } from './commands/create-admin-command.request.dto';
 import { CreateAdminNoteRequestDto } from './commands/create-admin-note-command.request.dto';
 import { UpdateAdminDto } from './dto/update-admin.dto';
-import { AdminNote } from './models/admin-note.model';
-import { Admin } from './models/admin.model';
 
 @Injectable()
 export class AdminRepository {

@@ -33,4 +33,7 @@ export class Admin extends Model {
 
   @Column
   updatedAt: Date;
+
+  /*   @HasOne(() => AdminNote)
+  adminNote: AdminNote; */
 }

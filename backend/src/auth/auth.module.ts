@@ -1,4 +1,4 @@
-import { Module, forwardRef } from '@nestjs/common';
+import { forwardRef, Global, Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { CqrsModule } from '@nestjs/cqrs';
 import { JwtModule } from '@nestjs/jwt';
@@ -6,6 +6,7 @@ import { AdminModule } from 'src/admin/admin.module';
 import { RabbitMQModule } from 'src/rabbitmq/rabbitmq.module';
 import { UsersModule } from '../users/users.module';
 import { AuthController } from './auth.controller';
+import { AuthGuard } from './auth.guards';
 import { AuthService } from './auth.service';
 import { LoginAdminHandler } from './commands/login-admin.command';
 import { LoginHandler } from './commands/login.command';
@@ -23,6 +24,7 @@ const CommandHandlers = [
 ];
 const Validators = [LoginValidator, RegisterValidator];
 
+@Global()
 @Module({
   imports: [
     CqrsModule,
@@ -40,7 +42,16 @@ const Validators = [LoginValidator, RegisterValidator];
     }),
   ],
   controllers: [AuthController],
-  providers: [GoogleStrategy, AuthService, ...CommandHandlers, ...Validators],
+  providers: [
+    GoogleStrategy,
+    AuthService,
+    ...CommandHandlers,
+    ...Validators,
+    {
+      provide: 'APP_GUARD',
+      useClass: AuthGuard,
+    },
+  ],
   exports: [JwtModule],
 })
 export class AuthModule {}

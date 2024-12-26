@@ -39,6 +39,9 @@ export class NotificationService implements OnModuleInit {
       case 'USER_UPDATED':
         await this.handleUserUpdate(message);
         break;
+      case 'CV_JOB_MATCHED':
+        await this.handleCVMatched(message);
+        break;
       // Autres cas d'utilisation
     }
   }
@@ -56,5 +59,21 @@ export class NotificationService implements OnModuleInit {
   private async handleUserUpdate(userData: any) {
     // Traitement des mises à jour utilisateur
     console.log(`Utilisateur mis à jour: ${userData.email}`);
+  }
+
+  private async handleCVMatched(message: any) {
+    const { userId, matches } = message;
+
+    // Envoyer une notification pour chaque match
+    for (const match of matches) {
+      await this.sendJobMatchNotification(userId, match);
+    }
+  }
+
+  private async sendJobMatchNotification(userId: string, match: any) {
+    // Logique d'envoi de notification (email, notification in-app, etc.)
+    console.log(
+      `Match found for user ${userId} with job ${match.jobId} (score: ${match.score})`,
+    );
   }
 }

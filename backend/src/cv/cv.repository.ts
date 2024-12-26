@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
+import { CVEducation } from 'src/models/cv-education.model';
+import { CVSkill } from 'src/models/cv-skill.model';
+import { CV } from 'src/models/cv.model';
 import { PersonalInfo } from './interfaces/cv-extracted-data.interface';
-import { CVEducation } from './models/cv-education.model';
-import { CVSkill } from './models/cv-skill.model';
-import { CV } from './models/cv.model';
 
 @Injectable()
 export class CVRepository {

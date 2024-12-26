@@ -2,22 +2,22 @@ import { ApiProperty } from '@nestjs/swagger';
 import { IsEmail, IsNotEmpty, IsString } from 'class-validator';
 
 export class RegisterAdminRequestDto {
-  @ApiProperty({ description: "Nom de l'administrateur" })
-  @IsNotEmpty({ message: 'Le nom ne peut pas être vide' })
-  @IsString({ message: 'Le nom doit être une chaîne de caractères' })
+  @ApiProperty({ description: 'The name of the admin' })
+  @IsNotEmpty({ message: 'The name cannot be empty' })
+  @IsString({ message: 'The name must be a string' })
   name: string;
 
-  @ApiProperty({ description: "Email de l'administrateur" })
-  @IsEmail({}, { message: "L'email doit être valide" })
-  @IsNotEmpty({ message: "L'email ne peut pas être vide" })
+  @ApiProperty({ description: 'The email of the admin' })
+  @IsEmail({}, { message: 'The email must be valid' })
+  @IsNotEmpty({ message: 'The email cannot be empty' })
   email: string;
 
-  @ApiProperty({ description: "Mot de passe de l'administrateur" })
-  @IsNotEmpty({ message: 'Le mot de passe ne peut pas être vide' })
+  @ApiProperty({ description: 'The password of the admin' })
+  @IsNotEmpty({ message: 'The password cannot be empty' })
   password: string;
 
-  @ApiProperty({ description: "Code secret pour l'enregistrement admin" })
-  @IsNotEmpty({ message: 'Le code secret est requis' })
-  @IsString({ message: 'Le code secret doit être une chaîne de caractères' })
+  @ApiProperty({ description: 'The secret code for admin registration' })
+  @IsNotEmpty({ message: 'The secret code is required' })
+  @IsString({ message: 'The secret code must be a string' })
   secretCode: string;
 }

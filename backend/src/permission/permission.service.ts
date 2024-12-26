@@ -3,7 +3,7 @@ import { InjectModel } from '@nestjs/sequelize';
 import { Permission } from '../models/permission.model';
 import { RolePermission } from '../models/role-permission.model';
 import { Role } from '../models/role.model';
-import { User } from '../users/models/user.model';
+import { User } from '../models/user.model';
 
 @Injectable()
 export class PermissionService {

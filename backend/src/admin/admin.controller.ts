@@ -20,6 +20,7 @@ import { AuthGuard } from 'src/auth/auth.guards';
 import { AppAbility } from 'src/casl/casl-ability.factory';
 import { CheckPolicies } from 'src/casl/check-policies.decorator';
 import { PoliciesGuard } from 'src/casl/policies.guard';
+import { Admin } from '../models/admin.model';
 import { CreateAdminRequestDto } from './commands/create-admin-command.request.dto';
 import { CreateAdminNoteRequestDto } from './commands/create-admin-note-command.request.dto';
 import { CreateAdminNoteCommand } from './commands/create-admin-note.command';
@@ -29,7 +30,6 @@ import { DeleteAdminCommand } from './commands/delete-admin.command';
 import { UpdateAdminNoteCommand } from './commands/update-admin-note.command';
 import { UpdateAdminCommand } from './commands/update-admin.command';
 import { UpdateAdminDto } from './dto/update-admin.dto';
-import { Admin } from './models/admin.model';
 import { GetAdminNotesQuery } from './queries/get-admin-notes.query';
 
 @ApiTags('Admin')

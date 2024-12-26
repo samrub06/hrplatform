@@ -21,12 +21,12 @@ import { AuthGuard } from 'src/auth/auth.guards';
 import { AppAbility } from 'src/casl/casl-ability.factory';
 import { CheckPolicies } from 'src/casl/check-policies.decorator';
 import { PoliciesGuard } from 'src/casl/policies.guard';
+import { Job } from '../models/job.model';
 import { CreateJobRequestDto } from './commands/create-job-command.request.dto';
 import { CreateJobCommand } from './commands/create-job.command';
 import { DeleteJobCommand } from './commands/delete-job.command';
 import { UpdateJobCommand } from './commands/update-job.command';
 import { UpdateJobDto } from './dto/update-job-dto';
-import { Job } from './models/job.model';
 import { GetJobsQuery } from './queries/get-jobs-query';
 
 @ApiTags('Jobs')
