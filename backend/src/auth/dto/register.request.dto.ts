@@ -2,35 +2,35 @@ import { ApiProperty } from '@nestjs/swagger';
 import { IsEmail, IsNotEmpty, IsString, MinLength } from 'class-validator';
 
 export class RegisterRequestDto {
-  @ApiProperty({ description: "L'email de l'utilisateur" })
-  @IsEmail({}, { message: "L'email doit être valide" })
-  @IsNotEmpty({ message: "L'email est requis" })
+  @ApiProperty({ description: 'The email of the user' })
+  @IsEmail({}, { message: 'The email must be valid' })
+  @IsNotEmpty({ message: 'The email is required' })
   email: string;
 
-  @ApiProperty({ description: "Le mot de passe de l'utilisateur" })
-  @IsNotEmpty({ message: 'Le mot de passe est requis' })
+  @ApiProperty({ description: 'The password of the user' })
+  @IsNotEmpty({ message: 'The password is required' })
   @MinLength(6, {
-    message: 'Le mot de passe doit contenir au moins 6 caractères',
+    message: 'The password must contain at least 6 characters',
   })
   password?: string;
 
-  @ApiProperty({ description: 'Confirmation du mot de passe' })
-  @IsNotEmpty({ message: 'La confirmation du mot de passe est requise' })
+  @ApiProperty({ description: 'The password confirmation' })
+  @IsNotEmpty({ message: 'The password confirmation is required' })
   @MinLength(6)
   password_confirmation?: string;
 
-  @ApiProperty({ description: "Le prénom de l'utilisateur" })
+  @ApiProperty({ description: 'The first name of the user' })
   @IsString()
-  @IsNotEmpty({ message: 'Le prénom est requis' })
+  @IsNotEmpty({ message: 'The first name is required' })
   first_name: string;
 
-  @ApiProperty({ description: "Le nom de l'utilisateur" })
+  @ApiProperty({ description: 'The last name of the user' })
   @IsString()
-  @IsNotEmpty({ message: 'Le nom est requis' })
+  @IsNotEmpty({ message: 'The last name is required' })
   last_name: string;
 
-  @ApiProperty({ description: 'role' })
+  @ApiProperty({ description: 'The role of the user' })
   @IsString()
-  @IsNotEmpty({ message: 'role is required' })
+  @IsNotEmpty({ message: 'The role is required' })
   role: string;
 }

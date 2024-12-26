@@ -6,7 +6,7 @@ import {
   IsNumber,
   IsString,
 } from 'class-validator';
-import { CompanyType, SkillLevel, WorkCondition } from '../models/job.model';
+import { CompanyType, SkillLevel, WorkCondition } from '../../models/job.model';
 
 export class CreateJobRequestDto {
   @ApiProperty()

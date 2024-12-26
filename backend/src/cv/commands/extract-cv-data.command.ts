@@ -1,5 +1,10 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { AwsService } from 'src/aws/aws.service';
+import {
+  RABBITMQ_EXCHANGES,
+  RABBITMQ_ROUTING_KEYS,
+} from '../../rabbitmq/rabbitmq.config';
+import { RabbitMQService } from '../../rabbitmq/rabbitmq.service';
 import { CVRepository } from '../cv.repository';
 
 export class ExtractCVDataCommand {
@@ -16,6 +21,7 @@ export class ExtractCVDataHandler
   constructor(
     private readonly awsService: AwsService,
     private readonly cvRepository: CVRepository,
+    private readonly rabbitMQService: RabbitMQService,
   ) {}
 
   async execute(command: ExtractCVDataCommand) {
@@ -56,6 +62,19 @@ export class ExtractCVDataHandler
     );
 
     await Promise.all([...skillPromises, ...educationPromises]);
+
+    // Publier les données extraites pour le matching
+    await this.rabbitMQService.publishToExchange(
+      RABBITMQ_EXCHANGES.CV_EVENTS,
+      RABBITMQ_ROUTING_KEYS.CV_EXTRACTED,
+      {
+        userId,
+        cvId: cv.id,
+        skills: textractResponse.skills,
+        event: 'CV_DATA_EXTRACTED',
+        timestamp: new Date().toISOString(),
+      },
+    );
 
     const fullCV = await this.cvRepository.findByUserId(userId);
 

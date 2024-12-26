@@ -6,20 +6,17 @@ import {
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { JwtService } from '@nestjs/jwt';
-import { AdminRepository } from 'src/admin/admin.repository';
 import { IS_PUBLIC_KEY } from 'src/casl/public.decorator';
-import { UserRepository } from 'src/users/user.repository';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
   constructor(
     private jwtService: JwtService,
-    private usersRepository: UserRepository,
-    private adminRepository: AdminRepository,
     private reflector: Reflector,
   ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
+    // 1. Vérifier si la route est publique
     const isPublic = this.reflector.getAllAndOverride<boolean>(IS_PUBLIC_KEY, [
       context.getHandler(),
       context.getClass(),
@@ -27,59 +24,28 @@ export class AuthGuard implements CanActivate {
 
     const request = context.switchToHttp().getRequest();
 
+    // 2. Autoriser l'accès aux routes publiques sans token
     if (isPublic && !request.headers.authorization) {
       return true;
     }
 
-    if (request.params?.token && request.path.includes('profile/public')) {
-      const code = request.params.token;
-      try {
-        const user = await this.usersRepository.findByPublicToken(code);
-        if (!user) {
-          throw new UnauthorizedException('Code de profil public invalide');
-        }
-        request.user = {
-          ...user.dataValues,
-          role: 'viewer',
-          isPublicProfile: true,
-        };
-        return true;
-      } catch (error) {
-        throw new UnauthorizedException('Code de profil public invalide');
-      }
-    }
-
+    // 3. Validation du token Bearer
     const token = this.extractTokenFromHeader(request);
     if (!token) {
       if (isPublic) return true;
-      throw new UnauthorizedException('Token Missing');
+      throw new UnauthorizedException('Missing Token');
     }
 
     try {
-      const payload = await this.jwtService.verifyAsync(token);
+      // 4. Vérification du token et ajout du payload à la requête
+      const payload = await this.jwtService.verifyAsync(token, {
+        secret: process.env.JWT_SECRET,
+      });
 
-      // Vérifier si c'est un admin
-      if (payload.userType === 'admin') {
-        const admin = await this.adminRepository.findAdminById(payload.sub);
-        if (!admin) {
-          throw new UnauthorizedException('Administrateur non trouvé');
-        }
-        request.user = {
-          ...admin,
-          role: 'admin',
-        };
-        return true;
-      }
-
-      // Si ce n'est pas un admin, chercher dans users
-      const user = await this.usersRepository.findById(payload.sub);
-      if (!user) {
-        throw new UnauthorizedException('Utilisateur non trouvé');
-      }
-      request.user = user;
+      request.user = payload;
       return true;
     } catch (error) {
-      throw new UnauthorizedException('Token invalide');
+      throw new UnauthorizedException('Invalid Token ');
     }
   }
 

@@ -7,7 +7,7 @@ import {
   Model,
   Table,
 } from 'sequelize-typescript';
-import { User } from '../../users/models/user.model';
+import { User } from 'src/models/user.model';
 import { CVEducation } from './cv-education.model';
 import { CVSkill } from './cv-skill.model';
 

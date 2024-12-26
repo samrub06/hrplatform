@@ -8,9 +8,9 @@ import {
   Model,
   Table,
 } from 'sequelize-typescript';
-import { AdminNote } from '../../admin/models/admin-note.model';
-import { CV } from '../../cv/models/cv.model';
-import { Role } from '../../models/role.model';
+import { CV } from 'src/models/cv.model';
+import { AdminNote } from './admin-note.model';
+import { Role } from './role.model';
 
 interface SkillDto {
   language: string;
@@ -63,14 +63,26 @@ export class User extends Model {
   profilePicture?: string;
 
   @Column({
-    type: DataType.JSON, // Changé de STRING à JSON
+    type: DataType.JSON,
     allowNull: true,
     get() {
       const rawValue = this.getDataValue('skills');
-      return rawValue ? JSON.parse(rawValue) : [];
+      if (!rawValue) return [];
+      try {
+        return typeof rawValue === 'string' ? JSON.parse(rawValue) : rawValue;
+      } catch (error) {
+        return [];
+      }
     },
     set(value: any) {
-      this.setDataValue('skills', JSON.stringify(value));
+      if (value === null || value === undefined) {
+        this.setDataValue('skills', null);
+      } else {
+        this.setDataValue(
+          'skills',
+          typeof value === 'string' ? value : JSON.stringify(value),
+        );
+      }
     },
   })
   skills?: SkillDto[];
@@ -101,7 +113,7 @@ export class User extends Model {
 
   @ForeignKey(() => AdminNote)
   @Column
-  admin_note_id: string;
+  admin_note_id?: string;
 
   @BelongsTo(() => AdminNote)
   adminNote: AdminNote;

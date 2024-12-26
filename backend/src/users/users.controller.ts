@@ -25,7 +25,7 @@ import { CheckPolicies } from 'src/casl/check-policies.decorator';
 import { PoliciesGuard } from 'src/casl/policies.guard';
 import { Public } from 'src/casl/public.decorator';
 import { RateLimit } from 'src/rate-limit/rate-limit.decorator';
-import { RateLimitGuard } from 'src/rate-limit/rate-limit.guard';
+import { User } from '../models/user.model';
 import { CreateUserCommand } from './commands/create-user.command';
 import { CreateUserRequestDto } from './commands/create-user.command.request.dto';
 import { GeneratePresignedUrlCommand } from './commands/generate-presigned-url.command';
@@ -35,7 +35,6 @@ import { GetCvDownloadUrlQuery } from './commands/get-cv-download-url-query';
 import { RemoveUserCommand } from './commands/remove-user.command';
 import { UpdateUserCommand } from './commands/update-user.command';
 import { UpdateUserRequestDto } from './commands/update-user.command.request.dto';
-import { User } from './models/user.model';
 import { CheckUserPermissionQuery } from './queries/check-user-permission.query';
 import { GetAllUsersQueryCommand } from './queries/get-all-user.query';
 import { GetPublicProfileQuery } from './queries/get-public-profile.query';
@@ -53,7 +52,7 @@ export class UsersController {
   ) {}
 
   @Post()
-  @UseGuards(AuthGuard, PoliciesGuard, RateLimitGuard)
+  @UseGuards(AuthGuard)
   @ApiOperation({ summary: 'Create User' })
   @ApiResponse({ status: 403, description: 'Forbidden.' })
   @CheckPolicies((ability: AppAbility) => ability.can(Action.Create, User))
@@ -70,7 +69,7 @@ export class UsersController {
   @UseGuards(AuthGuard, PoliciesGuard)
   @ApiOperation({ summary: 'Get All Users' })
   @ApiResponse({ status: 403, description: 'Forbidden.' })
-  @CheckPolicies((ability: AppAbility) => ability.can(Action.Read, User))
+  //@CheckPolicies((ability: AppAbility) => ability.can(Action.Read, User))
   findAllUsers() {
     return this.queryBus.execute(new GetAllUsersQueryCommand());
   }

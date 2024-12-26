@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
+import { User } from '../models/user.model';
 import { CreateUserRequestDto } from './commands/create-user.command.request.dto';
 import { UpdateUserRequestDto } from './commands/update-user.command.request.dto';
-import { User } from './models/user.model';
 
 @Injectable()
 export class UserRepository {
@@ -20,7 +20,7 @@ export class UserRepository {
   async findAll(filters: any = {}): Promise<User[]> {
     return this.userModel.findAll({
       where: filters,
-      include: [{ all: true }],
+      /* include: [{ all: true }], */
       order: [['createdAt', 'DESC']],
     });
   }

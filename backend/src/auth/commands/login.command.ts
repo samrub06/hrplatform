@@ -2,6 +2,7 @@ import { UnauthorizedException } from '@nestjs/common';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
+import { Role } from 'src/app.enum';
 import { UserRepository } from '../../users/user.repository';
 import { LoginRequestDto } from '../dto/login.request.dto';
 import { LoginResponseDto } from '../dto/login.response.dto';
@@ -25,12 +26,12 @@ export class LoginHandler
     const { request } = command;
 
     if (!this.validator.validate(request)) {
-      throw new UnauthorizedException('Données de connexion invalides');
+      throw new UnauthorizedException('Invalid login data');
     }
 
     const user = await this.userRepository.findByEmail(request.email);
     if (!user) {
-      throw new UnauthorizedException('Identifiants invalides');
+      throw new UnauthorizedException('this email is not registered');
     }
 
     const isPasswordValid = await bcrypt.compare(
@@ -38,12 +39,13 @@ export class LoginHandler
       user.password,
     );
     if (!isPasswordValid) {
-      throw new UnauthorizedException('Mot de passe invalide');
+      throw new UnauthorizedException('Password is invalid');
     }
 
     const payload = {
       email: user.email,
-      sub: user.id,
+      id: user.id,
+      role: Role.CANDIDATE,
       role_id: user.role_id,
     };
 

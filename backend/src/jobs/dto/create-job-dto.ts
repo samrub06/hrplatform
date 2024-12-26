@@ -10,7 +10,7 @@ import {
   IsString,
   ValidateNested,
 } from 'class-validator';
-import { CompanyType, SkillLevel, WorkCondition } from '../models/job.model';
+import { CompanyType, SkillLevel, WorkCondition } from '../../models/job.model';
 
 class SkillDto {
   @IsString()

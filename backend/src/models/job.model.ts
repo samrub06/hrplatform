@@ -6,7 +6,7 @@ import {
   Model,
   Table,
 } from 'sequelize-typescript';
-import { User } from 'src/users/models/user.model';
+import { User } from 'src/models/user.model';
 
 export enum WorkCondition {
   ONSITE = 'onsite',

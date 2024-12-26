@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { CompanyType, WorkCondition } from '../models/job.model';
+import { CompanyType, WorkCondition } from '../../models/job.model';
 
 export class CreateJobResponseDto {
   @ApiProperty()
