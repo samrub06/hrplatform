@@ -2,6 +2,7 @@ import { GoogleOutlined, LockOutlined, MailOutlined } from "@ant-design/icons";
 import { Button, Checkbox, Form, Grid, Input, Space, theme, Typography } from "antd";
 import { useState } from "react";
 import { useNavigate } from "react-router";
+import { useAuth } from "../context/AuthContext";
 import { login, loginGoogle } from "../services/auth.service";
 
 const { useToken } = theme;
@@ -13,11 +14,13 @@ export default function LoginPage() {
   const screens = useBreakpoint();
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const { setUser } = useAuth();
 
   const onFinish = async (values: any) => {
     setLoading(true);
     try {
-      await login(values); 
+      const userData = await login(values);
+      setUser(userData);
       navigate("/dashboard");
     } catch (error) {
       console.error(error);

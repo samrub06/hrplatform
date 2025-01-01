@@ -16,7 +16,6 @@ export const login = async (credentials: LoginRequestDto): Promise<AuthUser> => 
   const response = await axiosInstance.post('/auth/login', credentials);
   const { access_token } = response.data;
   localStorage.setItem('token', access_token);
-
   
   const decodedToken = jwtDecode(access_token) as { sub: string, email: string };
   const permissionsResponse = await axiosInstance.get('/user/me/permissions');
@@ -27,8 +26,8 @@ export const login = async (credentials: LoginRequestDto): Promise<AuthUser> => 
     role: 'candidate', // ou la valeur appropriée du token
     permissions: permissionsResponse.data
   };
-    localStorage.setItem('user', JSON.stringify(userWithPermissions));
-    return userWithPermissions;
+
+  return userWithPermissions; // Retournez l'utilisateur au lieu de le stocker directement
 };
 
 export const loginGoogle = async (): Promise<void> => {
@@ -41,11 +40,11 @@ export const register = async (data: RegisterDto): Promise<AuthUser> => {
   const { access_token } = response.data;
   localStorage.setItem('token', access_token);
 
-  const decodedToken = jwtDecode(access_token) as { sub: string, email: string ,role:string};
+  const decodedToken = jwtDecode(access_token) as { id: string, email: string ,role:string};
   const permissionsResponse = await axiosInstance.get('/user/me/permissions');
   
   const userWithPermissions: AuthUser = {
-    id: decodedToken.sub,
+    id: decodedToken.id,
     email: decodedToken.email,
     role: decodedToken?.role as 'admin' | 'publisher' | 'candidate' | 'viewer',    permissions: permissionsResponse.data
   };

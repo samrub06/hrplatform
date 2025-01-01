@@ -73,7 +73,7 @@ export class RegisterHandler
 
     const payload = {
       email: newUser.email,
-      sub: newUser.id,
+      id: newUser.id,
       role_id: newUser.role_id,
       role: role.name,
     };

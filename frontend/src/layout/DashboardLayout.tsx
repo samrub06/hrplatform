@@ -12,7 +12,7 @@ export const DashboardLayout = () => {
   const navigate = useNavigate();
   const { checkPermission } = useAuth();
   const canEditUser = checkPermission('User', 'edit');
-
+console.log(user);
   const handleLogout = () => {
     logout();
   };
