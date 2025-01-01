@@ -21,6 +21,7 @@ const SignUp = () => {
     try {
       const userData = await register(values);
 			setUser(userData); 
+			console.log(userData);
 			navigate("/complete-profile"); 
 			message.success("Registration Success");
     } catch (error) {
