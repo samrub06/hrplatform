@@ -2,11 +2,9 @@ import {
   Body,
   Controller,
   Delete,
-  Get,
   Param,
   Patch,
   Post,
-  Query,
   UseGuards,
 } from '@nestjs/common';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
@@ -47,12 +45,13 @@ export class JobsController {
     return this.commandBus.execute(new CreateJobCommand(createJobRequestDto));
   }
 
-  @Get()
+  @Post('search')
   @ApiOperation({ summary: 'Get All Jobs' })
   @ApiResponse({ status: 403, description: 'Forbidden.' })
   @CheckPolicies((ability: AppAbility) => ability.can(Action.Read, Job))
-  findAllJobs(@Query() filters?: any) {
-    return this.queryBus.execute(new GetJobsQuery(filters));
+  findAllJobs(@Body() { page, size }: { page: number; size: number }) {
+    const query = new GetJobsQuery(page, size);
+    return this.queryBus.execute(query);
   }
 
   @Patch(':id')

@@ -1,11 +1,11 @@
-import { Job } from '../interface/job.interface';
+import { GetJobsQuery, Job, JobPaginationResponse } from '../interface/job.interface';
 import axiosInstance from '../utils/axiosInstance';
 
 const API_URL = 'http://localhost:3000/api/jobs'; // Remplacez par l'URL de votre API
 
-export const getAllJobs = async (): Promise<Job[]> => {
-  const response = await axiosInstance.get<Job[]>(API_URL);
-  return response.data as Job[];
+export const getAllJobs = async (query: GetJobsQuery): Promise<JobPaginationResponse> => {
+  const response = await axiosInstance.post<JobPaginationResponse>(`${API_URL}/search`, query);
+  return response.data;
 };
 
 export const getJobById = async (id: string): Promise<Job> => {

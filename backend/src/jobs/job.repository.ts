@@ -38,4 +38,16 @@ export class JobRepository {
     const result = await this.jobModel.destroy({ where: { id } });
     return result > 0;
   }
+
+  async findAndCountAll(offset: number, limit: number) {
+    return this.jobModel.findAll({
+      offset,
+      limit,
+      order: [['createdAt', 'DESC']],
+    });
+  }
+
+  async count(): Promise<number> {
+    return this.jobModel.count();
+  }
 }

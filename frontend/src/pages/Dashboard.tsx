@@ -25,7 +25,9 @@ const Dashboard = () => {
 	const [isJobModalVisible, setIsJobModalVisible] = useState(false);
 	const [isUserModalVisible, setIsUserModalVisible] = useState(false);
 	const queryClient = useQueryClient();
-
+	const [currentPage, setCurrentPage] = useState(1);
+	const [pageSize, setPageSize] = useState(5);
+	
 	const hasJobPermission = (action: 'read' | 'create' | 'edit' | 'delete'): boolean => {
 		return user?.permissions?.some(
 			perm => perm.domain === 'Job' && perm[`can_${action}`]
@@ -38,9 +40,9 @@ const Dashboard = () => {
 		) ?? false;
 	};
 
-	const { data: jobs, isLoading: isLoadingJobs } = useQuery({
-		queryKey: ['jobs'],
-		queryFn: getAllJobs,
+	const { data: jobsData, isLoading: isLoadingJobs } = useQuery({
+		queryKey: ['jobs', currentPage, pageSize],
+		queryFn: () => getAllJobs({ page: currentPage, size: pageSize }),
 		enabled: hasJobPermission('read')
 	});
 
@@ -100,7 +102,7 @@ const Dashboard = () => {
 		}
 	};
 
-	const filteredJobs = jobs?.filter(job =>
+	const filteredJobs = jobsData?.results?.filter((job: Job) =>
 		job.name.toLowerCase().includes(jobSearchTerm.toLowerCase()) ||
 		job.description.toLowerCase().includes(jobSearchTerm.toLowerCase()) ||
 		job.company_name.toLowerCase().includes(jobSearchTerm.toLowerCase()) ||
@@ -161,6 +163,17 @@ const Dashboard = () => {
 							currentUserId={user?.id}
 							onEdit={handleEditJob}
 							onDelete={handleDeleteJob}
+							pagination={{
+								current: currentPage,
+								pageSize: pageSize,
+								total: jobsData?.pagination.total || 0,
+								onChange: (page, size) => {
+									setCurrentPage(page);
+									setPageSize(size);
+								},
+								showSizeChanger: true,
+								showTotal: (total) => `Total ${total} items`
+							}}
 						/>
 					</div>
 				)}

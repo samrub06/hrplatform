@@ -30,7 +30,7 @@ const AdminDashboard = () => {
 
 	const { data: jobs, isLoading: isLoadingJobs, refetch: refetchJobs } = useQuery({
 		queryKey: ['jobs'],
-		queryFn: getAllJobs
+		queryFn: () => getAllJobs({ page: 1, size: 10 })
 	});
 
 	const filteredUsers = (users || []).filter((user: any) => 
@@ -39,7 +39,7 @@ const AdminDashboard = () => {
 		user.email?.toLowerCase().includes(userSearchText.toLowerCase())
 	);
 
-	const filteredJobs = (jobs || []).filter((job: any) =>
+	const filteredJobs = (jobs?.results || []).filter((job: any) =>
 		job.name?.toLowerCase().includes(jobSearchText.toLowerCase()) ||
 		job.description?.toLowerCase().includes(jobSearchText.toLowerCase())
 	);

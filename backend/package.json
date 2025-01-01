@@ -46,6 +46,7 @@
     "ioredis": "^5.4.2",
     "jest-mock-extended": "^3.0.7",
     "multer": "^1.4.5-lts.1",
+    "nest-winston": "^1.9.7",
     "npm": "^10.9.2",
     "passport-google-oauth20": "^2.0.0",
     "pg": "^8.13.1",
@@ -54,7 +55,9 @@
     "rxjs": "^7.8.1",
     "sequelize": "^6.37.5",
     "sequelize-cli": "^6.2.0",
-    "sequelize-typescript": "^2.1.6"
+    "sequelize-typescript": "^2.1.6",
+    "winston": "^3.17.0",
+    "winston-daily-rotate-file": "^5.0.0"
   },
   "devDependencies": {
     "@nestjs/cli": "^10.3.1",
