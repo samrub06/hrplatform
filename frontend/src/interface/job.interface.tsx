@@ -20,3 +20,18 @@ export interface Job {
   createdAt: Date;
   updatedAt: Date;
 } 
+
+export interface GetJobsQuery {
+  page: number;
+  size: number;
+}
+
+export interface JobPaginationResponse {
+  pagination: {
+    page: number;
+    size: number;
+    total_pages: number;
+    total: number;
+  };
+  results: Job[];
+}

@@ -5,10 +5,31 @@ import {
   SwaggerDocumentOptions,
   SwaggerModule,
 } from '@nestjs/swagger';
+import * as winston from 'winston';
 import { AllExceptionsFilter } from './all-exceptions.filter';
 import { AppModule } from './app.module';
 
 async function bootstrap() {
+  // Configuration simple de Winston
+  const logger = winston.createLogger({
+    format: winston.format.combine(
+      winston.format.timestamp(),
+      winston.format.json(),
+    ),
+    transports: [
+      new winston.transports.Console({
+        format: winston.format.simple(),
+      }),
+      new winston.transports.File({
+        filename: 'logs/error.log',
+        level: 'error',
+      }),
+      new winston.transports.File({
+        filename: 'logs/combined.log',
+      }),
+    ],
+  });
+
   const app = await NestFactory.create(AppModule);
 
   // Activer CORS
@@ -46,9 +67,10 @@ async function bootstrap() {
   await app.listen(process.env.PORT ?? 3000);
   const port = process.env.PORT || 3000;
   const address = app.getHttpServer().address();
-  const host = address.family === 'IPv6' ? 'localhost' : address.address; // Utiliser 'localhost' pour IPv6
-  const fullUrl = `http://${host}:${port}`; // Construire l'URL
-  console.log(`Application is running on: ${fullUrl}`); // Affiche
-  console.log(`Swagger is available on: ${fullUrl}/swagger`); // Afficher l'URL de Swagger
+  const host = address.family === 'IPv6' ? 'localhost' : address.address;
+  const fullUrl = `http://${host}:${port}`;
+
+  logger.info(` 🚀 Application is running on: ${fullUrl}`);
+  logger.info(` 📚 Swagger is available on: ${fullUrl}/swagger`);
 }
 bootstrap();

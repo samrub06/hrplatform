@@ -3,21 +3,32 @@ import { JobRepository } from '../job.repository';
 
 export class GetJobsQuery {
   constructor(
-    public readonly filters?: {
-      city?: string;
-      work_condition?: string;
-      company_type?: string;
-    },
+    public readonly page: number = 1,
+    public readonly size: number = 10,
   ) {}
 }
 
 @QueryHandler(GetJobsQuery)
 export class GetJobsHandler implements IQueryHandler<GetJobsQuery> {
   constructor(private readonly jobRepository: JobRepository) {}
+
   async execute(query: GetJobsQuery) {
-    //todo: RAW QUERY improve skills in SQL
-    // matchmaking between jobs and user skilss in raw query
-    const { filters } = query;
-    return this.jobRepository.findAll(filters);
+    const { page, size } = query;
+    const offset = (page - 1) * size;
+
+    const [jobs, total] = await Promise.all([
+      this.jobRepository.findAndCountAll(offset, size),
+      this.jobRepository.count(),
+    ]);
+
+    return {
+      pagination: {
+        page,
+        size,
+        total_pages: Math.ceil(total / size),
+        total,
+      },
+      results: jobs,
+    };
   }
 }

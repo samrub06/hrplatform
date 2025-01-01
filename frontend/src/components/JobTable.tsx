@@ -1,5 +1,5 @@
 import { DeleteOutlined, EditOutlined } from '@ant-design/icons';
-import { Button, Space, Table, Tag } from 'antd';
+import { Button, Space, Table, TablePaginationConfig, Tag } from 'antd';
 import moment from 'moment';
 import React from 'react';
 import { Job } from '../interface/job.interface';
@@ -12,9 +12,10 @@ interface JobTableProps {
   onEdit?: (job: Job) => void;
   onDelete?: (jobId: string) => void;
   currentUserId?: string;
+  pagination?: TablePaginationConfig;
 }
 
-const JobTable: React.FC<JobTableProps> = ({ jobs, isLoading, onEdit, onDelete, canEdit, canDelete, currentUserId }) => {
+const JobTable: React.FC<JobTableProps> = ({ jobs, isLoading, onEdit, onDelete, canEdit, canDelete, currentUserId, pagination }) => {
   const getBadgeColor = (yearsRequired: number) => {
     if (yearsRequired <= 2) return 'green';
     if (yearsRequired <= 5) return 'blue';
@@ -97,7 +98,7 @@ const JobTable: React.FC<JobTableProps> = ({ jobs, isLoading, onEdit, onDelete, 
       dataSource={jobs}
       loading={isLoading}
       rowKey="id"
-      pagination={{ pageSize: 10, showSizeChanger: true }}
+      pagination={pagination}
     />
   );
 };
