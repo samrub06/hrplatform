@@ -4,7 +4,6 @@ import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { UserRepository } from '../../users/user.repository';
 
-import { Role } from 'src/models/role.model';
 import {
   RABBITMQ_EXCHANGES,
   RABBITMQ_ROUTING_KEYS,
@@ -41,11 +40,6 @@ export class RegisterHandler
       throw new ConflictException('This email is already used');
     }
 
-    const roleType = await Role.findOne({ where: { name: request.role } });
-    if (!roleType) {
-      throw new Error('Role Not Found');
-    }
-
     const hashedPassword = await bcrypt.hash(request.password, 10);
 
     const newUser = await this.userRepository.create({
@@ -53,10 +47,8 @@ export class RegisterHandler
       password: hashedPassword,
       first_name: request.first_name,
       last_name: request.last_name,
-      role_id: roleType.id,
     });
 
-    const role = await Role.findByPk(newUser.role_id);
     // todo rabbit envoyer les donnees du cv + skilss ensuite manoua va toujours chercher les skills dans la base de donnee il va trouver un match de job avec les skills et sur le queue en reponse il renvoie une notfication qu il a trouve un match et au candidat il envoie un mail avec le job et le cv
     await this.rabbitMQService.publishToExchange(
       RABBITMQ_EXCHANGES.USER_EVENTS,
@@ -74,8 +66,6 @@ export class RegisterHandler
     const payload = {
       email: newUser.email,
       id: newUser.id,
-      role_id: newUser.role_id,
-      role: role.name,
     };
 
     return {

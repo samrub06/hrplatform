@@ -6,7 +6,7 @@ import {
   IsNumber,
   IsString,
 } from 'class-validator';
-import { CompanyType, SkillLevel, WorkCondition } from '../../models/job.model';
+import { WorkCondition } from '../../models/job.model';
 
 export class CreateJobRequestDto {
   @ApiProperty()
@@ -21,15 +21,14 @@ export class CreateJobRequestDto {
 
   @ApiProperty()
   @IsNotEmpty()
-  @IsNumber()
-  salary_offered: number;
+  @IsString()
+  link_referral: string;
 
   @ApiProperty()
   @IsNotEmpty()
   skills: {
     name: string;
     years_required: number;
-    level: SkillLevel;
   }[];
 
   @ApiProperty()
@@ -56,11 +55,6 @@ export class CreateJobRequestDto {
   @IsNotEmpty()
   @IsString()
   company_name: string;
-
-  @ApiProperty()
-  @IsNotEmpty()
-  @IsEnum(CompanyType)
-  company_type: CompanyType;
 
   @ApiProperty()
   @IsNotEmpty()

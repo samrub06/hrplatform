@@ -16,7 +16,7 @@ interface ISequelizeConfig {
 
 const config: ISequelizeConfig = {
   development: {
-    dialect: 'postgres',
+    dialect: 'postgres' as Dialect,
     host: process.env.DB_HOST || 'localhost',
     port: parseInt(process.env.DB_PORT || '8083', 10),
     username: process.env.DB_USER || 'samuel',

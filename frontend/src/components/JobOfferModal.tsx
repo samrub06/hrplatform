@@ -24,27 +24,35 @@ const JobOfferModal = ({ isVisible, onClose, userId, initialData }: JobOfferModa
     if (initialData) {
       const formattedData = {
         ...initialData,
-        skills: initialData.skills || [],
+        skills: initialData.skills?.map(skill => ({
+          name: skill.name,
+          years_required: skill.years_required,
+        })) || []
       };
       form.setFieldsValue(formattedData);
     } else {
       form.resetFields();
+
     }
   }, [initialData, form]);
 
   const handleFieldChange = (changedFields: any, allFields: any) => {
     const currentValues = form.getFieldsValue();
-    const skills = currentValues.skills?.map((skill: any, index: number) => ({
-      ...skill,
-      name: skill?.name || '',
-      years_required: skill?.years_required || 0,
-      level: skill?.level || 'beginner'
-    })) || [];
+    if (currentValues.skills) {
+      const skills = currentValues.skills
+        .filter((skill: any) => skill && (skill.name || skill.years_required))
+        .map((skill: any) => ({
+          name: skill.name || '',
+          years_required: typeof skill.years_required === 'number' ? skill.years_required : 0
+        }));
 
-    form.setFieldsValue({
-      ...currentValues,
-      skills: skills
-    });
+      if (skills.length > 0) {
+        form.setFieldsValue({
+          ...currentValues,
+          skills
+        });
+      }
+    }
   };
 
   const createJobMutation = useMutation({
@@ -89,11 +97,11 @@ const JobOfferModal = ({ isVisible, onClose, userId, initialData }: JobOfferModa
 
   return (
     <Modal
-      title="Créer une offre d'emploi"
+      title={initialData ? "Update Job Offer" : "Add a job offer"}
       open={isVisible}
       onCancel={onClose}
-      okText="Créer"
-      cancelText="Annuler"
+      okText={initialData ? "Update" : "Create"}
+      cancelText="Cancel"
       confirmLoading={loading}
       onOk={() => form.submit()}
       width={1000}
@@ -109,26 +117,35 @@ const JobOfferModal = ({ isVisible, onClose, userId, initialData }: JobOfferModa
           <Col span={24}>
             <Form.Item
               name="name"
-              label="Titre du poste"
-              rules={[{ required: true, message: 'Veuillez entrer le titre du poste' }]}
+              label="Job Title"
+              rules={[{ required: true, message: 'Please enter the job title' }]}
             >
               <Input />
             </Form.Item>
           </Col>
-
+          <Col span={24}>
+            <Form.Item
+              name="link_referral"
+              label="Link Referral"
+              rules={[{ required: true, message: 'Please enter the link referral' }]}
+            >
+              <Input style={{ width: '100%' }} />
+            </Form.Item>
+          </Col>
           <Col span={24}>
             <Form.Item
               name="description"
               label="Description"
-              rules={[{ required: true, message: 'Veuillez entrer une description' }]}
+              rules={[{ required: true, message: 'Please enter a description' }]}
             >
               <Input.TextArea rows={4} />
             </Form.Item>
           </Col>
 
           <Col span={24}>
-          <Form.Item name="skills" label="Compétences requises">
-        <Form.List name="skills">
+          <Form.Item name="skills" label="Skills required">
+        <Form.List name="skills" >
+      
           {(fields, { add, remove }) => (
             <>
               {fields.map(({ key, name, ...restField }) => (
@@ -136,37 +153,37 @@ const JobOfferModal = ({ isVisible, onClose, userId, initialData }: JobOfferModa
                   <Form.Item
                     {...restField}
                     name={[name, 'name']}
-                    rules={[{ required: true, message: 'Nom requis' }]}
+                    rules={[{ required: true, message: 'Skill name required' }]}
                   >
-                    <Input placeholder="Nom de la compétence" />
+                    <Input placeholder="Language name"  />
                   </Form.Item>
                   
                   <Form.Item
                     {...restField}
                     name={[name, 'years_required']}
-                    rules={[{ required: true, message: 'Années requises' }]}
+                    rules={[{ required: true, message: 'Years Experience required' }]}
                   >
-                    <InputNumber min={0} placeholder="Années" />
+                    <InputNumber  placeholder="Years of Experience"  style={{width: '100%'}}/>
                   </Form.Item>
 
-                  <Form.Item
+                  {/* <Form.Item
                     {...restField}
                     name={[name, 'level']}
-                    rules={[{ required: true, message: 'Niveau requis' }]}
+                    rules={[{ required: true, message: 'Level required' }]}
                   >
-                    <Select placeholder="Niveau" style={{ width: 120 }}>
-                      <Option value="beginner">Débutant</Option>
-                      <Option value="intermediate">Intermédiaire</Option>
-                      <Option value="advanced">Avancé</Option>
+                    <Select placeholder="Level" style={{ width: 120 }}>
+                      <Option value="beginner">Beginner</Option>
+                      <Option value="intermediate">Intermediate</Option>
+                      <Option value="advanced">Advanced</Option>
                       <Option value="expert">Expert</Option>
                     </Select>
-                  </Form.Item>
+                  </Form.Item> */}
 
                   <MinusCircleOutlined onClick={() => remove(name)} />
                 </Space>
               ))}
               <Button type="dashed" onClick={() => add()} block icon={<PlusOutlined />}>
-                Ajouter une compétence
+                Add a skill
               </Button>
             </>
           )}
@@ -177,37 +194,26 @@ const JobOfferModal = ({ isVisible, onClose, userId, initialData }: JobOfferModa
           <Col span={12}>
             <Form.Item
               name="global_year_experience"
-              label="Années d'expérience requises"
-              rules={[{ required: true, message: 'Veuillez entrer les années d\'expérience', type: 'number' }]}
+              label="Years of experience required"
+              rules={[{ required: true, message: 'Please enter the years of experience', type: 'number' }]}
             >
               <InputNumber min={0} style={{ width: '100%' }} />
             </Form.Item>
           </Col>
+         
 
-          <Col span={12}>
-            <Form.Item
-              name="salary_offered"
-              label="Salaire proposé"
-              rules={[{ required: true, message: 'Veuillez entrer le salaire' }]}
-            >
-              <InputNumber
-                style={{ width: '100%' }}
-                formatter={value => `${value}€`}
-                parser={value => value!.replace('€', '')}
-              />
-            </Form.Item>
-          </Col>
+          
 
           <Col span={12}>
             <Form.Item
               name="work_condition"
-              label="Conditions de travail"
-              rules={[{ required: true, message: 'Veuillez sélectionner les conditions de travail' }]}
+              label="Work conditions"
+              rules={[{ required: true, message: 'Please select the work conditions' }]}
             >
               <Select>
-                <Option value="onsite">Sur site</Option>
-                <Option value="remote">Télétravail</Option>
-                <Option value="hybrid">Hybride</Option>
+                <Option value="onsite">On site</Option>
+                <Option value="remote">Remote</Option>
+                <Option value="hybrid">Hybrid</Option>
               </Select>
             </Form.Item>
           </Col>
@@ -215,8 +221,8 @@ const JobOfferModal = ({ isVisible, onClose, userId, initialData }: JobOfferModa
           <Col span={12}>
             <Form.Item
               name="city"
-              label="Ville"
-              rules={[{ required: true, message: 'Veuillez entrer la ville' }]}
+              label="City"
+              rules={[{ required: true, message: 'Please enter the city' }]}
             >
               <Input />
             </Form.Item>
@@ -225,33 +231,20 @@ const JobOfferModal = ({ isVisible, onClose, userId, initialData }: JobOfferModa
           <Col span={12}>
             <Form.Item
               name="company_name"
-              label="Nom de l'entreprise"
-              rules={[{ required: true, message: 'Veuillez entrer le nom de l\'entreprise' }]}
+              label="Company name"
+              rules={[{ required: true, message: 'Please enter the company name' }]}
             >
               <Input />
             </Form.Item>
           </Col>
 
-          <Col span={12}>
-            <Form.Item
-              name="company_type"
-              label="Type d'entreprise"
-              rules={[{ required: true, message: 'Veuillez sélectionner le type d\'entreprise' }]}
-            >
-              <Select>
-                <Option value="startup">Startup</Option>
-                <Option value="enterprise">Grande entreprise</Option>
-                <Option value="smb">PME</Option>
-                <Option value="consulting">Cabinet de conseil</Option>
-              </Select>
-            </Form.Item>
-          </Col>
+          
 
           <Col span={12}>
             <Form.Item
               name="contact_name"
-              label="Nom du contact"
-              rules={[{ required: true, message: 'Veuillez entrer le nom du contact' }]}
+              label="Contact name"
+              rules={[{ required: true, message: 'Please enter the contact name' }]}
             >
               <Input />
             </Form.Item>
@@ -260,8 +253,8 @@ const JobOfferModal = ({ isVisible, onClose, userId, initialData }: JobOfferModa
           <Col span={12}>
             <Form.Item
               name="phone_number"
-              label="Numéro de téléphone"
-              rules={[{ required: true, message: 'Veuillez entrer le numéro de téléphone' }]}
+              label="Phone number"
+              rules={[{ required: true, message: 'Please enter the phone number' }]}
             >
               <Input />
             </Form.Item>
@@ -270,10 +263,10 @@ const JobOfferModal = ({ isVisible, onClose, userId, initialData }: JobOfferModa
           <Col span={24}>
             <Form.Item
               name="email_address"
-              label="Adresse email"
+              label="Email address"
               rules={[
-                { required: true, message: 'Veuillez entrer l\'adresse email' },
-                { type: 'email', message: 'Veuillez entrer une adresse email valide' }
+                { required: true, message: 'Please enter the email address' },
+                { type: 'email', message: 'Please enter a valid email address' }
               ]}
             >
               <Input />

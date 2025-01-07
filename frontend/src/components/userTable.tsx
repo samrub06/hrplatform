@@ -10,9 +10,14 @@ interface UserTableProps {
   onEdit: (user: UserData) => void;
   onDelete: (userId: string) => void;
   onDownloadCv: (id: string) => void;
+  currentUserId: string;
+  canEdit: boolean;
+  canDelete: boolean;
+  mode: string;
+
 }
 
-const UserTable: React.FC<UserTableProps> = ({ users, isLoading, onEdit, onDelete, onDownloadCv }) => {
+const UserTable: React.FC<UserTableProps> = ({ users, isLoading, onEdit, onDelete, onDownloadCv, currentUserId, canEdit, canDelete, mode }) => {
  
   const getBadgeColor = (level: string) => {
     switch (level) {
@@ -30,12 +35,7 @@ const UserTable: React.FC<UserTableProps> = ({ users, isLoading, onEdit, onDelet
   };
 
   const columns = [
-    {
-      title: 'Id',
-      dataIndex: 'id',
-      key: 'id',
-      sorter: (a: UserData, b: UserData) => a.id.toString().localeCompare(b.id.toString()),
-    },
+    
     {
       title: 'First Name',
       dataIndex: 'first_name',
@@ -54,18 +54,22 @@ const UserTable: React.FC<UserTableProps> = ({ users, isLoading, onEdit, onDelet
       key: 'email',
       sorter: (a: UserData, b: UserData) => a.email.localeCompare(b.email),
     },
-    {
+    mode === 'alumni' ? {
+      title: 'Current Position',
+      dataIndex: 'current_position',
+      key: 'current_position',
+    } : {
       title: 'Desired Position',
       dataIndex: 'desired_position',
       key: 'desired_position',
     },
-    {
+    mode === 'candidate' ? {
       title: 'Skills',
       dataIndex: 'skills',
       key: 'skills',
       render: (skills: { name: string; level: string; years_of_experience: number }[]) => (
         <Space>
-        {skills.map((skill, index) => (
+        {skills?.map((skill, index) => (
           <Tag key={index} color={getBadgeColor(skill.level)}>
             {skill.name} ({skill.level}  Expected: {skill.years_of_experience} years)
           </Tag>
@@ -74,6 +78,10 @@ const UserTable: React.FC<UserTableProps> = ({ users, isLoading, onEdit, onDelet
       ),
       sorter: (a: UserData, b: UserData) => a.skills.length - b.skills.length,
 
+    } : {
+      title: 'Current Company',
+      dataIndex: 'current_company',
+      key: 'current_company',
     },
     {
       title: 'Updated At',
@@ -82,19 +90,24 @@ const UserTable: React.FC<UserTableProps> = ({ users, isLoading, onEdit, onDelet
       sorter: (a: UserData, b: UserData) => new Date(a.updatedAt).getTime() - new Date(b.updatedAt).getTime(),
       render: (text: string) => moment(text).format('DD/MM/YYYY HH:mm'),
     },
-    {
-      title: 'Actions',
+    ...(canEdit || canDelete ? [{
+      title: 'Actions', 
       key: 'actions',
       render: (_: any, record: UserData) => (
         <Space>
+          {canEdit && onEdit && record.id === currentUserId && 
+            <Button icon={<EditOutlined />} onClick={() => onEdit(record)} />
+          }
+          {canDelete && onDelete && record.id === currentUserId && 
+            <Button icon={<DeleteOutlined />} danger onClick={() => onDelete(record.id)} />
+          }
           <Button icon={<DownloadOutlined />} onClick={() => onDownloadCv(record.id)} disabled={!record.cv}>
             CV
           </Button>
-          <Button icon={<EditOutlined />} onClick={() => onEdit(record)} />
-          <Button icon={<DeleteOutlined />} danger onClick={() => onDelete(record.id)} />
+        
         </Space>
       ),
-    },
+    }] : []),
   ];
 
 
@@ -106,7 +119,8 @@ const UserTable: React.FC<UserTableProps> = ({ users, isLoading, onEdit, onDelet
       loading={isLoading}
       rowKey="id"
       pagination={{ pageSize: 10, showSizeChanger: true }}
-    />
+      scroll={{ x: 'max-content' }}
+          />
   );
 };
 

@@ -32,19 +32,18 @@ export class ExtractCVDataHandler
     );
 
     const cv = await this.cvRepository.create({
-      userId,
       fileName,
-      name: textractResponse.personalInfo.name,
-      email: textractResponse.personalInfo.email,
-      phone: textractResponse.personalInfo.phone,
-      location: textractResponse.personalInfo.location,
+      name: textractResponse.personalInfo?.name,
+      email: textractResponse.personalInfo?.email ?? '',
+      phone: textractResponse.personalInfo?.phone ?? '',
+      location: textractResponse.personalInfo?.location ?? '',
+      user_id: userId,
     });
 
-    const skillPromises = textractResponse.skills.map((skill) =>
+    const skillPromises = textractResponse.skills?.map((skill) =>
       this.cvRepository.createSkill({
         cvId: cv.id,
         name: skill.name,
-        level: this.calculateSkillLevel(skill.level),
         yearsOfExperience: this.extractYearsFromPeriod(skill.period),
       }),
     );

@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { CompanyType, WorkCondition } from '../../models/job.model';
+import { WorkCondition } from '../../models/job.model';
 
 export class CreateJobResponseDto {
   @ApiProperty()
@@ -12,13 +12,12 @@ export class CreateJobResponseDto {
   description: string;
 
   @ApiProperty()
-  salary_offered: number;
+  link_referral: string;
 
   @ApiProperty()
   skills: {
     name: string;
     years_required: number;
-    level: string;
   }[];
 
   @ApiProperty()
@@ -35,9 +34,6 @@ export class CreateJobResponseDto {
 
   @ApiProperty()
   userId: string;
-
-  @ApiProperty()
-  company_type: CompanyType;
 
   @ApiProperty()
   contact_name: string;

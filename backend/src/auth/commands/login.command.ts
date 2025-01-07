@@ -2,10 +2,10 @@ import { UnauthorizedException } from '@nestjs/common';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
-import { Role } from 'src/app.enum';
 import { UserRepository } from '../../users/user.repository';
 import { LoginRequestDto } from '../dto/login.request.dto';
 import { LoginResponseDto } from '../dto/login.response.dto';
+import { RefreshTokenRepository } from '../refresh-token.repository';
 import { LoginValidator } from './login.command.validator';
 
 export class LoginCommand {
@@ -20,6 +20,7 @@ export class LoginHandler
     private readonly userRepository: UserRepository,
     private readonly jwtService: JwtService,
     private readonly validator: LoginValidator,
+    private readonly refreshTokenRepository: RefreshTokenRepository,
   ) {}
 
   async execute(command: LoginCommand): Promise<LoginResponseDto> {
@@ -34,6 +35,10 @@ export class LoginHandler
       throw new UnauthorizedException('this email is not registered');
     }
 
+    if (user.isRevoked) {
+      throw new UnauthorizedException('This account is revoked');
+    }
+
     const isPasswordValid = await bcrypt.compare(
       request.password,
       user.password,
@@ -45,12 +50,22 @@ export class LoginHandler
     const payload = {
       email: user.email,
       id: user.id,
-      role: Role.CANDIDATE,
-      role_id: user.role_id,
     };
 
+    const access_token = this.jwtService.sign(payload);
+    const refresh_token = this.jwtService.sign(payload, {
+      expiresIn: '30d',
+    });
+
+    await this.refreshTokenRepository.create({
+      token: refresh_token,
+      userId: user.id,
+      expiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
+    });
+
     return {
-      access_token: this.jwtService.sign(payload),
+      access_token,
+      refresh_token,
     };
   }
 }

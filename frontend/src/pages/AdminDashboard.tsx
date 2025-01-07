@@ -106,6 +106,10 @@ const AdminDashboard = () => {
 					</Col>
 				</Row>
 				<UserTable
+					mode="candidate"
+					currentUserId={user?.id || ''}
+					canEdit={true}
+					canDelete={true}
 					users={filteredUsers}
 					isLoading={isLoadingUsers}
 					onEdit={handleEditUser}

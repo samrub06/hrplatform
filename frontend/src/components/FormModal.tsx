@@ -190,14 +190,14 @@ const FormModal: React.FC<FormModalProps> = ({
       <Form.Item name="company_name" label="Company Name" rules={[{ required: true }]}>
         <Input />
       </Form.Item>
-      <Form.Item name="company_type" label="Company Type" rules={[{ required: true }]}>
+    {/*   <Form.Item name="company_type" label="Company Type" rules={[{ required: true }]}>
         <Select>
           <Select.Option value="startup">Startup</Select.Option>
           <Select.Option value="enterprise">Enterprise</Select.Option>
           <Select.Option value="smb">SMB</Select.Option>
           <Select.Option value="consulting">Consulting</Select.Option>
         </Select>
-      </Form.Item>
+      </Form.Item> */}
       <Form.Item name="contact_name" label="Contact Name" rules={[{ required: true }]}>
         <Input />
       </Form.Item>

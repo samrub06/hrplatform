@@ -18,27 +18,70 @@ export class CVEducation extends Model {
   id: string;
 
   @ForeignKey(() => CV)
-  @Column
-  cvId: string;
+  @Column({
+    type: DataType.UUID,
+    allowNull: false,
+    field: 'cv_id',
+    references: {
+      model: 'cv',
+      key: 'id',
+    },
+  })
+  cv_id: string;
 
-  @BelongsTo(() => CV)
+  @BelongsTo(() => CV, {
+    foreignKey: 'cv_id',
+    as: 'cv',
+  })
   cv: CV;
 
-  @Column
+  @Column({
+    type: DataType.STRING,
+    allowNull: false,
+  })
   institution: string;
 
-  @Column
+  @Column({
+    type: DataType.STRING,
+    allowNull: false,
+  })
   degree: string;
 
-  @Column
+  @Column({
+    type: DataType.STRING,
+    allowNull: false,
+  })
   fieldOfStudy: string;
 
-  @Column(DataType.DATE)
+  @Column({
+    type: DataType.DATE,
+    allowNull: false,
+  })
   startDate: Date;
 
-  @Column(DataType.DATE)
+  @Column({
+    type: DataType.DATE,
+    allowNull: true,
+  })
   endDate: Date;
 
-  @Column(DataType.TEXT)
+  @Column({
+    type: DataType.TEXT,
+    allowNull: true,
+  })
   description: string;
+
+  @Column({
+    type: DataType.DATE,
+    allowNull: false,
+    defaultValue: DataType.NOW,
+  })
+  createdAt: Date;
+
+  @Column({
+    type: DataType.DATE,
+    allowNull: false,
+    defaultValue: DataType.NOW,
+  })
+  updatedAt: Date;
 }

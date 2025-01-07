@@ -11,6 +11,14 @@ export class UpdateUserValidator {
       }
     }
 
+    if (
+      request.role &&
+      request.role !== 'candidate' &&
+      request.role !== 'publisher'
+    ) {
+      return false;
+    }
+
     if (request.password && request.password.length < 6) {
       return false;
     }

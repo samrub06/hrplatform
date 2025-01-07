@@ -3,6 +3,7 @@ import { Type } from 'class-transformer';
 import {
   IsArray,
   IsEmail,
+  IsNumber,
   IsOptional,
   IsString,
   MinLength,
@@ -59,6 +60,11 @@ export class UpdateUserRequestDto {
 
   @ApiProperty()
   @IsOptional()
+  @IsNumber()
+  years_of_experience?: number;
+
+  @ApiProperty()
+  @IsOptional()
   @IsArray()
   @ValidateNested({ each: true })
   @Type(() => SkillDto)
@@ -97,5 +103,15 @@ export class UpdateUserRequestDto {
   @ApiProperty()
   @IsOptional()
   @IsString()
-  role_id?: string;
+  role?: string;
+
+  @ApiProperty({ required: false })
+  @IsOptional()
+  @IsString()
+  current_position?: string;
+
+  @ApiProperty({ required: false })
+  @IsOptional()
+  @IsString()
+  current_company?: string;
 }

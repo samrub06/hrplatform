@@ -10,7 +10,7 @@ import {
   IsString,
   ValidateNested,
 } from 'class-validator';
-import { CompanyType, SkillLevel, WorkCondition } from '../../models/job.model';
+import { WorkCondition } from '../../models/job.model';
 
 class SkillDto {
   @IsString()
@@ -20,11 +20,6 @@ class SkillDto {
   @IsNumber()
   @IsNotEmpty()
   years_required: number;
-
-  @IsString()
-  @IsNotEmpty()
-  @IsEnum(SkillLevel)
-  level: string;
 }
 
 export class CreateJobDto {
@@ -45,8 +40,8 @@ export class CreateJobDto {
 
   @ApiProperty()
   @IsNotEmpty()
-  @IsNumber()
-  salary_offered: number;
+  @IsString()
+  link_referral: string;
 
   @ApiProperty()
   @IsNotEmpty()
@@ -78,11 +73,6 @@ export class CreateJobDto {
   @IsNotEmpty()
   @IsString()
   company_name: string;
-
-  @ApiProperty()
-  @IsNotEmpty()
-  @IsEnum(CompanyType)
-  company_type: CompanyType;
 
   @ApiProperty()
   @IsNotEmpty()

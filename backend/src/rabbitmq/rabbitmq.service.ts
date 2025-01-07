@@ -26,11 +26,14 @@ export class RabbitMQService implements OnModuleInit, OnModuleDestroy {
         this.channel.assertExchange(RABBITMQ_EXCHANGES.JOB_EVENTS, 'topic', {
           durable: true,
         }),
+        this.channel.assertExchange(RABBITMQ_EXCHANGES.CV_EVENTS, 'topic', {
+          durable: true,
+        }),
       ]);
 
-      console.log('Connexion RabbitMQ établie avec succès');
+      console.log('RabbitMQ Established with success');
     } catch (error) {
-      console.error('Erreur lors de la connexion à RabbitMQ:', error);
+      console.error('Error connecting to RabbitMQ:', error);
       throw error;
     }
   }
