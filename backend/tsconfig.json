@@ -12,7 +12,8 @@
     "baseUrl": "./",
     "incremental": true,
     "skipLibCheck": true,
-    "esModuleInterop": true // Permet l'importation de modules CommonJS
+    "esModuleInterop": true,
+    "jsx": "react"
   },
   "include": ["src/**/*.ts","test/**/*.ts","migrations/**/*.js","models/**/*.js"],
   "exclude": ["node_modules", "dist"]

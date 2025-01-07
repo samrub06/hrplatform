@@ -53,12 +53,7 @@ export class NotificationService implements OnModuleInit {
   }
 
   private async sendWelcomeEmail(userData: any) {
-    await this.emailService.sendTemplateEmail(
-      'delivered@resend.dev',
-      'welcome',
-      { userData: userData },
-      'fr',
-    );
+    await this.emailService.sendWelcomeEmail(userData);
   }
 
   private async logUserRegistration(userData: any) {
@@ -90,11 +85,11 @@ export class NotificationService implements OnModuleInit {
   private async handleJobOfferCreated(jobData: any) {
     // Logique d'envoi de notification (email, notification in-app, etc.)
     console.log(`New job offer created: ${jobData.jobId}`);
-    await this.emailService.sendTemplateEmail(
+    /*  await this.emailService.sendJobOfferEmail(
       jobData.jobData.email_address,
       'job',
       { jobData: jobData.jobData },
       'fr',
-    );
+    ); */
   }
 }
