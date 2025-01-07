@@ -1,0 +1,19 @@
+{
+  "compilerOptions": {
+    "module": "commonjs",
+    "declaration": true,
+    "removeComments": true,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "allowSyntheticDefaultImports": true,
+    "target": "ES2021",
+    "sourceMap": true,
+    "outDir": "./dist",
+    "baseUrl": "./",
+    "incremental": true,
+    "skipLibCheck": true,
+    "esModuleInterop": true // Permet l'importation de modules CommonJS
+  },
+  "include": ["src/**/*.ts","test/**/*.ts","migrations/**/*.js","models/**/*.js"],
+  "exclude": ["node_modules", "dist"]
+}
