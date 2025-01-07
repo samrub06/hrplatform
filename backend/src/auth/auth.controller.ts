@@ -2,20 +2,24 @@ import {
   Body,
   Controller,
   Get,
+  Param,
   Post,
   Req,
   Res,
+  UnauthorizedException,
   UseGuards,
 } from '@nestjs/common';
 import { CommandBus } from '@nestjs/cqrs';
 import { AuthGuard } from '@nestjs/passport';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { Request, Response } from 'express';
 import { Public } from 'src/casl/public.decorator';
-import { AuthService } from './auth.service';
 import { LoginAdminCommand } from './commands/login-admin.command';
 import { LoginCommand } from './commands/login.command';
+import { RefreshTokenCommand } from './commands/refresh-token.command';
 import { RegisterAdminCommand } from './commands/register-admin.command';
 import { RegisterCommand } from './commands/register.command';
+import { RevokeUserTokensCommand } from './commands/revoke-token.command';
 import { LoginAdminRequestDto } from './dto/login-admin.request.dto';
 import { LoginRequestDto } from './dto/login.request.dto';
 import { LoginResponseDto } from './dto/login.response.dto';
@@ -26,10 +30,25 @@ import { RegisterResponseDto } from './dto/register.response.dto';
 @ApiTags('Auth')
 @Controller('auth')
 export class AuthController {
-  constructor(
-    private readonly commandBus: CommandBus,
-    private readonly authService: AuthService,
-  ) {}
+  constructor(private readonly commandBus: CommandBus) {}
+
+  @Public()
+  @Post('refresh-token')
+  @ApiOperation({ summary: 'Refresh Access Token' })
+  @ApiResponse({
+    status: 200,
+    description: 'Access Token refreshed successfully',
+    type: LoginResponseDto,
+  })
+  @ApiResponse({ status: 401, description: 'Invalid or expired token' })
+  async refreshToken(@Req() request: Request) {
+    const refreshToken = request.cookies['refresh_token'];
+    if (!refreshToken) {
+      throw new UnauthorizedException('No refresh token provided');
+    }
+
+    return this.commandBus.execute(new RefreshTokenCommand(refreshToken));
+  }
 
   @Public()
   @Post('register')
@@ -56,8 +75,25 @@ export class AuthController {
     type: LoginResponseDto,
   })
   @ApiResponse({ status: 401, description: 'Information Invalid' })
-  async login(@Body() loginDto: LoginRequestDto): Promise<LoginResponseDto> {
-    return this.commandBus.execute(new LoginCommand(loginDto));
+  async login(
+    @Body() loginRequestDto: LoginRequestDto,
+    @Res({ passthrough: true }) response: Response,
+  ) {
+    const result = await this.commandBus.execute(
+      new LoginCommand(loginRequestDto),
+    );
+
+    // Configuration du cookie HTTP-only pour le refresh token
+    response.cookie('refresh_token', result.refresh_token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production', // true en production
+      sameSite: 'strict',
+      maxAge: 30 * 24 * 60 * 60 * 1000, // 30 jours en millisecondes
+      path: '/api/auth/refresh-token', // Restreint le cookie à la route de refresh
+    });
+
+    // On ne renvoie que l'access token dans la réponse
+    return { access_token: result.access_token };
   }
 
   @Public()
@@ -102,8 +138,11 @@ export class AuthController {
   @ApiOperation({ summary: 'Google Auth Callback' })
   async googleAuthCallback(@Req() req, @Res() res) {
     try {
-      const { access_token } = await this.authService.validateGoogleUser(
-        req.user,
+      const { access_token } = await this.commandBus.execute(
+        new LoginCommand({
+          email: req.user.email,
+          password: req.user.password,
+        }),
       );
       const redirectUrl = `${process.env.FRONTEND_URL}/auth/google/callback?token=${access_token}`;
       return res.redirect(redirectUrl);
@@ -113,5 +152,20 @@ export class AuthController {
         `${process.env.FRONTEND_URL}/login?error=auth_failed`,
       );
     }
+  }
+
+  @Post('revoke-user-tokens/:userId')
+  @ApiOperation({
+    summary: 'Revoke all refresh tokens of a user',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Tokens revoked successfully',
+  })
+  @ApiResponse({ status: 401, description: 'Unauthorized' })
+  @ApiResponse({ status: 404, description: 'User not found' })
+  async revokeUserTokens(@Param('userId') userId: string) {
+    await this.commandBus.execute(new RevokeUserTokensCommand(userId));
+    return { message: 'All user tokens have been revoked' };
   }
 }

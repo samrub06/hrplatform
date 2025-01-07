@@ -16,6 +16,7 @@ interface JobTableProps {
 }
 
 const JobTable: React.FC<JobTableProps> = ({ jobs, isLoading, onEdit, onDelete, canEdit, canDelete, currentUserId, pagination }) => {
+ 
   const getBadgeColor = (yearsRequired: number) => {
     if (yearsRequired <= 2) return 'green';
     if (yearsRequired <= 5) return 'blue';
@@ -39,7 +40,8 @@ const JobTable: React.FC<JobTableProps> = ({ jobs, isLoading, onEdit, onDelete, 
       title: 'Skills Required ',
       dataIndex: 'skills',
       key: 'skills',
-      render: (skills: { name: string; years_required: number }[]) => (
+      render: (skills: { name: string; years_required: number }[]) => {
+        return (
         <Space className='flex flex-wrap min-w-40' >
           {skills?.map((skill, index) => (
             <Tag key={index} color={getBadgeColor(skill?.years_required)}>
@@ -47,15 +49,11 @@ const JobTable: React.FC<JobTableProps> = ({ jobs, isLoading, onEdit, onDelete, 
             </Tag>
           ))}
         </Space>
-      ),
+      )},
     },
+   
     {
-      title: 'Salary Offered',
-      dataIndex: 'salary_offered',
-      key: 'salary_offered',
-    },
-    {
-      title: 'Global Year Experience',
+      title: 'Years Experience',
       dataIndex: 'global_year_experience',
       key: 'global_year_experience',
     },
@@ -65,9 +63,12 @@ const JobTable: React.FC<JobTableProps> = ({ jobs, isLoading, onEdit, onDelete, 
       key: 'company_name',
     },
     {
-      title: 'Company Type',
-      dataIndex: 'company_type',
-      key: 'company_type',
+      title: 'Link Referral',
+      dataIndex: 'link_referral',
+      key: 'link_referral',
+      render: (link_referral: string) => {
+        return <a href={link_referral} target="_blank" rel="noopener noreferrer">Link Referral</a>;
+      },
     },
     {
       title: 'Created At',
@@ -99,6 +100,8 @@ const JobTable: React.FC<JobTableProps> = ({ jobs, isLoading, onEdit, onDelete, 
       loading={isLoading}
       rowKey="id"
       pagination={pagination}
+      scroll={{ x: 'max-content' }}
+
     />
   );
 };

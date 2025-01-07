@@ -5,10 +5,14 @@ import {
   RABBITMQ_ROUTING_KEYS,
 } from '../rabbitmq/rabbitmq.config';
 import { RabbitMQService } from '../rabbitmq/rabbitmq.service';
+import { EmailService } from './email.service';
 
 @Injectable()
 export class NotificationService implements OnModuleInit {
-  constructor(private readonly rabbitMQService: RabbitMQService) {}
+  constructor(
+    private readonly rabbitMQService: RabbitMQService,
+    private readonly emailService: EmailService,
+  ) {}
 
   async onModuleInit() {
     await this.setupQueuesAndBindings();
@@ -42,23 +46,29 @@ export class NotificationService implements OnModuleInit {
       case 'CV_JOB_MATCHED':
         await this.handleCVMatched(message);
         break;
-      // Autres cas d'utilisation
+      case 'JOB_OFFER_CREATED':
+        await this.handleJobOfferCreated(message);
+        break;
     }
   }
 
   private async sendWelcomeEmail(userData: any) {
-    // Envoi d'email via un service d'email (SendGrid, AWS SES, etc.)
-    console.log(`Email de bienvenue envoyé à ${userData.email}`);
+    await this.emailService.sendTemplateEmail(
+      'delivered@resend.dev',
+      'welcome',
+      { userData: userData },
+      'fr',
+    );
   }
 
   private async logUserRegistration(userData: any) {
     // Logging dans une base de données ou un service externe
-    console.log(`Nouvel utilisateur enregistré: ${userData.email}`);
+    console.log(`New user registered: ${userData.email}`);
   }
 
   private async handleUserUpdate(userData: any) {
     // Traitement des mises à jour utilisateur
-    console.log(`Utilisateur mis à jour: ${userData.email}`);
+    console.log(`User updated: ${userData.email}`);
   }
 
   private async handleCVMatched(message: any) {
@@ -74,6 +84,17 @@ export class NotificationService implements OnModuleInit {
     // Logique d'envoi de notification (email, notification in-app, etc.)
     console.log(
       `Match found for user ${userId} with job ${match.jobId} (score: ${match.score})`,
+    );
+  }
+
+  private async handleJobOfferCreated(jobData: any) {
+    // Logique d'envoi de notification (email, notification in-app, etc.)
+    console.log(`New job offer created: ${jobData.jobId}`);
+    await this.emailService.sendTemplateEmail(
+      jobData.jobData.email_address,
+      'job',
+      { jobData: jobData.jobData },
+      'fr',
     );
   }
 }

@@ -1,5 +1,5 @@
 import { GoogleOutlined, LockOutlined, MailOutlined } from "@ant-design/icons";
-import { Button, Checkbox, Form, Grid, Input, Space, theme, Typography } from "antd";
+import { Button, Form, Grid, Input, Space, theme, Typography } from "antd";
 import { useState } from "react";
 import { useNavigate } from "react-router";
 import { useAuth } from "../context/AuthContext";
@@ -41,11 +41,11 @@ export default function LoginPage() {
       width: "380px"
     },
     footer: {
-			footer: {
-				marginTop: token.marginLG,
-				textAlign: 'center' as 'center', // Ajoutez 'as' pour indiquer le type
-				width: '100%',
-			},
+      footer: {
+        marginTop: token.marginLG,
+        textAlign: 'center' as 'center', // Ajoutez 'as' pour indiquer le type
+        width: '100%',
+      },
     },
     forgotPassword: {
       float: "right"
@@ -73,12 +73,12 @@ export default function LoginPage() {
       width: '100%',
       border: '1px solid #ddd',
       borderRadius: '6px',
-    
+
       color: '#757575',
       fontSize: '14px',
       fontWeight: 500,
       cursor: 'pointer',
-    
+
     },
     googleIcon: {
       fontSize: '20px',
@@ -90,31 +90,10 @@ export default function LoginPage() {
     <section style={styles.section}>
       <div style={styles.container}>
         <div style={styles.header}>
-          <svg
-            width="25"
-            height="24"
-            viewBox="0 0 25 24"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <rect x="0.464294" width="24" height="24" rx="4.8" fill="#1890FF" />
-            <path
-              d="M14.8643 3.6001H20.8643V9.6001H14.8643V3.6001Z"
-              fill="white"
-            />
-            <path
-              d="M10.0643 9.6001H14.8643V14.4001H10.0643V9.6001Z"
-              fill="white"
-            />
-            <path
-              d="M4.06427 13.2001H11.2643V20.4001H4.06427V13.2001Z"
-              fill="white"
-            />
-          </svg>
 
           <Title style={styles.title}>Sign in</Title>
           <Text style={styles.text}>
-            Welcome back to AntBlocks UI! Please enter your details below to
+            Welcome back to HR Platform! Please enter your details below to
             sign in.
           </Text>
         </div>
@@ -157,21 +136,14 @@ export default function LoginPage() {
               placeholder="Password"
             />
           </Form.Item>
-          <Form.Item>
-            <Form.Item name="remember" valuePropName="checked" noStyle>
-              <Checkbox>Remember me</Checkbox>
-            </Form.Item>
-            <a  href="/forgot-password">
-              Forgot password?
-            </a>
-          </Form.Item>
+
           <Form.Item >
             <Space style={{ width: "100%" }} direction="vertical" size={16}>
               <Button block type="primary" htmlType="submit" loading={loading}>
                 Log in
               </Button>
-              <Button 
-                block 
+              <Button
+                block
                 onClick={handleGoogleLogin}
                 icon={<GoogleOutlined style={styles.googleIcon} />}
                 style={styles.googleButton}
@@ -179,11 +151,20 @@ export default function LoginPage() {
                 Continue with Google
               </Button>
             </Space>
-            <div style={{marginTop: "10px"}}>
-              <Text style={styles.text}>Don't have an account?</Text>{" "}
-              <Link href="/auth/signup">Sign up now</Link>
-            </div>
+
+            <Space style={{ marginTop: "10px" }}>
+              <div>
+                <a href="/forgot-password">
+                  Forgot password?
+                </a>
+              </div>
+              <div>
+                <Text style={styles.text}>Don't have an account?</Text>{" "}
+                <Link href="/auth/signup">Sign up now</Link>
+              </div>
+            </Space>
           </Form.Item>
+
         </Form>
       </div>
     </section>

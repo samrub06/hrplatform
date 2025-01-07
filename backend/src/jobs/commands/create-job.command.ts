@@ -32,10 +32,19 @@ export class CreateJobHandler
       throw new BadRequestException('Invalid data');
     }
 
-    const job = await this.jobRepository.create({
+    const formattedRequest = {
       ...request,
       id: uuidv4(),
-    });
+      skills:
+        request.skills && Array.isArray(request.skills)
+          ? request.skills?.map((skill) => ({
+              name: skill.name,
+              years_required: skill.years_required,
+            }))
+          : [],
+    };
+
+    const job = await this.jobRepository.create(formattedRequest);
 
     await this.rabbitMQService.publishToExchange(
       RABBITMQ_EXCHANGES.JOB_EVENTS,

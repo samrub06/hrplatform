@@ -29,7 +29,7 @@ export const extractCVData = async (userId: string, fileName: string) => {
     userId,
     fileName,
   });
-  return response.data;
+  return response?.data;
 };
 
 export const getFileUrl = async (userId: string, fileName: string, fileType: FileType) => {

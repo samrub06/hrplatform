@@ -10,7 +10,7 @@ import GoogleCallback from './pages/GoogleCallback';
 import Login from './pages/Login';
 import PublicProfile from './pages/PublicProfile';
 import SignUp from './pages/SignUp';
-import { darkTheme, lightTheme } from './theme/theme.config';
+import { getTheme } from './theme/theme.config';
 
 const Loadable = (Component: React.LazyExoticComponent<any>) => (props: any) => {
   return (
@@ -53,7 +53,7 @@ export const privateRoutes: RouteObject[] = [
   {
     path: '/',
     element:
-      <ProtectedRoute requiredRole="">
+      <ProtectedRoute >
         <DashboardLayout />
       </ProtectedRoute>,
     children: [
@@ -85,10 +85,10 @@ export const adminRoutes: RouteObject[] = [
 const App = () => {
   return (
     <ThemeProvider>
-      {({ isDarkMode }) => (
+      {({ isDarkMode, screenSize }) => (
         <ConfigProvider
           theme={{
-            ...isDarkMode ? darkTheme : lightTheme,
+            ...getTheme(isDarkMode, screenSize),
             algorithm: isDarkMode ? theme.darkAlgorithm : theme.defaultAlgorithm,
           }}
         >

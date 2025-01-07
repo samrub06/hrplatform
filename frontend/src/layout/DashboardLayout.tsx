@@ -1,4 +1,4 @@
-import { Layout, Menu, Space, Switch } from 'antd';
+import { Grid, Layout, Menu, Space, Switch, theme } from 'antd';
 import { Outlet, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
@@ -10,9 +10,9 @@ export const DashboardLayout = () => {
   const { user } = useAuth();
   const { isDarkMode, toggleTheme } = useTheme();
   const navigate = useNavigate();
-  const { checkPermission } = useAuth();
-  const canEditUser = checkPermission('User', 'edit');
-console.log(user);
+  const { token } = theme.useToken();
+  const screens = Grid.useBreakpoint();
+
   const handleLogout = () => {
     logout();
   };
@@ -22,11 +22,10 @@ console.log(user);
       label: 'Dashboard',
       onClick: () => navigate(user?.role === 'admin' ? '/admin/dashboard' : '/dashboard'),
     },
-    ...(canEditUser ? [{
-      key: 'profile',
+      {key: 'profile',
       label: 'Profile',
       onClick: () => navigate('/profile'),
-    }] : []),
+    },
     {
       key: 'logout',
       label: 'Logout',
@@ -35,13 +34,15 @@ console.log(user);
   ];
 
   return (
-    <Layout style={{ minHeight: '100vh', color: "white" }}>
+    <Layout style={{ minHeight: '100vh' }}>
       <Header 
         style={{ 
           display: 'flex', 
           justifyContent: 'space-between', 
           alignItems: 'center',
-          background: '#1677ff' // Nouvelle couleur bleue d'Ant Design
+          background: '#1677ff',
+          padding: screens.xs ? token.paddingSM : token.padding,
+          height: screens.xs ? 48 : 64
         }}
       >
         <Menu 
@@ -51,21 +52,26 @@ console.log(user);
             flex: 1,
             background: '#1677ff',
             color: 'white',
-            borderBottom: 'none'
+            borderBottom: 'none',
+            fontSize: screens.xs ? '12px' : '14px',
           }}
           theme="dark"
         />
-        <Space style={{ marginLeft: 16 }}>
+        <Space style={{ marginLeft: screens.xs ? token.marginSM : token.margin }}>
           <Switch
             checked={isDarkMode}
             onChange={toggleTheme}
             checkedChildren="🌙"
             unCheckedChildren="☀️"
+            size={screens.xs ? 'small' : 'default'}
           />
         </Space>
       </Header>
       <Layout>
-        <Content style={{ margin: '24px 16px', padding: 24 }}>
+        <Content style={{ 
+          margin: screens.xs ? token.marginSM : token.marginLG,
+          padding: screens.xs ? token.paddingSM : token.paddingLG 
+        }}>
           <Outlet />
         </Content>
       </Layout>

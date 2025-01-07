@@ -18,7 +18,7 @@ interface SkillDto {
   level?: number;
 }
 
-@Table({ tableName: 'user' })
+@Table({ tableName: 'user', timestamps: true })
 export class User extends Model {
   @Column({
     type: DataType.UUID,
@@ -103,6 +103,24 @@ export class User extends Model {
     type: DataType.STRING,
     allowNull: true,
   })
+  current_position?: string;
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
+  current_company?: string;
+
+  @Column({
+    type: DataType.INTEGER,
+    allowNull: true,
+  })
+  years_experience?: number;
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
   salary_expectation?: string;
 
   @Column({
@@ -111,17 +129,17 @@ export class User extends Model {
   })
   public_link_code?: string;
 
-  @ForeignKey(() => AdminNote)
-  @Column
-  admin_note_id?: string;
-
-  @BelongsTo(() => AdminNote)
-  adminNote: AdminNote;
+  @Column({
+    type: DataType.BOOLEAN,
+    allowNull: true,
+  })
+  isRevoked: boolean;
 
   @ForeignKey(() => Role)
   @Column({
     type: DataType.UUID,
     allowNull: true,
+    field: 'role_id',
   })
   role_id: string;
 
@@ -133,6 +151,7 @@ export class User extends Model {
     allowNull: true,
   })
   phone_number?: string;
+
   @Column({
     type: DataType.STRING,
     allowNull: true,
@@ -161,4 +180,10 @@ export class User extends Model {
 
   @HasOne(() => CV)
   cv_id: CV;
+
+  @HasOne(() => AdminNote, {
+    foreignKey: 'user_id',
+    as: 'adminNotes',
+  })
+  adminNotes: AdminNote[];
 }

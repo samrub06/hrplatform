@@ -17,6 +17,7 @@ import { CVRepository } from './cv.repository';
 @Module({
   imports: [
     CqrsModule,
+
     SequelizeModule.forFeature([
       CV,
       Admin,

@@ -50,8 +50,8 @@ export interface Permission {
 export interface AuthUser {
   id: string;
   email: string;
-  role: 'admin' | 'publisher' | 'candidate' | 'viewer';
-  permissions: Permission[];
+  role?: 'admin' | 'publisher' | 'candidate' | 'viewer';
+  permissions?: Permission[];
 }
 
 
@@ -61,5 +61,4 @@ export interface RegisterDto {
   password_confirmation: string;
   first_name: string;
   last_name: string;
-  role_id:string
 }

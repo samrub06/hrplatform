@@ -7,12 +7,12 @@ import JobTable from "../components/JobTable";
 import UserFormModal from "../components/UserFormModal";
 import UserTable from "../components/userTable";
 import { useAuth } from "../context/AuthContext";
+import PermissionGuard from "../guards/PermissionGuard";
 import { Job } from "../interface/job.interface";
 import { UserData } from "../interface/user.interface";
 import { deleteJob, getAllJobs } from "../services/job.service";
 import { FileType, getFileUrl } from '../services/upload.service';
-import { deleteUser, getAllUsers } from "../services/user.service";
-
+import { deleteUser, getAllPublishers, getAllUsers } from "../services/user.service";
 const { Search } = Input;
 const { Title } = Typography;
 
@@ -27,51 +27,48 @@ const Dashboard = () => {
 	const queryClient = useQueryClient();
 	const [currentPage, setCurrentPage] = useState(1);
 	const [pageSize, setPageSize] = useState(5);
-	
-	const hasJobPermission = (action: 'read' | 'create' | 'edit' | 'delete'): boolean => {
-		return user?.permissions?.some(
-			perm => perm.domain === 'Job' && perm[`can_${action}`]
-		) ?? false;
-	};
 
-	const hasUserPermission = (action: 'read' | 'create' | 'edit' | 'delete'): boolean => {
-		return user?.permissions?.some(
-			perm => perm.domain === 'User' && perm[`can_${action}`]
-		) ?? false;
-	};
+	
 
 	const { data: jobsData, isLoading: isLoadingJobs } = useQuery({
 		queryKey: ['jobs', currentPage, pageSize],
 		queryFn: () => getAllJobs({ page: currentPage, size: pageSize }),
-		enabled: hasJobPermission('read')
+		//enabled: user?.permissions?.includes('read:job')
 	});
 
 	const { data: users, isLoading: isLoadingUsers } = useQuery({
 		queryKey: ['users'],
 		queryFn: getAllUsers,
-		enabled: hasUserPermission('read'),
-		select: (data) => data.filter((user: any) => user.role === 'candidate')
+		//enabled: user?.permissions?.includes('read:user'),
+		//select: (data) => data.filter((user: any) => user.role === 'candidate')
+	});
+
+	const { data: alumni, isLoading: isLoadingAlumni } = useQuery({
+		queryKey: ['alumni'],
+		queryFn: getAllPublishers,
+		//enabled: user?.permissions?.includes('read:publisher'),
+		//select: (data) => data.filter((user: any) => user.role === 'candidate')
 	});
 
 	const deleteJobMutation = useMutation({
 		mutationFn: deleteJob,
 		onSuccess: () => {
-			message.success('Job supprimé avec succès');
+			message.success('Job deleted successfully');
 			queryClient.invalidateQueries({ queryKey: ['jobs'] });
 		},
 		onError: () => {
-			message.error('Erreur lors de la suppression');
+			message.error('Error during deletion');
 		}
 	});
 
 	const deleteUserMutation = useMutation({
 		mutationFn: deleteUser,
 		onSuccess: () => {
-			message.success('Utilisateur supprimé avec succès');
+			message.success('User deleted successfully');
 			queryClient.invalidateQueries({ queryKey: ['users'] });
 		},
 		onError: () => {
-			message.error('Erreur lors de la suppression');
+			message.error('Error during deletion');
 		}
 	});
 
@@ -81,7 +78,7 @@ const Dashboard = () => {
 	};
 
 	const handleDeleteJob = async (jobId: string) => {
-		if (window.confirm('Êtes-vous sûr de vouloir supprimer cette offre ?')) {
+		if (window.confirm('Are you sure you want to delete this job ?')) {
 			await deleteJobMutation.mutateAsync(jobId);
 		}
 	};
@@ -97,7 +94,7 @@ const Dashboard = () => {
 	};
 
 	const handleDeleteUser = async (userId: string) => {
-		if (window.confirm('Êtes-vous sûr de vouloir supprimer cet utilisateur ?')) {
+		if (window.confirm('Are you sure you want to delete this user ?')) {
 			await deleteUserMutation.mutateAsync(userId);
 		}
 	};
@@ -120,7 +117,7 @@ const Dashboard = () => {
 			const presignedUrl = await getFileUrl(id, 'cv', FileType.CV);
 			window.open(presignedUrl, '_blank');
 		} catch (error) {
-			message.error('Erreur lors du téléchargement du CV');
+			message.error('Error downloading CV');
 		}
 	};
 
@@ -131,35 +128,32 @@ const Dashboard = () => {
 	return (
 		<div className="p-4">
 			<Space direction="vertical" size="large" style={{ width: '100%' }}>
-				{hasJobPermission('read') && (
+				<PermissionGuard domain="Job" action="read">
 					<div>
 						<Title level={2}>Jobs Referral</Title>
 						<Row gutter={16} style={{ marginBottom: 16 }}>
-							<Col flex="auto">
+							<Col span={18}>
 								<Search
 									placeholder="Search a job..."
 									allowClear
 									enterButton
-									style={{ width: '100%' }}
 									onChange={(e) => setJobSearchTerm(e.target.value)}
 								/>
 							</Col>
-							{hasJobPermission('create') && (
-								<Col flex="none">
-									<Button
-										type="primary"
-										icon={<PlusOutlined />}
-										onClick={() => setIsJobModalVisible(true)}
-									>
-										Add a job
-									</Button>
-								</Col>
-							)}
+							<Col span={6}>
+								<Button
+									type="primary"
+									icon={<PlusOutlined />}
+									onClick={() => setIsJobModalVisible(true)}
+								>
+									Add
+								</Button>
+							</Col>
 						</Row>
 						<JobTable
 							jobs={filteredJobs || []}
-							canEdit={hasJobPermission('edit')}
-							canDelete={hasJobPermission('delete')}
+							canEdit={true}
+							canDelete={true}
 							currentUserId={user?.id}
 							onEdit={handleEditJob}
 							onDelete={handleDeleteJob}
@@ -176,13 +170,13 @@ const Dashboard = () => {
 							}}
 						/>
 					</div>
-				)}
+				</PermissionGuard>
 
-				{hasUserPermission('read') && (
+				<PermissionGuard domain="User" action="create">
 					<div>
 						<Title level={2}>Candidates</Title>
 						<Row gutter={16} style={{ marginBottom: 16 }}>
-							<Col flex="auto">
+							<Col span={18}>
 								<Search
 									placeholder="Search a candidate..."
 									allowClear
@@ -191,27 +185,66 @@ const Dashboard = () => {
 									onChange={(e) => setUserSearchTerm(e.target.value)}
 								/>
 							</Col>
-							{hasUserPermission('create') && (
-								<Col flex="none">
-									<Button
-										type="primary"
-										icon={<PlusOutlined />}
-										onClick={() => setIsUserModalVisible(true)}
+							<Col span={6}>
+								<Button
+									type="primary"
+									icon={<PlusOutlined />}
+									onClick={() => setIsUserModalVisible(true)}
 									>
-										Add a candidate
+										Add
 									</Button>
 								</Col>
-							)}
 						</Row>
 						<UserTable
+							mode="candidate"
 							users={filteredUsers || []}
 							isLoading={isLoadingUsers}
+							canEdit={true}
+							canDelete={true}
+							currentUserId={user?.id || ''}
 							onEdit={handleEditUser}
 							onDelete={handleDeleteUser}
 							onDownloadCv={handleDownloadCv}
 						/>
 					</div>
-				)}
+				</PermissionGuard>
+
+				<PermissionGuard domain="User" action="read">
+					<div>
+						<Title level={2}>Alumni</Title>
+						<Row gutter={16} style={{ marginBottom: 16 }}>
+							<Col span={18}>
+								<Search
+									placeholder="Search a alumni..."
+									allowClear
+									enterButton
+									style={{ width: '100%' }}
+									onChange={(e) => setUserSearchTerm(e.target.value)}
+								/>
+							</Col>
+							<Col span={6}>
+								<Button
+									type="primary"
+										icon={<PlusOutlined />}
+										onClick={() => setIsUserModalVisible(true)}
+									>
+										Add
+									</Button>
+								</Col>
+						</Row>
+						<UserTable
+							currentUserId={user?.id || ''}
+							canEdit={true}
+							canDelete={true}
+							mode="alumni"
+							users={alumni || []}
+							isLoading={isLoadingAlumni}
+							onEdit={handleEditUser}
+							onDelete={handleDeleteUser}
+							onDownloadCv={handleDownloadCv}
+						/>
+					</div>
+				</PermissionGuard>
 			</Space>
 
 			{/* Modals */}

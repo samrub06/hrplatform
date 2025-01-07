@@ -39,7 +39,7 @@ export class JobsController {
 
   @Post()
   @ApiOperation({ summary: 'Create Job' })
-  @ApiResponse({ status: 403, description: 'Forbidden.' })
+  @ApiResponse({ status: 403, description: 'Forbidden Access.' })
   @CheckPolicies((ability: AppAbility) => ability.can(Action.Create, Job))
   createJob(@Body() createJobRequestDto: CreateJobRequestDto) {
     return this.commandBus.execute(new CreateJobCommand(createJobRequestDto));

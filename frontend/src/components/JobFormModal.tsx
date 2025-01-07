@@ -19,7 +19,7 @@ const JobFormModal: React.FC<JobFormModalProps> = ({
 }) => {
   const [form] = Form.useForm();
   const isEditMode = !!initialData;
-
+  console.log(initialData);
   const handleSubmit = async (values: any) => {
     try {
       if (isEditMode) {
@@ -93,14 +93,7 @@ const JobFormModal: React.FC<JobFormModalProps> = ({
           <Select.Option value="hybrid">Hybrid</Select.Option>
         </Select>
       </Form.Item>
-      <Form.Item name="company_type" label="Company Type" rules={[{ required: true }]}>
-        <Select>
-          <Select.Option value="startup">Startup</Select.Option>
-          <Select.Option value="enterprise">Enterprise</Select.Option>
-          <Select.Option value="smb">SMB</Select.Option>
-          <Select.Option value="consulting">Consulting</Select.Option>
-        </Select>
-      </Form.Item>
+  
       <Form.Item name="contact_name" label="Contact Name" rules={[{ required: true }]}>
         <Input />
       </Form.Item>

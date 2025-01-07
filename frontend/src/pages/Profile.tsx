@@ -1,6 +1,6 @@
 import { DownloadOutlined } from '@ant-design/icons';
 import { useQuery } from '@tanstack/react-query';
-import { Avatar, Button, Col, Row, Space, Typography } from 'antd';
+import { Avatar, Button, Col, Row, Space, Tag, Typography, message } from 'antd';
 import { useEffect, useRef, useState } from 'react';
 import SkillCard from '../components/SkillCard';
 import { Skill } from '../interface/skill.interface';
@@ -17,7 +17,7 @@ const { Title, Text } = Typography;
 
 const PersonalInfoDisplay = ({ userData }: { userData: UserData }) => {
 	const [imageUrl, setImageUrl] = useState<string | null>(null);
-
+	const { user } = useAuth();
 	useEffect(() => {
 		const loadProfilePicture = async () => {
 			if (userData?.profilePicture && userData?.id) {
@@ -31,8 +31,6 @@ const PersonalInfoDisplay = ({ userData }: { userData: UserData }) => {
 				}
 			}
 		};
-		
-
 		loadProfilePicture();
 	}, [userData?.profilePicture, userData?.id]);
 
@@ -40,9 +38,13 @@ const PersonalInfoDisplay = ({ userData }: { userData: UserData }) => {
 		<div style={{ textAlign: 'center' }}>
 			<Avatar size={200} src={imageUrl} style={{ marginBottom: '20px' }} />
 			<Title level={2}>{userData?.first_name} {userData?.last_name}</Title>
+			<Title level={4}> {userData?.years_of_experience && `${userData?.years_of_experience} years of experience`}</Title>
 			<Text type="secondary">{userData?.desired_position}</Text>
-			<div style={{ marginTop: '10px' }}>
-				<Text>Expected Salary: {userData?.salary_expectation}€</Text>
+			<div style={{ marginTop: '10px', display: 'flex', flexDirection: 'column', gap: '10px' }}>
+				{user?.role && <Text><Tag color="blue">{user?.role.charAt(0).toUpperCase() + user?.role.slice(1)}</Tag></Text>}
+				{userData?.role && <Text>Expected Salary: {userData?.salary_expectation}€</Text>}
+				{userData?.current_position && <Text>Current Position: {userData?.current_position}</Text>}
+				{userData?.current_company && <Text>Current Company: {userData?.current_company}</Text>}
 			</div>
 		</div>
 	);
@@ -52,7 +54,7 @@ const PersonalInfoDisplay = ({ userData }: { userData: UserData }) => {
 const DocumentsDisplay = ({ userData, onDownloadCv }: { userData: UserData; onDownloadCv: () => void }) => (
 	<Space direction="vertical" size="large" style={{ width: '100%' }}>
 		<Button type="primary" onClick={onDownloadCv} icon={<DownloadOutlined />} block>
-		Download CV
+			Download CV
 		</Button>
 		{userData?.cv && (
 			<Text type="secondary">Current CV : {userData.cv}</Text>
@@ -70,6 +72,7 @@ const SkillsDisplay = ({ skills }: { skills: Skill[] }) => (
 		))}
 	</Row>
 );
+
 const Profile = () => {
 	const { user } = useAuth();
 	const [editingSection, setEditingSection] = useState<'personal' | 'skills' | 'documents' | 'links' | null>(null);
@@ -78,7 +81,7 @@ const Profile = () => {
 	const { data: userData, isLoading, refetch } = useQuery({
 		queryKey: ['user', user?.id],
 		queryFn: () => GetUserById(user?.id),
-			enabled: !!user?.id,
+		enabled: !!user?.id,
 	});
 
 	const handleSectionEdit = (section: 'personal' | 'skills' | 'documents' | 'links') => {
@@ -103,28 +106,33 @@ const Profile = () => {
 			<Button onClick={handleCancel}>
 				Cancel
 			</Button>
-			<Button 
-				type="primary" 
+			<Button
+				type="primary"
 				onClick={handleValidate}
 				loading={isUploading}
 			>
-				Validate	
+				Validate
 			</Button>
 		</Space>
 	);
 
 	const downloadCv = async () => {
 		if (userData?.cv) {
-			const presignedUrl = await getFileUrl(
-				userData.id.toString(),
-				userData.cv,
-				FileType.CV
-			);
-			window.open(presignedUrl, '_blank');
+			try {
+				const presignedUrl = await getFileUrl(
+					userData.id.toString(),
+					userData.cv,
+					FileType.CV
+				);
+				window.open(presignedUrl, '_blank');
+				message.success('CV downloaded successfully');
+			} catch (error) {
+				message.error('Error during CV download');
+			}
 		}
 	};
 
-	if (isLoading) return <div>Chargement...</div>;
+	if (isLoading) return <div>Loading...</div>;
 
 	return (
 		<div style={{ padding: '24px' }}>

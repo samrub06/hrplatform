@@ -9,7 +9,10 @@ import {
 import { Admin } from './admin.model';
 import { User } from './user.model';
 
-@Table({ tableName: 'admin_note' })
+@Table({
+  tableName: 'admin_note',
+  timestamps: true,
+})
 export class AdminNote extends Model {
   @Column({
     type: DataType.UUID,
@@ -19,26 +22,45 @@ export class AdminNote extends Model {
   })
   id: string;
 
-  @Column
+  @Column({
+    type: DataType.TEXT,
+    allowNull: false,
+  })
   note: string;
 
-  @ForeignKey(() => Admin)
-  @Column
-  admin_id: string;
-
-  @BelongsTo(() => Admin)
-  admin: Admin;
-
   @ForeignKey(() => User)
-  @Column
+  @Column({
+    type: DataType.UUID,
+    allowNull: false,
+    field: 'user_id',
+    references: {
+      model: 'user',
+      key: 'id',
+    },
+  })
   user_id: string;
 
-  @BelongsTo(() => User)
+  @BelongsTo(() => User, {
+    foreignKey: 'user_id',
+    as: 'user',
+  })
   user: User;
 
-  @Column
-  createdAt: Date;
+  @ForeignKey(() => Admin)
+  @Column({
+    type: DataType.UUID,
+    allowNull: false,
+    field: 'admin_id',
+    references: {
+      model: 'admin',
+      key: 'id',
+    },
+  })
+  admin_id: string;
 
-  @Column
-  updatedAt: Date;
+  @BelongsTo(() => Admin, {
+    foreignKey: 'admin_id',
+    as: 'admin',
+  })
+  admin: Admin;
 }

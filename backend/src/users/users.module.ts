@@ -14,8 +14,10 @@ import { GeneratePresignedUrlHandler } from './commands/generate-presigned-url.c
 import { GeneratePublicLinkHandler } from './commands/generate-public-link.command';
 import { GetCvDownloadUrlHandler } from './commands/get-cv-download-url-query';
 import { RemoveUserHandler } from './commands/remove-user.command';
+import { UpdateUserRoleHandler } from './commands/update-user-role.command';
 import { UpdateUserValidator } from './commands/update-user.command.validator';
 import { CheckUserPermissionHandler } from './queries/check-user-permission.query';
+import { GetAllAlumniQueryHandler } from './queries/get-all-alumni.query';
 import { GetAllUsersQueryHandler } from './queries/get-all-user.query';
 import { GetPublicProfileHandler } from './queries/get-public-profile.query';
 import { GetUserByIdQueryHandler } from './queries/get-user-by-id.query';
@@ -38,7 +40,9 @@ import { UsersController } from './users.controller';
     RemoveUserHandler,
     GetAllUsersQueryHandler,
     GetUserByIdQueryHandler,
+    GetAllAlumniQueryHandler,
     UpdateUserHandler,
+    UpdateUserRoleHandler,
     GeneratePresignedUrlHandler,
     GetCvDownloadUrlHandler,
     GetUserPermissionsHandler,

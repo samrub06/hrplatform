@@ -1,4 +1,4 @@
-import { BadRequestException, NotFoundException } from '@nestjs/common';
+import { NotFoundException } from '@nestjs/common';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { UpdateJobDto } from '../dto/update-job-dto';
 import { JobRepository } from '../job.repository';
@@ -16,10 +16,6 @@ export class UpdateJobHandler implements ICommandHandler<UpdateJobCommand> {
 
   async execute(command: UpdateJobCommand) {
     const { id, updateJobDto } = command;
-
-    if (updateJobDto.salary_offered && updateJobDto.salary_offered < 0) {
-      throw new BadRequestException('Salary cannot be negative');
-    }
 
     const updatedJob = await this.jobRepository.update(id, updateJobDto);
     if (!updatedJob) {

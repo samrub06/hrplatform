@@ -16,9 +16,7 @@ export class CVRepository {
     private cvEducationModel: typeof CVEducation,
   ) {}
 
-  async create(
-    data: PersonalInfo & { userId: string; fileName: string },
-  ): Promise<CV> {
+  async create(data: PersonalInfo & { fileName: string }): Promise<CV> {
     return this.cvModel.create({
       ...data,
     });
@@ -26,7 +24,7 @@ export class CVRepository {
 
   async findByUserId(userId: string): Promise<CV> {
     return this.cvModel.findOne({
-      where: { userId },
+      where: { user_id: userId },
       include: [
         {
           model: CVSkill,
@@ -56,7 +54,6 @@ export class CVRepository {
   async createSkill(data: {
     cvId: string;
     name: string;
-    level: number;
     yearsOfExperience: number;
   }): Promise<CVSkill> {
     return this.cvSkillModel.create(data);

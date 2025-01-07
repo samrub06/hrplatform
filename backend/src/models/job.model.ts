@@ -32,8 +32,9 @@ export enum SkillLevel {
 export class Job extends Model {
   @Column({
     type: DataType.UUID,
-    autoIncrement: true,
+    defaultValue: DataType.UUIDV4,
     primaryKey: true,
+    allowNull: false,
   })
   id: string;
 
@@ -43,8 +44,8 @@ export class Job extends Model {
   @Column(DataType.TEXT)
   description: string;
 
-  @Column(DataType.DECIMAL)
-  salary_offered: number;
+  @Column(DataType.STRING)
+  link_referral: string;
 
   @Column({
     type: DataType.JSONB,
@@ -53,7 +54,6 @@ export class Job extends Model {
   skills: {
     name: string;
     years_required: number;
-    level: string;
   }[];
 
   @Column
@@ -70,12 +70,6 @@ export class Job extends Model {
 
   @Column
   company_name: string;
-
-  @Column({
-    type: DataType.ENUM,
-    values: Object.values(CompanyType),
-  })
-  company_type: CompanyType;
 
   @Column
   contact_name: string;

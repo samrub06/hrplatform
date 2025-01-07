@@ -4,7 +4,6 @@ export class RegisterDto {
   email: string;
   first_name: string;
   last_name: string;
-  role_id: string;
 }
 
 export class LoginDto {

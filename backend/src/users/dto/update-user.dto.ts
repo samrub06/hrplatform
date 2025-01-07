@@ -14,6 +14,7 @@ export class UpdateUserDto extends PartialType(CreateUserDto) {
   role: Role;
   skills: string[];
   cv: string;
+  years_experience?: number;
   updateAt: Date;
 
   @ApiProperty({ required: false })

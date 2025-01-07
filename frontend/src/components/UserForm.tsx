@@ -1,9 +1,11 @@
-import { FilePdfOutlined, GithubOutlined, InboxOutlined, LinkedinOutlined, MailOutlined, MinusCircleOutlined, PhoneOutlined, PlusOutlined } from '@ant-design/icons';
+import { AuthUser } from '@/interface/auth.interface';
+import { GithubOutlined, InboxOutlined, LinkedinOutlined, MailOutlined, MinusCircleOutlined, PhoneOutlined, PlusOutlined } from '@ant-design/icons';
 import { Button, Col, Form, Input, InputNumber, message, Row, Select, Space, Upload } from 'antd';
 import React, { useEffect, useState } from 'react';
+import { useAuth } from '../context/AuthContext';
 import { UserData } from '../interface/user.interface';
 import { extractCVData, FileType, getPresignedUrl, uploadFileToS3 } from '../services/upload.service';
-import { updateUser } from '../services/user.service';
+import { checkPermission, updateUser, updateUserRole } from '../services/user.service';
 
 const { Dragger } = Upload;
 
@@ -27,18 +29,17 @@ const UserForm = React.forwardRef<any, UserFormProps>(({
   const [existingCV, setExistingCV] = useState<string | null>(initialData?.cv || null);
   const [fileToUpload, setFileToUpload] = useState<File | null>(null);
   const isEditMode = !!initialData;
-
+  const { user, setUser } = useAuth();
   React.useImperativeHandle(ref, () => ({
     submit: () => {
       form.submit();
     }
   }));
-console.log(initialData);
+
   const handleSubmit = async (values: any) => {
     try {
       setUploading(true);
       let dataToSubmit: any = {};
-
       switch (partialForm) {
         case 'personal':
           if (fileToUpload) {
@@ -47,10 +48,14 @@ console.log(initialData);
               fileToUpload.name,
               FileType.PROFILE_PICTURE
             );
+           
+
             if(presignedUrl){
               console.log(presignedUrl);
-              await uploadFileToS3(presignedUrl, fileToUpload);
+              const response = await uploadFileToS3(presignedUrl, fileToUpload);
+              console.log(response);
             }
+
             dataToSubmit = {
               first_name: values.first_name,
               last_name: values.last_name,
@@ -60,12 +65,31 @@ console.log(initialData);
               profilePicture: fileToUpload.name,
             };
           } else {
+            if (values.role !== initialData?.role) {
+              try {
+                const roleResponse = await updateUserRole(initialData?.id || '', values.role);
+                if (roleResponse) {
+                  const permissionsResponse = await checkPermission();
+                  setUser({ 
+                      ...user, 
+                    role: values.role, 
+                    permissions: permissionsResponse 
+                  } as AuthUser);
+                }
+              } catch (error) {
+                message.error('Erreur lors de la mise à jour du rôle');
+                console.error('Erreur:', error);
+              }
+            }
+
             dataToSubmit = {
               first_name: values.first_name,
               last_name: values.last_name,
               email: values.email,
               desired_position: values.desired_position,
               salary_expectation: values.salary_expectation,
+              current_position: values.current_position,
+              current_company: values.current_company,
             };
           }
           break;
@@ -81,9 +105,9 @@ console.log(initialData);
             dataToSubmit = { 
               cv: fileToUpload.name,
             };
+            setExistingCV(fileToUpload.name);
             const extractedData = await extractCVData(initialData?.id || "", fileToUpload.name);
             console.log(extractedData);
-
           }
           break;
 
@@ -92,9 +116,7 @@ console.log(initialData);
             skills: values.skills?.map((skill: any) => ({
               language: skill.name,
               experience_years: parseInt(skill.years_of_experience) || 0,
-              level: skill.level === 'beginner' ? 1 : 
-                     skill.level === 'intermediate' ? 2 :
-                     skill.level === 'advanced' ? 3 : 4
+             
             })) || []
           };
           break;
@@ -114,9 +136,9 @@ console.log(initialData);
         message.success('Profile updated successfully');
         onSuccess();
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error:', error);
-      message.error('Error updating profile');
+      message.error(error.message);
     } finally {
       setUploading(false);
     }
@@ -128,8 +150,10 @@ console.log(initialData);
         first_name: initialData.first_name,
         last_name: initialData.last_name,
         email: initialData.email,
-        role: initialData.role,
+        role: user?.role,
         adminNotes: initialData.adminNotes,
+        current_position: initialData.current_position,
+        current_company: initialData.current_company,
         skills: initialData.skills,
         desired_position: initialData.desired_position,
         cv: initialData.cv,
@@ -147,12 +171,10 @@ console.log(initialData);
 
   useEffect(() => {
     if (initialData?.skills) {
-      const formattedSkills = initialData.skills.map(skill => ({
+      const formattedSkills = initialData.skills?.map(skill => ({
         name: skill.language,
         years_of_experience: skill.experience_years,
-        level: skill.level === 1 ? 'beginner' :
-               skill.level === 2 ? 'intermediate' :
-               skill.level === 3 ? 'advanced' : 'expert'
+       
       }));
       form.setFieldsValue({
         ...initialData,
@@ -203,11 +225,34 @@ console.log(initialData);
             <Form.Item name="email" label="Email" rules={[{ required: true, type: 'email' }]}>
               <Input />
             </Form.Item>
-            <Form.Item name="desired_position" label="Desired Position">
-              <Input />
-            </Form.Item>
-            <Form.Item name="salary_expectation" label="Expected Salary">
-              <InputNumber style={{ width: '100%' }} />
+            
+            {user?.role === 'candidate' && (
+              <>
+                <Form.Item name="desired_position" label="Desired Position">
+                  <Input />
+                </Form.Item>
+                <Form.Item name="salary_expectation" label="Expected Salary">
+                  <InputNumber style={{ width: '100%' }} />
+                </Form.Item>
+              </>
+            )}
+
+            {user?.role === 'publisher' && (
+              <>
+                <Form.Item name="current_position" label="Current Position">
+                  <Input />
+                </Form.Item>
+                <Form.Item name="current_company" label="Current Company">
+                  <Input />
+                </Form.Item>
+              </>
+            )}
+
+            <Form.Item name="role" label="Status">
+              <Select>
+                <Select.Option value="publisher">Publisher</Select.Option>
+                <Select.Option value="candidate">Candidate</Select.Option>
+              </Select>
             </Form.Item>
           </>
         );
@@ -218,10 +263,10 @@ console.log(initialData);
             <Form.Item name="cv" label="CV">
               <Dragger {...uploadProps}>
                 <p className="ant-upload-drag-icon">
-                  {initialData?.cv ? <FilePdfOutlined /> : <InboxOutlined />}
+                  { <InboxOutlined />}
                 </p>
                 <p className="ant-upload-text">
-                  {initialData?.cv ? `File: ${initialData?.cv}` : "Click or drop your CV"}
+                  { "Click or drop your CV"}
                 </p>
               </Dragger>
             </Form.Item>
@@ -240,14 +285,7 @@ console.log(initialData);
                       <Form.Item {...restField} name={[name, 'name']}>
                         <Input placeholder="Skill name" />
                       </Form.Item>
-                      <Form.Item {...restField} name={[name, 'level']}>
-                        <Select placeholder="Level">
-                          <Select.Option value="beginner">Débutant</Select.Option>
-                          <Select.Option value="intermediate">Intermédiaire</Select.Option>
-                          <Select.Option value="advanced">Avancé</Select.Option>
-                          <Select.Option value="expert">Expert</Select.Option>
-                        </Select>
-                      </Form.Item>
+                      
                       <Form.Item {...restField} name={[name, 'years_of_experience']}>
                         <InputNumber min={0} placeholder="Years" />
                       </Form.Item>

@@ -13,9 +13,12 @@ export interface UserData {
   role?: string;
   adminNotes?: string;
   profilePicture?: string;
+  years_of_experience?: number;
   skills: Skill[];
   desired_position?: string;  
   salary_expectation?: string;  
+  current_position?: string;
+  current_company?: string;
   createdAt: Date;
   updatedAt: Date;
 }

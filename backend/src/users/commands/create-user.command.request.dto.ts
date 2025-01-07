@@ -27,8 +27,5 @@ export class CreateUserRequestDto {
   @IsNotEmpty()
   last_name?: string;
 
-  @ApiProperty({ description: 'role is required' })
-  @IsString()
-  @IsNotEmpty()
-  role_id?: string;
+  
 }

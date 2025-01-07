@@ -1,5 +1,5 @@
 import { LockOutlined, MailOutlined } from "@ant-design/icons";
-import { Button, Col, Form, Grid, Input, message, Radio, Row, theme, Typography } from "antd";
+import { Button, Col, Form, Grid, Input, message, Row, theme, Typography } from "antd";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
@@ -12,25 +12,24 @@ const { Text, Title } = Typography;
 const SignUp = () => {
 	const { token } = useToken();
 	const screens = useBreakpoint();
-  const [loading, setLoading] = useState(false);
-	const navigate = useNavigate(); 
+	const [loading, setLoading] = useState(false);
+	const navigate = useNavigate();
 	const { setUser } = useAuth();
 
 	const onFinish = async (values: any) => {
-    setLoading(true);
-    try {
-      const userData = await register(values);
-			setUser(userData); 
-			console.log(userData);
-			navigate("/complete-profile"); 
+		setLoading(true);
+		try {
+			const userData = await register(values);
+			setUser(userData);
+			navigate("/complete-profile");
 			message.success("Registration Success");
-    } catch (error) {
-      console.error(error);
-      // Gérez l'erreur (affichez un message, etc.)
-    } finally {
-      setLoading(false);
-    }
-  };
+		} catch (error) {
+			console.error(error);
+			// Gérez l'erreur (affichez un message, etc.)
+		} finally {
+			setLoading(false);
+		}
+	};
 
 	const styles = {
 		container: {
@@ -102,18 +101,8 @@ const SignUp = () => {
 						<Input prefix={<MailOutlined />} placeholder="Email" />
 					</Form.Item>
 					<Col span={12}>
-					
+
 					</Col>
-					<Form.Item
-					
-						name="role"
-						rules={[{ required: true, message: 'Please choose a role' }]}
-					>
-						<Radio.Group buttonStyle="solid" style={{ display: 'flex', width: '100%' }}>
-							<Radio.Button value="candidate" style={{ flex: 1, textAlign: 'center' }}>Candidate</Radio.Button>
-							<Radio.Button value="publisher" style={{ flex: 1, textAlign: 'center' }}>Publisher</Radio.Button>
-						</Radio.Group>
-					</Form.Item>
 
 					<Form.Item
 						name="password"

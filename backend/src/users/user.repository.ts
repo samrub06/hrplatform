@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
+import { Role } from 'src/models/role.model';
 import { User } from '../models/user.model';
 import { CreateUserRequestDto } from './commands/create-user.command.request.dto';
 import { UpdateUserRequestDto } from './commands/update-user.command.request.dto';
@@ -21,6 +22,20 @@ export class UserRepository {
     return this.userModel.findAll({
       where: filters,
       /* include: [{ all: true }], */
+      order: [['createdAt', 'DESC']],
+    });
+  }
+
+  async findAllAlumni(): Promise<User[]> {
+    return this.userModel.findAll({
+      include: [
+        {
+          model: Role,
+          where: {
+            name: 'publisher',
+          },
+        },
+      ],
       order: [['createdAt', 'DESC']],
     });
   }
@@ -48,8 +63,27 @@ export class UserRepository {
     return user.reload();
   }
 
+  async updateRole(id: string, role: any): Promise<User | null> {
+    const { role: roleName } = role;
+    const roleRepository = await Role.findOne({ where: { name: roleName } });
+    if (!roleRepository) return null;
+
+    const user = await this.findById(id);
+    if (!user) return null;
+
+    await user.update({ role_id: roleRepository.id });
+    return user.reload();
+  }
+
   async delete(id: string): Promise<boolean> {
     const result = await this.userModel.destroy({ where: { id } });
     return result > 0;
+  }
+
+  async updateRevocationStatus(
+    userId: string,
+    isRevoked: boolean,
+  ): Promise<void> {
+    await this.userModel.update({ isRevoked }, { where: { id: userId } });
   }
 }
