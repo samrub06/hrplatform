@@ -1,6 +1,6 @@
 import { AuthUser } from '@/interface/auth.interface';
 import { GithubOutlined, InboxOutlined, LinkedinOutlined, MailOutlined, MinusCircleOutlined, PhoneOutlined, PlusOutlined } from '@ant-design/icons';
-import { Button, Col, Form, Input, InputNumber, message, Row, Select, Space, Upload } from 'antd';
+import { Button, Card, Col, DatePicker, Form, Input, InputNumber, message, Row, Select, Space, Upload } from 'antd';
 import React, { useEffect, useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { UserData } from '../interface/user.interface';
@@ -14,8 +14,8 @@ interface UserFormProps {
   onSuccess: () => void;
   onClose: () => void;
   setUploading: (loading: boolean) => void;
-  partialForm?: 'personal' | 'documents' | 'skills' | 'links'; 
-
+  partialForm?: 'personal' | 'documents' | 'skills' | 'links' | 'education';
+  mode?: 'signup' | 'edit';
 }
 
 const UserForm = React.forwardRef<any, UserFormProps>(({
@@ -23,6 +23,7 @@ const UserForm = React.forwardRef<any, UserFormProps>(({
   onSuccess,
   onClose,
   setUploading,
+  mode,
   partialForm
 }, ref) => {
   const [form] = Form.useForm();
@@ -30,6 +31,7 @@ const UserForm = React.forwardRef<any, UserFormProps>(({
   const [fileToUpload, setFileToUpload] = useState<File | null>(null);
   const isEditMode = !!initialData;
   const { user, setUser } = useAuth();
+  const { RangePicker } = DatePicker;
   React.useImperativeHandle(ref, () => ({
     submit: () => {
       form.submit();
@@ -129,6 +131,19 @@ const UserForm = React.forwardRef<any, UserFormProps>(({
             linkedin_link: values.linkedin_link,
           };
           break;
+
+        case 'education':
+          dataToSubmit = {
+            education: values.education?.map((edu: any) => ({
+              institution: edu.institution,
+              degree: edu.degree,
+              fieldOfStudy: edu.fieldOfStudy,
+              startDate: edu.period[0],
+              endDate: edu.period[1],
+              description: edu.description
+            })) || []
+          };
+          break;
       }
 
       if (isEditMode && initialData?.id) {
@@ -167,7 +182,7 @@ const UserForm = React.forwardRef<any, UserFormProps>(({
       setExistingCV(null);
       setFileToUpload(null);
     }
-  }, [initialData, fileToUpload, existingCV, form]);
+  }, [initialData, fileToUpload, existingCV, form, user]);
 
   useEffect(() => {
     if (initialData?.skills) {
@@ -226,7 +241,7 @@ const UserForm = React.forwardRef<any, UserFormProps>(({
               <Input />
             </Form.Item>
             
-            {user?.role === 'candidate' && (
+            { (mode === 'signup' || user?.role === 'candidate') && (
               <>
                 <Form.Item name="desired_position" label="Desired Position">
                   <Input />
@@ -248,11 +263,24 @@ const UserForm = React.forwardRef<any, UserFormProps>(({
               </>
             )}
 
-            <Form.Item name="role" label="Status">
-              <Select>
-                <Select.Option value="publisher">Publisher</Select.Option>
-                <Select.Option value="candidate">Candidate</Select.Option>
-              </Select>
+            {mode !== 'signup' && (
+              <Form.Item name="role" label="Status">
+                <Select>
+                  <Select.Option value="publisher">Publisher</Select.Option>
+                  <Select.Option value="candidate">Candidate</Select.Option>
+                </Select>
+              </Form.Item>
+            )}
+
+            <Form.Item 
+              name="birthday" 
+              label="Date de naissance"
+              rules={[{ required: true, message: 'Date de naissance requise' }]}
+            >
+              <DatePicker 
+                style={{ width: '100%' }}
+                format="DD/MM/YYYY"
+              />
             </Form.Item>
           </>
         );
@@ -317,6 +345,80 @@ const UserForm = React.forwardRef<any, UserFormProps>(({
               <Input prefix={<LinkedinOutlined />} />
             </Form.Item>
           </>
+        );
+
+      case 'education':
+        return (
+          <Form.Item name="education" label="Education">
+            <Form.List name="education">
+              {(fields, { add, remove }) => (
+                <>
+                  {fields.map(({ key, name, ...restField }) => (
+                    <Card 
+                      key={key} 
+                      style={{ marginBottom: 16 }}
+                      extra={<MinusCircleOutlined onClick={() => remove(name)} />}
+                    >
+                      <Row gutter={16}>
+                        <Col span={12}>
+                          <Form.Item
+                            {...restField}
+                            name={[name, 'institution']}
+                            label="Institution"
+                            rules={[{ required: true, message: 'Institution requise' }]}
+                          >
+                            <Input placeholder="Nom de l'institution" />
+                          </Form.Item>
+                        </Col>
+                        <Col span={12}>
+                          <Form.Item
+                            {...restField}
+                            name={[name, 'degree']}
+                            label="Diplôme"
+                            rules={[{ required: true, message: 'Diplôme requis' }]}
+                          >
+                            <Input placeholder="Nom du diplôme" />
+                          </Form.Item>
+                        </Col>
+                        <Col span={12}>
+                          <Form.Item
+                            {...restField}
+                            name={[name, 'fieldOfStudy']}
+                            label="Domaine d'études"
+                            rules={[{ required: true, message: 'Domaine requis' }]}
+                          >
+                            <Input placeholder="Domaine d'études" />
+                          </Form.Item>
+                        </Col>
+                        <Col span={12}>
+                          <Form.Item
+                            {...restField}
+                            name={[name, 'period']}
+                            label="Période"
+                            rules={[{ required: true, message: 'Période requise' }]}
+                          >
+                            <RangePicker />
+                          </Form.Item>
+                        </Col>
+                        <Col span={24}>
+                          <Form.Item
+                            {...restField}
+                            name={[name, 'description']}
+                            label="Description"
+                          >
+                            <Input.TextArea rows={4} placeholder="Description du programme" />
+                          </Form.Item>
+                        </Col>
+                      </Row>
+                    </Card>
+                  ))}
+                  <Button type="dashed" onClick={() => add()} block icon={<PlusOutlined />}>
+                    Ajouter une formation
+                  </Button>
+                </>
+              )}
+            </Form.List>
+          </Form.Item>
         );
     }
   };

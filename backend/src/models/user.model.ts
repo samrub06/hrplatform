@@ -186,4 +186,10 @@ export class User extends Model {
     as: 'adminNotes',
   })
   adminNotes: AdminNote[];
+
+  @Column({
+    type: DataType.DATE,
+    allowNull: true,
+  })
+  birthday?: Date;
 }

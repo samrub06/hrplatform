@@ -21,6 +21,15 @@ export interface UserData {
   current_company?: string;
   createdAt: Date;
   updatedAt: Date;
+  birthday?: Date;
+  education?: {
+    institution: string;
+    degree: string;
+    fieldOfStudy: string;
+    startDate: Date;
+    endDate?: Date;
+    description?: string;
+  }[];
 }
 
 export enum Role {
