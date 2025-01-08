@@ -18,18 +18,22 @@ interface BaseLayoutProps {
   language?: 'fr' | 'en';
 }
 
-export const BaseLayout = ({ children, previewText, language = 'fr' }: BaseLayoutProps) => {
+export const BaseLayout = ({
+  children,
+  previewText,
+  language = 'fr',
+}: BaseLayoutProps) => {
   const translations = {
     fr: {
       rights: 'Tous droits réservés',
       follow: 'Suivez-nous sur',
-      help: 'Besoin d\'aide ?',
+      help: "Besoin d'aide ?",
     },
     en: {
       rights: 'All rights reserved',
       follow: 'Follow us on',
       help: 'Need help?',
-    }
+    },
   };
 
   const t = translations[language];
@@ -42,17 +46,15 @@ export const BaseLayout = ({ children, previewText, language = 'fr' }: BaseLayou
           {/* Header with Logo */}
           <Section style={styles.headerSection}>
             <Img
-              src="https://your-domain.com/logo.png"
-              width="150"
-              height="50"
+              src="https://www.notion.so/images/page-cover/gradients_11.jpg"
+              width="100%"
+              height="80px"
               alt="HR Platform"
             />
           </Section>
 
           {/* Main Content */}
-          <Section style={styles.mainSection}>
-            {children}
-          </Section>
+          <Section style={styles.mainSection}>{children}</Section>
 
           {/* Footer */}
           <Section style={styles.footer}>
@@ -63,8 +65,7 @@ export const BaseLayout = ({ children, previewText, language = 'fr' }: BaseLayou
                 </Text>
                 <Text style={styles.footerText}>
                   {t.follow}{' '}
-                  <Link href="https://linkedin.com/hrplatform">LinkedIn</Link>
-                  {' '}/{' '}
+                  <Link href="https://linkedin.com/hrplatform">LinkedIn</Link> /{' '}
                   <Link href="https://twitter.com/hrplatform">Twitter</Link>
                 </Text>
               </Column>
@@ -79,7 +80,8 @@ export const BaseLayout = ({ children, previewText, language = 'fr' }: BaseLayou
 const styles = {
   body: {
     backgroundColor: '#f6f9fc',
-    fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+    fontFamily:
+      '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
   },
   container: {
     margin: '0 auto',

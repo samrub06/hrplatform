@@ -28,15 +28,17 @@ export const SignUpStepperModal: React.FC<SignUpStepperModalProps> = ({
   const handleRoleSelect = async (role: 'publisher' | 'candidate') => {
     try {
       const roleResponse = await updateUserRole(user?.id || '',  role );
+      console.log(roleResponse.role);
       if (roleResponse.role) {
           const permissionsResponse = await checkPermission()
           setUser({ ...user, role: roleResponse.role, permissions: permissionsResponse } as any);
+          if (role === 'publisher') {
+            message.success('Rôle updated with success');
+            setShowJobModal(true);
+            onClose();
+          } 
       }
-      if (role === 'publisher') {
-        message.success('Rôle updated with success');
-        setShowJobModal(true);
-        onClose();
-      } else {
+     else {
         setCurrentStep(1);
       }
     } catch (error) {
@@ -79,6 +81,7 @@ export const SignUpStepperModal: React.FC<SignUpStepperModalProps> = ({
           onSuccess={() => setCurrentStep(2)}
           onClose={onClose}
           setUploading={setUploading}
+          mode="signup"
           partialForm="personal"
         />
       ),
