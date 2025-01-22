@@ -9,15 +9,15 @@ export default function GoogleCallback() {
   const { setUser } = useAuth();
 
   useEffect(() => {
-    const token = searchParams.get('token');
-    if (token) {
-      handleGoogleCallback(token)
+    const accessToken = searchParams.get('token');
+    if (accessToken) {
+      handleGoogleCallback(accessToken)
         .then((user) => {
           setUser(user);
-          navigate('/dashboard');
+          navigate('/complete-profile');
         })
         .catch((error) => {
-          console.error('Erreur lors de la connexion Google:', error);
+          console.error('Error during Google connection:', error);
           navigate('/login');
         });
     } else {
@@ -26,6 +26,6 @@ export default function GoogleCallback() {
   }, [searchParams, navigate, setUser]);
 
   return (
-    <div>Connexion en cours...</div>
+    <div>Connexion in Progress...</div>
   );
 } 
