@@ -1,7 +1,7 @@
 import { PlusOutlined } from '@ant-design/icons';
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Button, Col, Input, message, Row, Space, Typography } from "antd";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import JobOfferModal from "../components/JobOfferModal";
 import JobTable from "../components/JobTable";
 import UserFormModal from "../components/UserFormModal";
@@ -13,6 +13,7 @@ import { UserData } from "../interface/user.interface";
 import { deleteJob, getAllJobs } from "../services/job.service";
 import { FileType, getFileUrl } from '../services/upload.service';
 import { deleteUser, getAllPublishers, getAllUsers } from "../services/user.service";
+import debounce from '../utils/debounce';
 const { Search } = Input;
 const { Title } = Typography;
 
@@ -71,6 +72,20 @@ const Dashboard = () => {
 			message.error('Error during deletion');
 		}
 	});
+
+	const debouncedSearchUser = useCallback(
+		debounce((value: string) => {
+			setUserSearchTerm(value);
+		}, 500),
+		[userSearchTerm]
+	);
+
+	const onUserSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+		debouncedSearchUser(e.target.value);
+	};
+
+
+
 
 	const handleEditJob = (job: Job) => {
 		setSelectedJob(job);
@@ -132,15 +147,16 @@ const Dashboard = () => {
 					<div>
 						<Title level={2}>Jobs Referral</Title>
 						<Row gutter={16} style={{ marginBottom: 16 }}>
-							<Col span={18}>
+							<Col flex="auto">
 								<Search
 									placeholder="Search a job..."
 									allowClear
 									enterButton
+									style={{ width: '100%' }}
 									onChange={(e) => setJobSearchTerm(e.target.value)}
 								/>
 							</Col>
-							<Col span={6}>
+							<Col flex="none">
 								<Button
 									type="primary"
 									icon={<PlusOutlined />}
@@ -176,16 +192,16 @@ const Dashboard = () => {
 					<div>
 						<Title level={2}>Candidates</Title>
 						<Row gutter={16} style={{ marginBottom: 16 }}>
-							<Col span={18}>
+							<Col flex="auto">
 								<Search
 									placeholder="Search a candidate..."
 									allowClear
 									enterButton
 									style={{ width: '100%' }}
-									onChange={(e) => setUserSearchTerm(e.target.value)}
+									onChange={onUserSearchChange}
 								/>
 							</Col>
-							<Col span={6}>
+							<Col flex="none">
 								<Button
 									type="primary"
 									icon={<PlusOutlined />}
@@ -213,7 +229,7 @@ const Dashboard = () => {
 					<div>
 						<Title level={2}>Alumni</Title>
 						<Row gutter={16} style={{ marginBottom: 16 }}>
-							<Col span={18}>
+							<Col flex="auto">
 								<Search
 									placeholder="Search a alumni..."
 									allowClear
@@ -222,7 +238,7 @@ const Dashboard = () => {
 									onChange={(e) => setUserSearchTerm(e.target.value)}
 								/>
 							</Col>
-							<Col span={6}>
+							<Col flex="none">
 								<Button
 									type="primary"
 										icon={<PlusOutlined />}

@@ -46,12 +46,6 @@ export class CVSkill extends Model {
     type: DataType.INTEGER,
     allowNull: false,
   })
-  level: number;
-
-  @Column({
-    type: DataType.INTEGER,
-    allowNull: false,
-  })
   yearsOfExperience: number;
 
   @Column({

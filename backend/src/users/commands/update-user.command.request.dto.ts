@@ -1,25 +1,11 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Type } from 'class-transformer';
 import {
-  IsArray,
   IsEmail,
   IsNumber,
   IsOptional,
   IsString,
   MinLength,
-  ValidateNested,
 } from 'class-validator';
-
-class SkillDto {
-  @IsString()
-  language: string;
-
-  @IsOptional()
-  experience_years: number;
-
-  @IsOptional()
-  level?: number;
-}
 
 export class UpdateUserRequestDto {
   @ApiProperty()
@@ -65,13 +51,6 @@ export class UpdateUserRequestDto {
 
   @ApiProperty()
   @IsOptional()
-  @IsArray()
-  @ValidateNested({ each: true })
-  @Type(() => SkillDto)
-  skills?: SkillDto[];
-
-  @ApiProperty()
-  @IsOptional()
   @IsString()
   desired_position?: string;
 
@@ -114,4 +93,9 @@ export class UpdateUserRequestDto {
   @IsOptional()
   @IsString()
   current_company?: string;
+
+  @ApiProperty({ required: false })
+  @IsOptional()
+  @IsString()
+  birthday?: string;
 }

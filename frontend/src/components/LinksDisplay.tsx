@@ -1,5 +1,5 @@
 import { GithubOutlined, LinkedinOutlined, LinkOutlined, MailOutlined, PhoneOutlined } from '@ant-design/icons';
-import { Button, message, Space, Typography } from 'antd';
+import { Button, Col, message, Space, Typography } from 'antd';
 import { useState } from 'react';
 import { UserData } from '../interface/user.interface';
 import { generatePublicLink } from '../services/profile.service';
@@ -27,38 +27,38 @@ const LinksDisplay = ({ userData }: { userData: UserData }) => {
   return (
     <Space direction="vertical" size="middle" style={{ width: '100%' }}>
       {userData?.email && (
-        <div>
+        <Col>
           <MailOutlined style={{ marginRight: '8px' }} />
-          <Text copyable>{userData.email}</Text>
-        </div>
+          <Text copyable style={{ width: '100%' }}>{userData.email}</Text>
+        </Col>
       )}
       
       {userData?.phone_number && (
-        <div>
+        <Col>
           <PhoneOutlined style={{ marginRight: '8px' }} />
-          <Text copyable>{userData.phone_number}</Text>
-        </div>
+          <Text copyable style={{ width: '100%' }}>{userData.phone_number}</Text>
+        </Col>
       )}
       
       {userData?.github_link && (
-        <div>
+        <Col>
           <GithubOutlined style={{ marginRight: '8px' }} />
-          <a href={userData.github_link} target="_blank" rel="noopener noreferrer">
+          <a href={userData.github_link} target="_blank" rel="noopener noreferrer" style={{ width: '100%' }}>
             GitHub Profile
           </a>
-        </div>
+        </Col>
       )}
       
       {userData?.linkedin_link && (
-        <div>
+        <Col>
           <LinkedinOutlined style={{ marginRight: '8px' }} />
-          <a href={userData.linkedin_link} target="_blank" rel="noopener noreferrer">
+          <a href={userData.linkedin_link} target="_blank" rel="noopener noreferrer" style={{ width: '100%' }}>
             LinkedIn Profile
           </a>
-        </div>
+        </Col>
       )}
       
-      <div>
+      <Col>
         <LinkOutlined style={{ marginRight: '8px' }} />
         {userData?.public_profile_url ? (
           <Button type="link" onClick={() => navigator.clipboard.writeText(userData.public_profile_url!)}>
@@ -73,7 +73,7 @@ const LinksDisplay = ({ userData }: { userData: UserData }) => {
             Generate public link
           </Button>
         )}
-      </div>
+      </Col>
     </Space>
   );
 };
