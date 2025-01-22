@@ -1,9 +1,10 @@
-import { AuthUser } from '@/interface/auth.interface';
 import { GithubOutlined, InboxOutlined, LinkedinOutlined, MailOutlined, MinusCircleOutlined, PhoneOutlined, PlusOutlined } from '@ant-design/icons';
 import { Button, Card, Col, DatePicker, Form, Input, InputNumber, message, Row, Select, Space, Upload } from 'antd';
 import React, { useEffect, useState } from 'react';
 import { useAuth } from '../context/AuthContext';
+import { AuthUser } from '../interface/auth.interface';
 import { UserData } from '../interface/user.interface';
+import { updateEducation, updateSkills } from '../services/cv.service';
 import { extractCVData, FileType, getPresignedUrl, uploadFileToS3 } from '../services/upload.service';
 import { checkPermission, updateUser, updateUserRole } from '../services/user.service';
 
@@ -37,11 +38,13 @@ const UserForm = React.forwardRef<any, UserFormProps>(({
       form.submit();
     }
   }));
-
   const handleSubmit = async (values: any) => {
     try {
       setUploading(true);
       let dataToSubmit: any = {};
+        // create case role 
+
+      // Préparer les données selon l'étape
       switch (partialForm) {
         case 'personal':
           if (fileToUpload) {
@@ -50,77 +53,69 @@ const UserForm = React.forwardRef<any, UserFormProps>(({
               fileToUpload.name,
               FileType.PROFILE_PICTURE
             );
-           
-
-            if(presignedUrl){
-              console.log(presignedUrl);
-              const response = await uploadFileToS3(presignedUrl, fileToUpload);
-              console.log(response);
+            
+            if (presignedUrl) {
+              await uploadFileToS3(presignedUrl, fileToUpload);
+              dataToSubmit.profilePicture = fileToUpload.name;
             }
+          }
 
-            dataToSubmit = {
-              first_name: values.first_name,
-              last_name: values.last_name,
-              email: values.email,
-              desired_position: values.desired_position,
-              salary_expectation: values.salary_expectation,
-              profilePicture: fileToUpload.name,
-            };
-          } else {
-            if (values.role !== initialData?.role) {
-              try {
-                const roleResponse = await updateUserRole(initialData?.id || '', values.role);
-                if (roleResponse) {
-                  const permissionsResponse = await checkPermission();
-                  setUser({ 
-                      ...user, 
-                    role: values.role, 
-                    permissions: permissionsResponse 
-                  } as AuthUser);
-                }
-              } catch (error) {
-                message.error('Erreur lors de la mise à jour du rôle');
-                console.error('Erreur:', error);
-              }
+          dataToSubmit = {
+            ...dataToSubmit,
+            first_name: values.first_name,
+            last_name: values.last_name,
+            email: values.email,
+            birthday: values.birthday,
+            desired_position: values.desired_position,
+            salary_expectation: values.salary_expectation,
+            current_position: values.current_position,
+            current_company: values.current_company,
+          };
+          if (values.role && values.role !== initialData?.role && mode !== 'signup') {
+            const roleResponse = await updateUserRole(initialData?.id || '', values.role);
+            if (roleResponse) {
+              const permissionsResponse = await checkPermission();
+              setUser({ 
+                ...user, 
+                role: values.role, 
+                permissions: permissionsResponse 
+              } as AuthUser);
             }
+          }
 
-            dataToSubmit = {
-              first_name: values.first_name,
-              last_name: values.last_name,
-              email: values.email,
-              desired_position: values.desired_position,
-              salary_expectation: values.salary_expectation,
-              current_position: values.current_position,
-              current_company: values.current_company,
-            };
+          if (isEditMode && initialData?.id) {
+            await updateUser(initialData.id, dataToSubmit);
+            message.success('Profil mis à jour avec succès');
           }
           break;
 
         case 'documents':
           if (fileToUpload) {
             const presignedUrl = await getPresignedUrl(
-              initialData?.id|| '',
+              initialData?.id || '',
               fileToUpload.name,
               FileType.CV
             );
-            await uploadFileToS3(presignedUrl, fileToUpload);
-            dataToSubmit = { 
-              cv: fileToUpload.name,
-            };
-            setExistingCV(fileToUpload.name);
-            const extractedData = await extractCVData(initialData?.id || "", fileToUpload.name);
-            console.log(extractedData);
+            
+            if (presignedUrl) {
+              await uploadFileToS3(presignedUrl, fileToUpload);
+              dataToSubmit.cv = fileToUpload.name;
+              await updateUser(initialData?.id || '', { cv: fileToUpload.name });
+              setExistingCV(fileToUpload.name);
+              const extractedData = await extractCVData(initialData?.id || "", fileToUpload.name);
+              console.log('Données extraites du CV:', extractedData);
+            }
           }
           break;
 
         case 'skills':
           dataToSubmit = {
             skills: values.skills?.map((skill: any) => ({
-              language: skill.name,
-              experience_years: parseInt(skill.years_of_experience) || 0,
-             
+              name: skill.name.toLowerCase(),
+              yearsOfExperience: parseInt(skill.years_of_experience) || 0,
             })) || []
           };
+          await updateSkills(initialData?.id || '', dataToSubmit);
           break;
 
         case 'links':
@@ -130,6 +125,7 @@ const UserForm = React.forwardRef<any, UserFormProps>(({
             github_link: values.github_link,
             linkedin_link: values.linkedin_link,
           };
+          await updateUser(initialData?.id || '', dataToSubmit);
           break;
 
         case 'education':
@@ -143,17 +139,14 @@ const UserForm = React.forwardRef<any, UserFormProps>(({
               description: edu.description
             })) || []
           };
+          await updateEducation(initialData?.id || '', dataToSubmit);
           break;
       }
 
-      if (isEditMode && initialData?.id) {
-        await updateUser(initialData.id, dataToSubmit);
-        message.success('Profile updated successfully');
-        onSuccess();
-      }
+      onSuccess();
     } catch (error: any) {
-      console.error('Error:', error);
-      message.error(error.message);
+      console.error('Erreur:', error);
+      message.error(error.message || 'Une erreur est survenue');
     } finally {
       setUploading(false);
     }
@@ -165,6 +158,7 @@ const UserForm = React.forwardRef<any, UserFormProps>(({
         first_name: initialData.first_name,
         last_name: initialData.last_name,
         email: initialData.email,
+        birthday: initialData.birthday,
         role: user?.role,
         adminNotes: initialData.adminNotes,
         current_position: initialData.current_position,
@@ -184,19 +178,7 @@ const UserForm = React.forwardRef<any, UserFormProps>(({
     }
   }, [initialData, fileToUpload, existingCV, form, user]);
 
-  useEffect(() => {
-    if (initialData?.skills) {
-      const formattedSkills = initialData.skills?.map(skill => ({
-        name: skill.language,
-        years_of_experience: skill.experience_years,
-       
-      }));
-      form.setFieldsValue({
-        ...initialData,
-        skills: formattedSkills
-      });
-    }
-  }, [initialData, form]);
+
 
   const uploadProps = {
     beforeUpload: (file: File) => {
@@ -241,7 +223,7 @@ const UserForm = React.forwardRef<any, UserFormProps>(({
               <Input />
             </Form.Item>
             
-            { (mode === 'signup' || user?.role === 'candidate') && (
+            { user?.role === 'candidate' && (
               <>
                 <Form.Item name="desired_position" label="Desired Position">
                   <Input />
@@ -262,7 +244,6 @@ const UserForm = React.forwardRef<any, UserFormProps>(({
                 </Form.Item>
               </>
             )}
-
             {mode !== 'signup' && (
               <Form.Item name="role" label="Status">
                 <Select>
@@ -272,16 +253,16 @@ const UserForm = React.forwardRef<any, UserFormProps>(({
               </Form.Item>
             )}
 
-            <Form.Item 
+           {/*  <Form.Item 
               name="birthday" 
-              label="Date de naissance"
-              rules={[{ required: true, message: 'Date de naissance requise' }]}
+              label="Birthday"
+              rules={[{ required: true, message: 'Birthday is required' }]}
             >
               <DatePicker 
-                style={{ width: '100%' }}
                 format="DD/MM/YYYY"
+                style={{ width: '100%' }}
               />
-            </Form.Item>
+            </Form.Item> */}
           </>
         );
 
@@ -367,35 +348,35 @@ const UserForm = React.forwardRef<any, UserFormProps>(({
                             label="Institution"
                             rules={[{ required: true, message: 'Institution requise' }]}
                           >
-                            <Input placeholder="Nom de l'institution" />
+                            <Input placeholder="Institution name" />
                           </Form.Item>
                         </Col>
                         <Col span={12}>
                           <Form.Item
                             {...restField}
                             name={[name, 'degree']}
-                            label="Diplôme"
-                            rules={[{ required: true, message: 'Diplôme requis' }]}
+                            label="Degree"
+                            rules={[{ required: true, message: 'Degree is required' }]}
                           >
-                            <Input placeholder="Nom du diplôme" />
+                            <Input placeholder="Degree" />
                           </Form.Item>
                         </Col>
                         <Col span={12}>
                           <Form.Item
                             {...restField}
                             name={[name, 'fieldOfStudy']}
-                            label="Domaine d'études"
-                            rules={[{ required: true, message: 'Domaine requis' }]}
+                            label="Field of study"
+                            rules={[{ required: true, message: 'Field of study is required' }]}
                           >
-                            <Input placeholder="Domaine d'études" />
+                            <Input placeholder="Field of study" />
                           </Form.Item>
                         </Col>
                         <Col span={12}>
                           <Form.Item
                             {...restField}
                             name={[name, 'period']}
-                            label="Période"
-                            rules={[{ required: true, message: 'Période requise' }]}
+                            label="Period"
+                            rules={[{ required: true, message: 'Period is required' }]}
                           >
                             <RangePicker />
                           </Form.Item>
@@ -406,14 +387,14 @@ const UserForm = React.forwardRef<any, UserFormProps>(({
                             name={[name, 'description']}
                             label="Description"
                           >
-                            <Input.TextArea rows={4} placeholder="Description du programme" />
+                            <Input.TextArea rows={4} placeholder="Description" />
                           </Form.Item>
                         </Col>
                       </Row>
                     </Card>
                   ))}
                   <Button type="dashed" onClick={() => add()} block icon={<PlusOutlined />}>
-                    Ajouter une formation
+                    Add an education
                   </Button>
                 </>
               )}

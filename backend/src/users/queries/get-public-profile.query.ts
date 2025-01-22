@@ -6,7 +6,6 @@ interface PublicProfileResponse {
   id: string;
   first_name: string;
   last_name: string;
-  skills: any[];
   desired_position?: string;
   profilePicture?: string;
   cv?: string;
@@ -37,7 +36,6 @@ export class GetPublicProfileHandler
       id: user.id,
       first_name: user.first_name,
       last_name: user.last_name,
-      skills: user.skills,
       desired_position: user.desired_position,
       profilePicture: user.profilePicture,
       cv: user.cv,

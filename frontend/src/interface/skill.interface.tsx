@@ -1,7 +1,6 @@
 export interface Skill {
-  language: string;
-  experience_years: number;
-  level?: number; // optionnel, par défaut égal à experience_years
+  name: string;
+  yearsOfExperience: number;
 }
 
 export interface Position {
@@ -9,3 +8,11 @@ export interface Position {
   description?: string;
 }
 
+
+export interface Education {
+  name: string;
+  description?: string;
+  yearsOfExperience: number;
+  startDate: Date;
+  endDate: Date;
+}

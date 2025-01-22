@@ -11,8 +11,12 @@ import { CV } from 'src/models/cv.model';
 import { User } from 'src/models/user.model';
 import { RabbitMQService } from 'src/rabbitmq/rabbitmq.service';
 import { ExtractCVDataHandler } from './commands/extract-cv-data.command';
+import { UpdateCVEducationCommandHandler } from './commands/update-cv-education.command';
+import { UpdateCVSkillsCommandHandler } from './commands/update-cv-skills.command';
 import { CVController } from './cv.controller';
 import { CVRepository } from './cv.repository';
+import { GetCVEducationHandler } from './queries/get-cv-education.query';
+import { GetCVSkillsHandler } from './queries/get-cv-skills.query';
 
 @Module({
   imports: [
@@ -30,7 +34,15 @@ import { CVRepository } from './cv.repository';
     CaslModule,
   ],
   controllers: [CVController],
-  providers: [CVRepository, ExtractCVDataHandler, RabbitMQService],
+  providers: [
+    CVRepository,
+    ExtractCVDataHandler,
+    UpdateCVSkillsCommandHandler,
+    UpdateCVEducationCommandHandler,
+    GetCVSkillsHandler,
+    GetCVEducationHandler,
+    RabbitMQService,
+  ],
   exports: [CVRepository],
 })
 export class CVModule {}

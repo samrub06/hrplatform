@@ -3,6 +3,8 @@ import { InjectModel } from '@nestjs/sequelize';
 import { CVEducation } from 'src/models/cv-education.model';
 import { CVSkill } from 'src/models/cv-skill.model';
 import { CV } from 'src/models/cv.model';
+import { User } from 'src/models/user.model';
+import { UpdateCVEducationRequestDto } from './commands/update-cv-education.request.command.dto';
 import { PersonalInfo } from './interfaces/cv-extracted-data.interface';
 
 @Injectable()
@@ -46,6 +48,33 @@ export class CVRepository {
     return cv.reload();
   }
 
+  async updateSkills(cvId: string, skills: Partial<CVSkill>[]): Promise<void> {
+    await this.cvSkillModel.destroy({ where: { cv_id: cvId } });
+    await Promise.all(
+      skills.map((skill) =>
+        this.cvSkillModel.create({
+          ...skill,
+          cv_id: cvId,
+        }),
+      ),
+    );
+  }
+
+  async updateEducation(
+    cvId: string,
+    education: UpdateCVEducationRequestDto[],
+  ): Promise<void> {
+    await this.cvEducationModel.destroy({ where: { cv_id: cvId } });
+    await Promise.all(
+      education.map((edu) =>
+        this.cvEducationModel.create({
+          ...edu,
+          cv_id: cvId,
+        }),
+      ),
+    );
+  }
+
   async delete(id: string): Promise<boolean> {
     const result = await this.cvModel.destroy({ where: { id } });
     return result > 0;
@@ -69,5 +98,23 @@ export class CVRepository {
     description: string;
   }): Promise<CVEducation> {
     return this.cvEducationModel.create(data);
+  }
+
+  async findUsersBySkill(skillName: string): Promise<CV[]> {
+    return this.cvModel.findAll({
+      include: [
+        {
+          model: CVSkill,
+          as: 'skills',
+          where: {
+            name: skillName,
+          },
+        },
+        {
+          model: User,
+          as: 'user',
+        },
+      ],
+    });
   }
 }

@@ -1,5 +1,6 @@
 import { Grid, Layout, Menu, Space, Switch, theme } from 'antd';
 import { Outlet, useNavigate } from 'react-router-dom';
+import { SEOHead } from '../components/SEOHead';
 import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
 import { logout } from '../services/auth.service';
@@ -35,6 +36,7 @@ export const DashboardLayout = () => {
 
   return (
     <Layout style={{ minHeight: '100vh' }}>
+      <SEOHead title="Dashboard | HR Platform" description="Dashboard of HR Platform" />
       <Header 
         style={{ 
           display: 'flex', 

@@ -2,6 +2,7 @@ import { GoogleOutlined, LockOutlined, MailOutlined } from "@ant-design/icons";
 import { Button, Form, Grid, Input, Space, theme, Typography } from "antd";
 import { useState } from "react";
 import { useNavigate } from "react-router";
+import { SEOHead } from "../components/SEOHead";
 import { useAuth } from "../context/AuthContext";
 import { login, loginGoogle } from "../services/auth.service";
 
@@ -87,86 +88,95 @@ export default function LoginPage() {
   };
 
   return (
-    <section style={styles.section}>
-      <div style={styles.container}>
-        <div style={styles.header}>
+    <>
+      <SEOHead 
+        title="Login | HR Platform"
+        description="Login to your HR Platform account to access your personal space"
+        keywords="login, HR, recruitment, HR Platform"
+        canonicalUrl={`${process.env.REACT_APP_FRONTEND_URL}/login`}
+      />
+      
+      <section style={styles.section}>
+        <div style={styles.container}>
+          <div style={styles.header}>
 
-          <Title style={styles.title}>Sign in</Title>
-          <Text style={styles.text}>
-            Welcome back to HR Platform! Please enter your details below to
-            sign in.
-          </Text>
+            <Title style={styles.title}>Sign in</Title>
+            <Text style={styles.text}>
+              Welcome back to HR Platform! Please enter your details below to
+              sign in.
+            </Text>
+          </div>
+          <Form
+            name="normal_login"
+            initialValues={{
+              remember: true,
+            }}
+            onFinish={onFinish}
+            layout="vertical"
+            requiredMark="optional"
+          >
+            <Form.Item
+              name="email"
+              rules={[
+                {
+                  type: "email",
+                  required: true,
+                  message: "Please input your Email!",
+                },
+              ]}
+            >
+              <Input
+                prefix={<MailOutlined />}
+                placeholder="Email"
+              />
+            </Form.Item>
+            <Form.Item
+              name="password"
+              rules={[
+                {
+                  required: true,
+                  message: "Please input your Password!",
+                },
+              ]}
+            >
+              <Input.Password
+                prefix={<LockOutlined />}
+                type="password"
+                placeholder="Password"
+              />
+            </Form.Item>
+
+            <Form.Item >
+              <Space style={{ width: "100%" }} direction="vertical" size={16}>
+                <Button block type="primary" htmlType="submit" loading={loading}>
+                  Log in
+                </Button>
+                <Button
+                  block
+                  onClick={handleGoogleLogin}
+                  icon={<GoogleOutlined style={styles.googleIcon} />}
+                  style={styles.googleButton}
+                >
+                  Continue with Google
+                </Button>
+              </Space>
+
+              <Space style={{ marginTop: "10px" }}>
+                <div>
+                  <a href="/forgot-password">
+                    Forgot password?
+                  </a>
+                </div>
+                <div>
+                  <Text style={styles.text}>Don't have an account?</Text>{" "}
+                  <Link href="/auth/signup">Sign up now</Link>
+                </div>
+              </Space>
+            </Form.Item>
+
+          </Form>
         </div>
-        <Form
-          name="normal_login"
-          initialValues={{
-            remember: true,
-          }}
-          onFinish={onFinish}
-          layout="vertical"
-          requiredMark="optional"
-        >
-          <Form.Item
-            name="email"
-            rules={[
-              {
-                type: "email",
-                required: true,
-                message: "Please input your Email!",
-              },
-            ]}
-          >
-            <Input
-              prefix={<MailOutlined />}
-              placeholder="Email"
-            />
-          </Form.Item>
-          <Form.Item
-            name="password"
-            rules={[
-              {
-                required: true,
-                message: "Please input your Password!",
-              },
-            ]}
-          >
-            <Input.Password
-              prefix={<LockOutlined />}
-              type="password"
-              placeholder="Password"
-            />
-          </Form.Item>
-
-          <Form.Item >
-            <Space style={{ width: "100%" }} direction="vertical" size={16}>
-              <Button block type="primary" htmlType="submit" loading={loading}>
-                Log in
-              </Button>
-              <Button
-                block
-                onClick={handleGoogleLogin}
-                icon={<GoogleOutlined style={styles.googleIcon} />}
-                style={styles.googleButton}
-              >
-                Continue with Google
-              </Button>
-            </Space>
-
-            <Space style={{ marginTop: "10px" }}>
-              <div>
-                <a href="/forgot-password">
-                  Forgot password?
-                </a>
-              </div>
-              <div>
-                <Text style={styles.text}>Don't have an account?</Text>{" "}
-                <Link href="/auth/signup">Sign up now</Link>
-              </div>
-            </Space>
-          </Form.Item>
-
-        </Form>
-      </div>
-    </section>
+      </section>
+    </>
   );
 }

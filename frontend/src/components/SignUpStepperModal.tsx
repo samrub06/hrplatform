@@ -27,18 +27,10 @@ export const SignUpStepperModal: React.FC<SignUpStepperModalProps> = ({
 
   const handleRoleSelect = async (role: 'publisher' | 'candidate') => {
     try {
-      const roleResponse = await updateUserRole(user?.id || '',  role );
-      console.log(roleResponse.role);
-      if (roleResponse.role) {
-          const permissionsResponse = await checkPermission()
-          setUser({ ...user, role: roleResponse.role, permissions: permissionsResponse } as any);
-          if (role === 'publisher') {
-            message.success('Rôle updated with success');
-            setShowJobModal(true);
-            onClose();
-          } 
-      }
-     else {
+      const roleResponse = await updateUserRole(user?.id || '', role);
+      if (roleResponse) {
+        const permissionsResponse = await checkPermission()
+        setUser({ ...user, role: role, permissions: permissionsResponse } as any);
         setCurrentStep(1);
       }
     } catch (error) {
@@ -56,7 +48,7 @@ export const SignUpStepperModal: React.FC<SignUpStepperModalProps> = ({
       title: 'Role Selection',
       content: (
         <div style={{ textAlign: 'center', padding: '20px' }}>
-          <h3>Choisissez votre rôle</h3>
+            <h3>Choose your role</h3>
           <Radio.Group
             buttonStyle="solid"
             onChange={(e) => handleRoleSelect(e.target.value)}
@@ -78,7 +70,15 @@ export const SignUpStepperModal: React.FC<SignUpStepperModalProps> = ({
         <UserForm
           ref={formRef}
           initialData={initialData}
-          onSuccess={() => setCurrentStep(2)}
+          onSuccess={() => {
+            if (user?.role === 'publisher') {
+              message.success('Profil complété avec succès');
+              setShowJobModal(true);
+              onClose();
+            } else {
+              setCurrentStep(2);
+            }
+          }}
           onClose={onClose}
           setUploading={setUploading}
           mode="signup"
@@ -98,6 +98,7 @@ export const SignUpStepperModal: React.FC<SignUpStepperModalProps> = ({
           partialForm="documents"
         />
       ),
+      hideForPublisher: true,
     },
     {
       title: 'Skills',
@@ -105,25 +106,43 @@ export const SignUpStepperModal: React.FC<SignUpStepperModalProps> = ({
         <UserForm
           ref={formRef}
           initialData={initialData}
-          onSuccess={() => {
-            message.success('Profil complété avec succès!');
-            onClose();
-          }}
+          onSuccess={() => setCurrentStep(4)}
           onClose={onClose}
           setUploading={setUploading}
           partialForm="skills"
         />
       ),
+      hideForPublisher: true,
+    },
+    {
+      title: 'Education',
+      content: (
+        <UserForm
+          ref={formRef}
+          initialData={initialData}
+          onSuccess={() => {
+            onClose();
+          }}
+          onClose={onClose}
+          setUploading={setUploading}
+          partialForm="education"
+
+        />
+      ),
+      hideForPublisher: true,
     },
   ];
+
+  // Filtrer les étapes en fonction du rôle
+  const filteredSteps = steps.filter(step => 
+    !(user?.role === 'publisher' && step.hideForPublisher)
+  );
 
   return (
     <>
       <Modal
         title="Complete your profile"
         open={isVisible}
-
-        //onCancel={onClose}
         width={800}
         footer={currentStep === 0 ? null : [
           currentStep > 0 && (
@@ -143,10 +162,10 @@ export const SignUpStepperModal: React.FC<SignUpStepperModalProps> = ({
       >
         <Steps
           current={currentStep}
-          items={steps.map((item) => ({ title: item.title }))}
+          items={filteredSteps.map((item) => ({ title: item.title }))}
           style={{ marginBottom: 24 }}
         />
-        <div>{steps[currentStep].content}</div>
+        <div>{filteredSteps[currentStep].content}</div>
       </Modal>
 
       {showJobModal && (

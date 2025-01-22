@@ -15,29 +15,34 @@ const CVPreview = ({ cvUrl }: CVPreviewProps) => {
   if (!cvUrl) return <div>Aucun CV disponible</div>;
 
   return (
-    <div style={{ textAlign: 'center' }}>
+    <section style={{ textAlign: 'center' }} aria-label="Preview CV">
       <Document
         file={cvUrl}
         onLoadSuccess={({ numPages }) => setNumPages(numPages)}
+        aria-label="Document CV"
       >
         <Page pageNumber={pageNumber} />
       </Document>
+      <nav aria-label="Navigation des pages du CV">
       <Space style={{ marginTop: '20px' }}>
         <Button 
           disabled={pageNumber <= 1} 
           onClick={() => setPageNumber(pageNumber - 1)}
+          aria-label="Previous Page "
         >
-          Précédent
+          Previous
         </Button>
-        <span>Page {pageNumber} sur {numPages}</span>
+        <span aria-live="polite">Page {pageNumber} sur {numPages}</span>
         <Button 
           disabled={pageNumber >= (numPages || 0)} 
           onClick={() => setPageNumber(pageNumber + 1)}
+          aria-label="Next Page"
         >
-          Suivant
+          Next
         </Button>
       </Space>
-    </div>
+      </nav>
+    </section>
   );
 };
 

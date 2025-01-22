@@ -12,12 +12,6 @@ import { CV } from 'src/models/cv.model';
 import { AdminNote } from './admin-note.model';
 import { Role } from './role.model';
 
-interface SkillDto {
-  language: string;
-  experience_years: number;
-  level?: number;
-}
-
 @Table({ tableName: 'user', timestamps: true })
 export class User extends Model {
   @Column({
@@ -61,31 +55,6 @@ export class User extends Model {
     allowNull: true,
   })
   profilePicture?: string;
-
-  @Column({
-    type: DataType.JSON,
-    allowNull: true,
-    get() {
-      const rawValue = this.getDataValue('skills');
-      if (!rawValue) return [];
-      try {
-        return typeof rawValue === 'string' ? JSON.parse(rawValue) : rawValue;
-      } catch (error) {
-        return [];
-      }
-    },
-    set(value: any) {
-      if (value === null || value === undefined) {
-        this.setDataValue('skills', null);
-      } else {
-        this.setDataValue(
-          'skills',
-          typeof value === 'string' ? value : JSON.stringify(value),
-        );
-      }
-    },
-  })
-  skills?: SkillDto[];
 
   @Column({
     type: DataType.STRING,
