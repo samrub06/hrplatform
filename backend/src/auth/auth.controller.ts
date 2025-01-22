@@ -14,6 +14,7 @@ import { AuthGuard } from '@nestjs/passport';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Request, Response } from 'express';
 import { Public } from 'src/casl/public.decorator';
+import { GoogleLoginCommand } from './commands/google-login.command';
 import { LoginAdminCommand } from './commands/login-admin.command';
 import { LoginCommand } from './commands/login.command';
 import { RefreshTokenCommand } from './commands/refresh-token.command';
@@ -24,6 +25,7 @@ import { LoginAdminRequestDto } from './dto/login-admin.request.dto';
 import { LoginRequestDto } from './dto/login.request.dto';
 import { LoginResponseDto } from './dto/login.response.dto';
 import { RegisterAdminRequestDto } from './dto/register-admin.request.dto';
+import { RegisterGoogleRequestDto } from './dto/register-google.request.dto';
 import { RegisterRequestDto } from './dto/register.request.dto';
 import { RegisterResponseDto } from './dto/register.response.dto';
 
@@ -136,14 +138,27 @@ export class AuthController {
   @Get('google/callback')
   @UseGuards(AuthGuard('google'))
   @ApiOperation({ summary: 'Google Auth Callback' })
-  async googleAuthCallback(@Req() req, @Res() res) {
+  // req.user.email, req.user.first_name, req.user.last_name, req.user.picture, req.user.googleId
+  async googleAuthCallback(@Req() req: any, @Res() res) {
+    const user = req.user as RegisterGoogleRequestDto;
     try {
-      const { access_token } = await this.commandBus.execute(
-        new LoginCommand({
-          email: req.user.email,
-          password: req.user.password,
+      const { access_token, refresh_token } = await this.commandBus.execute(
+        new GoogleLoginCommand({
+          email: user.email,
+          firstName: user.firstName,
+          lastName: user.lastName,
+          picture: user.picture,
+          googleId: user.googleId,
         }),
       );
+
+      res.cookie('refresh_token', refresh_token, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'strict',
+        maxAge: 30 * 24 * 60 * 60 * 1000,
+        path: '/api/auth/refresh-token',
+      });
       const redirectUrl = `${process.env.FRONTEND_URL}/auth/google/callback?token=${access_token}`;
       return res.redirect(redirectUrl);
     } catch (error) {

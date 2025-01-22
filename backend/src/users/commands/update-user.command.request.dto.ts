@@ -98,4 +98,9 @@ export class UpdateUserRequestDto {
   @IsOptional()
   @IsString()
   birthday?: string;
+
+  @ApiProperty({ required: false })
+  @IsOptional()
+  @IsString()
+  googleId?: string;
 }

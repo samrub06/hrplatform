@@ -61,16 +61,15 @@ export const logout = () => {
   window.location.href = '/auth/login';
 };
 
-export const handleGoogleCallback = async (token: string): Promise<AuthUser> => {
-  localStorage.setItem('token', token);
+export const handleGoogleCallback = async (accessToken: string): Promise<AuthUser> => {
+  localStorage.setItem('token', accessToken);
   
-  const decodedToken = jwtDecode(token) as { sub: string, email: string };
+  const decodedToken = jwtDecode(accessToken) as { id: string, email: string };
   const permissionsResponse = await axiosInstance.get('/user/me/permissions');
   
   const userWithPermissions: AuthUser = {
-    id: decodedToken.sub,
+    id: decodedToken.id,
     email: decodedToken.email,
-    role: 'candidate',
     permissions: permissionsResponse.data
   };
 

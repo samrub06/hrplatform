@@ -27,5 +27,11 @@ export class CreateUserRequestDto {
   @IsNotEmpty()
   last_name?: string;
 
-  
+  @ApiProperty({ description: 'google id' })
+  @IsString()
+  googleId?: string;
+
+  @ApiProperty({ description: 'The picture of the user' })
+  @IsString()
+  profilePicture?: string;
 }

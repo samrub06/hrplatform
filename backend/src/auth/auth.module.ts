@@ -9,6 +9,7 @@ import { RabbitMQModule } from 'src/rabbitmq/rabbitmq.module';
 import { UsersModule } from '../users/users.module';
 import { AuthController } from './auth.controller';
 import { AuthGuard } from './auth.guards';
+import { GoogleLoginHandler } from './commands/google-login.command';
 import { LoginAdminHandler } from './commands/login-admin.command';
 import { LoginHandler } from './commands/login.command';
 import { LoginValidator } from './commands/login.command.validator';
@@ -26,7 +27,7 @@ const CommandHandlers = [
   RefreshTokenHandler,
   RegisterAdminHandler,
   RegisterHandler,
-  RefreshTokenHandler,
+  GoogleLoginHandler,
   RevokeUserTokensHandler,
 ];
 const Validators = [LoginValidator, RegisterValidator];

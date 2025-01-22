@@ -161,4 +161,10 @@ export class User extends Model {
     allowNull: true,
   })
   birthday?: Date;
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
+  googleId?: string;
 }
