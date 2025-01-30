@@ -9,7 +9,6 @@ import { CVEducation } from 'src/models/cv-education.model';
 import { CVSkill } from 'src/models/cv-skill.model';
 import { CV } from 'src/models/cv.model';
 import { User } from 'src/models/user.model';
-import { RabbitMQService } from 'src/rabbitmq/rabbitmq.service';
 import { ExtractCVDataHandler } from './commands/extract-cv-data.command';
 import { UpdateCVEducationCommandHandler } from './commands/update-cv-education.command';
 import { UpdateCVSkillsCommandHandler } from './commands/update-cv-skills.command';
@@ -41,7 +40,6 @@ import { GetCVSkillsHandler } from './queries/get-cv-skills.query';
     UpdateCVEducationCommandHandler,
     GetCVSkillsHandler,
     GetCVEducationHandler,
-    RabbitMQService,
   ],
   exports: [CVRepository],
 })
