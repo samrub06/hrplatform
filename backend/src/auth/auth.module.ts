@@ -5,7 +5,6 @@ import { JwtModule } from '@nestjs/jwt';
 import { SequelizeModule } from '@nestjs/sequelize';
 import { AdminModule } from 'src/admin/admin.module';
 import { RefreshToken } from 'src/models/token.model';
-import { RabbitMQModule } from 'src/rabbitmq/rabbitmq.module';
 import { UsersModule } from '../users/users.module';
 import { AuthController } from './auth.controller';
 import { AuthGuard } from './auth.guards';
@@ -37,7 +36,6 @@ const Validators = [LoginValidator, RegisterValidator];
   imports: [
     CqrsModule,
     ConfigModule,
-    RabbitMQModule,
     forwardRef(() => UsersModule),
     forwardRef(() => AdminModule),
     SequelizeModule.forFeature([RefreshToken]),

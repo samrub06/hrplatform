@@ -6,9 +6,9 @@ import { AuthModule } from 'src/auth/auth.module';
 import { CaslModule } from 'src/casl/casl.module';
 import { User } from 'src/models/user.model';
 import { PermissionModule } from 'src/permission/permission.module';
-import { RabbitMQService } from 'src/rabbitmq/rabbitmq.service';
 import { UsersModule } from 'src/users/users.module';
 import { Job } from '../models/job.model';
+import { RabbitMQModule } from '../rabbitmq/rabbitmq.module';
 import { CreateJobHandler } from './commands/create-job.command';
 import { CreateJobValidator } from './commands/create-job.command.validator';
 import { DeleteJobHandler } from './commands/delete-job.command';
@@ -29,6 +29,7 @@ const QueryHandlers = [GetJobsHandler];
     AdminModule,
     UsersModule,
     SequelizeModule.forFeature([Job, User]),
+    RabbitMQModule,
   ],
   controllers: [JobsController],
   providers: [
@@ -36,7 +37,6 @@ const QueryHandlers = [GetJobsHandler];
     ...CommandHandlers,
     CreateJobValidator,
     ...QueryHandlers,
-    RabbitMQService,
   ],
 })
 export class JobsModule {}

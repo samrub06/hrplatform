@@ -7,14 +7,21 @@ import { RABBITMQ_EXCHANGES } from './rabbitmq.config';
 export class RabbitMQService implements OnModuleInit, OnModuleDestroy {
   private connection: amqp.Connection;
   private channel: amqp.Channel;
+  private initialized = false;
 
   constructor(private configService: ConfigService) {}
 
   async onModuleInit() {
+    await this.initialize();
+  }
+
+  private async initialize() {
+    if (this.initialized) return;
+
     try {
       const rabbitmqUrl =
         this.configService.get<string>('RABBITMQ_URL') ||
-        'amqp://localhost:5672';
+        'amqp://guest:guest@localhost:5672';
       this.connection = await amqp.connect(rabbitmqUrl);
       this.channel = await this.connection.createChannel();
 
@@ -31,6 +38,7 @@ export class RabbitMQService implements OnModuleInit, OnModuleDestroy {
         }),
       ]);
 
+      this.initialized = true;
       console.log('RabbitMQ Established with success');
     } catch (error) {
       console.error('Error connecting to RabbitMQ:', error);
@@ -60,6 +68,10 @@ export class RabbitMQService implements OnModuleInit, OnModuleDestroy {
     exchange: string,
     routingKey: string,
   ) {
+    if (!this.initialized) {
+      await this.initialize();
+    }
+
     try {
       await this.channel.assertQueue(queue, { durable: true });
       await this.channel.bindQueue(queue, exchange, routingKey);

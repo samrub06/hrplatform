@@ -3,7 +3,8 @@ import { ConfigModule } from '@nestjs/config';
 import { APP_FILTER } from '@nestjs/core';
 import { SequelizeModule } from '@nestjs/sequelize';
 import { AdminModule } from './admin/admin.module';
-import { AllExceptionsFilter } from './all-exceptions.filter'; // Importez le filtre
+
+import { AllExceptionsFilter } from './all-exceptions.filter';
 import { CaslModule } from './casl/casl.module';
 import { JsonValidatorMiddleware } from './common/middleware/json-validator.middleware';
 import { CVModule } from './cv/cv.module';
@@ -20,6 +21,7 @@ import { Role } from './models/role.model';
 import { User } from './models/user.model';
 import { NotificationsModule } from './notifications/notifications.module';
 import { PermissionModule } from './permission/permission.module';
+import { RabbitMQModule } from './rabbitmq/rabbitmq.module';
 import { RateLimitModule } from './rate-limit/rate-limit.module';
 import { UsersModule } from './users/users.module';
 
@@ -59,6 +61,7 @@ import { UsersModule } from './users/users.module';
       autoLoadModels: true,
       synchronize: true,
     }),
+    RabbitMQModule,
   ],
   providers: [
     {

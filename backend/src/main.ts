@@ -74,5 +74,6 @@ async function bootstrap() {
 
   logger.info(` 🚀 Application is running on: ${fullUrl}`);
   logger.info(` 📚 Swagger is available on: ${fullUrl}/swagger`);
+  logger.info(` 📚 GraphQL is available on: ${fullUrl}/graphql`);
 }
 bootstrap();
