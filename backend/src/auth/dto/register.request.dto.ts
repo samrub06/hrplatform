@@ -29,8 +29,7 @@ export class RegisterRequestDto {
   @IsNotEmpty({ message: 'The last name is required' })
   last_name: string;
 
-  @ApiProperty({ description: 'The picture of the user' })
+  /*   @ApiProperty({ description: 'The picture of the user' })
   @IsString()
-  @IsNotEmpty({ message: 'The picture is required' })
-  picture: string;
+  picture?: string; */
 }

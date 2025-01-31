@@ -4,7 +4,6 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { ProgrammingLanguage } from 'src/enums/programming-languages.enum';
 import { CVRepository } from './../cv.repository';
 import { UpdateCVSkillsRequestDto } from './update-cv-skills.command.requet.dto';
 
@@ -33,7 +32,7 @@ export class UpdateCVSkillsCommandHandler
       throw new BadRequestException('At least one skill is required');
     }
 
-    for (const skill of skills) {
+    /*    for (const skill of skills) {
       if (!Object.values(ProgrammingLanguage).includes(skill.name)) {
         throw new BadRequestException(
           `The skill "${skill.name}" is not a valid skill`,
@@ -46,8 +45,8 @@ export class UpdateCVSkillsCommandHandler
         );
       }
     }
-
-    const cv = await this.cvRepository.findByUserId(id);
+ */
+    const cv = await this.cvRepository.findSkillsByUserId(id);
     if (!cv) {
       throw new NotFoundException(`CV for user ${id} not found`);
     }

@@ -18,6 +18,15 @@ export const PROGRAMMING_LANGUAGES: ProgrammingLanguageInfo[] = [
   { name: 'MongoDB', category: 'database' },
   { name: 'Docker', category: 'devops' },
   { name: 'Kubernetes', category: 'devops' },
+  { name: 'Git', category: 'devops' },
+  { name: 'GitHub', category: 'devops' },
+  { name: 'GitLab', category: 'devops' },
+  { name: 'React', category: 'frontend' },
+  { name: 'Angular', category: 'frontend' },
+  { name: 'Vue', category: 'frontend' },
+  { name: 'Node.js', category: 'backend' },
+  { name: 'Express', category: 'backend' },
+  { name: 'Spring', category: 'backend' },
 ];
 
 export const getProgrammingLanguages = (): string[] => {

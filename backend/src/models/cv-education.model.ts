@@ -49,13 +49,13 @@ export class CVEducation extends Model {
 
   @Column({
     type: DataType.STRING,
-    allowNull: false,
+    allowNull: true,
   })
-  fieldOfStudy: string;
+  fieldOfStudy?: string;
 
   @Column({
     type: DataType.DATE,
-    allowNull: false,
+    allowNull: true,
   })
   startDate: Date;
 

@@ -1,5 +1,5 @@
 import { GithubOutlined, InboxOutlined, LinkedinOutlined, MailOutlined, MinusCircleOutlined, PhoneOutlined, PlusOutlined } from '@ant-design/icons';
-import { Button, Card, Col, DatePicker, Form, Input, InputNumber, message, Row, Select, Space, Upload } from 'antd';
+import { Button, Card, Col, DatePicker, Form, Input, InputNumber, message, Row, Select, Slider, Space, Upload } from 'antd';
 import React, { useEffect, useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { AuthUser } from '../interface/auth.interface';
@@ -33,11 +33,13 @@ const UserForm = React.forwardRef<any, UserFormProps>(({
   const isEditMode = !!initialData;
   const { user, setUser } = useAuth();
   const { RangePicker } = DatePicker;
+  
   React.useImperativeHandle(ref, () => ({
     submit: () => {
       form.submit();
     }
   }));
+
   const handleSubmit = async (values: any) => {
     try {
       setUploading(true);
@@ -104,6 +106,7 @@ const UserForm = React.forwardRef<any, UserFormProps>(({
               setExistingCV(fileToUpload.name);
               const extractedData = await extractCVData(initialData?.id || "", fileToUpload.name);
               console.log('Données extraites du CV:', extractedData);
+              
             }
           }
           break;
@@ -163,9 +166,10 @@ const UserForm = React.forwardRef<any, UserFormProps>(({
         adminNotes: initialData.adminNotes,
         current_position: initialData.current_position,
         current_company: initialData.current_company,
-        skills: initialData.skills,
         desired_position: initialData.desired_position,
         cv: initialData.cv,
+        skills: initialData.skills,
+        education: initialData.education,
         profilePicture: initialData.profilePicture,
         phone_number: initialData.phone_number,
         github_link: initialData.github_link,
@@ -228,8 +232,24 @@ const UserForm = React.forwardRef<any, UserFormProps>(({
                 <Form.Item name="desired_position" label="Desired Position">
                   <Input />
                 </Form.Item>
-                <Form.Item name="salary_expectation" label="Expected Salary">
-                  <InputNumber style={{ width: '100%' }} />
+                <Form.Item name="salary_expectation" label="Expected Salary (k€)">
+                  <Slider
+                    min={8}
+                    max={70}
+                    step={2}
+                    marks={{
+                      8: '8k₪',
+                      20: '20k₪',
+                      30: '30k₪',
+                      40: '40k₪',
+                      50: '50k₪',
+                      60: '60k₪',
+                      70: '70k₪'
+                    }}
+                    tooltip={{
+                      formatter: (value) => `${value}k₪/month`
+                    }}
+                  />
                 </Form.Item>
               </>
             )}

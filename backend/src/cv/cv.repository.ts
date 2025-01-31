@@ -24,7 +24,7 @@ export class CVRepository {
     });
   }
 
-  async findByUserId(userId: string): Promise<CV> {
+  async findSkillsByUserId(userId: string): Promise<CV> {
     return this.cvModel.findOne({
       where: { user_id: userId },
       include: [
@@ -32,6 +32,14 @@ export class CVRepository {
           model: CVSkill,
           as: 'skills',
         },
+      ],
+    });
+  }
+
+  async findEducationByUserId(userId: string): Promise<CV> {
+    return this.cvModel.findOne({
+      where: { user_id: userId },
+      include: [
         {
           model: CVEducation,
           as: 'education',
@@ -81,7 +89,7 @@ export class CVRepository {
   }
 
   async createSkill(data: {
-    cvId: string;
+    cv_id: string;
     name: string;
     yearsOfExperience: number;
   }): Promise<CVSkill> {
@@ -89,13 +97,13 @@ export class CVRepository {
   }
 
   async createEducation(data: {
-    cvId: string;
+    cv_id: string;
     institution: string;
     degree: string;
-    fieldOfStudy: string;
-    startDate: Date;
-    endDate: Date;
-    description: string;
+    fieldOfStudy?: string;
+    startDate?: Date;
+    endDate?: Date;
+    description?: string;
   }): Promise<CVEducation> {
     return this.cvEducationModel.create(data);
   }

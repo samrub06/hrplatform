@@ -24,12 +24,12 @@ export const updateEducation = async (  id: string, updateEducationDto :any) => 
 
 // get skills
 export const getSkills = async (id: string) => {
-  const response = await axiosInstance.post<SkillsResponse>(`/cv/skills/${id}`);
+  const response = await axiosInstance.post<any>(`/cv/skills/${id}`);
   return response.data;
 };
 
 // get education
 export const getEducation = async (id: string) => {
-  const response = await axiosInstance.post<EducationResponse>(`/cv/education/${id}`);
+  const response = await axiosInstance.post<any>(`/cv/education/${id}`);
   return response.data;
 };

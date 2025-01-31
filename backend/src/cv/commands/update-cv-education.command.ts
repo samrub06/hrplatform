@@ -41,7 +41,7 @@ export class UpdateCVEducationCommandHandler
       }
     }
 
-    const cv = await this.cvRepository.findByUserId(id);
+    const cv = await this.cvRepository.findEducationByUserId(id);
     if (!cv) {
       throw new NotFoundException(`CV for user ${id} not found`);
     }
