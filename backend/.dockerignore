@@ -3,4 +3,7 @@ dist
 coverage
 .git
 .env
+.env.development
+.env.production
+.env.docker
 *.log
