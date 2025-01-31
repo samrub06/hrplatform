@@ -11,7 +11,7 @@ const CompleteProfile = () => {
   const { user } = useAuth();
 
   const { data: userData } = useQuery({
-    queryKey: ['user', user?.id],
+    queryKey: ['GetUserById', user?.id],
     queryFn: () => GetUserById(user?.id),
   });
 

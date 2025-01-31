@@ -20,6 +20,7 @@ import { RolePermission } from './models/role-permission.model';
 import { Role } from './models/role.model';
 import { User } from './models/user.model';
 import { NotificationsModule } from './notifications/notifications.module';
+import { OpenAIModule } from './openai/openai.module';
 import { PermissionModule } from './permission/permission.module';
 import { RabbitMQModule } from './rabbitmq/rabbitmq.module';
 import { RateLimitModule } from './rate-limit/rate-limit.module';
@@ -34,6 +35,7 @@ import { UsersModule } from './users/users.module';
     PermissionModule,
     CaslModule,
     AdminModule,
+    OpenAIModule,
     NotificationsModule,
     ConfigModule.forRoot({
       envFilePath: '.env',
@@ -41,11 +43,11 @@ import { UsersModule } from './users/users.module';
     }),
     SequelizeModule.forRoot({
       dialect: 'postgres',
-      host: process.env.DB_HOST || 'localhost',
-      port: +process.env.DB_PORT || 8083,
-      username: process.env.DB_USER || 'samuel',
-      password: process.env.DB_PASSWORD || 'root',
-      database: process.env.DB_NAME || 'hrplatform',
+      host: process.env.DB_HOST,
+      port: +process.env.DB_PORT,
+      username: process.env.DB_USER,
+      password: process.env.DB_PASSWORD,
+      database: process.env.DB_NAME,
       models: [
         Admin,
         Role,

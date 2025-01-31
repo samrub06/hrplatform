@@ -11,14 +11,12 @@ export class GetCVSkillsHandler implements IQueryHandler<GetCVSkillsQuery> {
   constructor(private readonly cvRepository: CVRepository) {}
 
   async execute(query: GetCVSkillsQuery) {
-    const cv = await this.cvRepository.findByUserId(query.id);
+    const cvSkills = await this.cvRepository.findSkillsByUserId(query.id);
 
-    if (!cv) {
+    if (!cvSkills) {
       throw new NotFoundException(`CV with ID ${query.id} not found`);
     }
 
-    return {
-      skills: cv.skills || [],
-    };
+    return cvSkills.skills;
   }
 }

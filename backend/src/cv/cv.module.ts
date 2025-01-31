@@ -9,18 +9,25 @@ import { CVEducation } from 'src/models/cv-education.model';
 import { CVSkill } from 'src/models/cv-skill.model';
 import { CV } from 'src/models/cv.model';
 import { User } from 'src/models/user.model';
+import { OpenAIModule } from 'src/openai/openai.module';
 import { ExtractCVDataHandler } from './commands/extract-cv-data.command';
 import { UpdateCVEducationCommandHandler } from './commands/update-cv-education.command';
 import { UpdateCVSkillsCommandHandler } from './commands/update-cv-skills.command';
 import { CVController } from './cv.controller';
 import { CVRepository } from './cv.repository';
-import { GetCVEducationHandler } from './queries/get-cv-education.query';
-import { GetCVSkillsHandler } from './queries/get-cv-skills.query';
+import {
+  GetCVEducationHandler,
+  GetCVEducationQuery,
+} from './queries/get-cv-education.query';
+import {
+  GetCVSkillsHandler,
+  GetCVSkillsQuery,
+} from './queries/get-cv-skills.query';
 
 @Module({
   imports: [
     CqrsModule,
-
+    OpenAIModule,
     SequelizeModule.forFeature([
       CV,
       Admin,
@@ -40,6 +47,8 @@ import { GetCVSkillsHandler } from './queries/get-cv-skills.query';
     UpdateCVEducationCommandHandler,
     GetCVSkillsHandler,
     GetCVEducationHandler,
+    GetCVSkillsQuery,
+    GetCVEducationQuery,
   ],
   exports: [CVRepository],
 })

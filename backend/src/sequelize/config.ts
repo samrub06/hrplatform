@@ -17,11 +17,11 @@ interface ISequelizeConfig {
 const config: ISequelizeConfig = {
   development: {
     dialect: 'postgres' as Dialect,
-    host: process.env.DB_HOST || 'localhost',
-    port: parseInt(process.env.DB_PORT || '8083', 10),
-    username: process.env.DB_USER || 'samuel',
-    password: process.env.DB_PASSWORD || 'root',
-    database: process.env.DB_NAME || 'hrplatform',
+    host: process.env.DB_HOST,
+    port: parseInt(process.env.DB_PORT, 10),
+    username: process.env.DB_USER,
+    password: process.env.DB_PASSWORD,
+    database: process.env.DB_NAME,
   },
   test: {
     dialect: 'postgres',

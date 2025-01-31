@@ -13,14 +13,12 @@ export class GetCVEducationHandler
   constructor(private readonly cvRepository: CVRepository) {}
 
   async execute(query: GetCVEducationQuery) {
-    const cv = await this.cvRepository.findByUserId(query.id);
+    const cv = await this.cvRepository.findEducationByUserId(query.id);
 
     if (!cv) {
       throw new NotFoundException(`CV with ID ${query.id} not found`);
     }
 
-    return {
-      education: cv.education || [],
-    };
+    return cv.education;
   }
 }
