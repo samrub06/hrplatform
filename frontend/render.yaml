@@ -1,0 +1,9 @@
+services:
+  - type: web
+    name: hrplatform-frontend
+    runtime: node
+    buildCommand: npm install && npm run build
+    startCommand: npm run start:prod
+    envVars:
+      - key: REACT_APP_API_URL
+        value: https://hrplatform-api.onrender.com

@@ -7,6 +7,7 @@ import { AuthenticationLayout } from './layout/AuthenticationLayout';
 import { DashboardLayout } from './layout/DashboardLayout';
 import CompleteProfile from './pages/CompleteProfile';
 import GoogleCallback from './pages/GoogleCallback';
+import LinkedInCallback from './pages/LinkedInCallback';
 import Login from './pages/Login';
 import PublicProfile from './pages/PublicProfile';
 import SignUp from './pages/SignUp';
@@ -46,6 +47,10 @@ export const publicRoutes: RouteObject[] = [
   {
     path: '/auth/google/callback',
     element: <GoogleCallback />
+  },
+  {
+    path: '/auth/linkedin/callback',
+    element: <LinkedInCallback />
   }
 ];
 

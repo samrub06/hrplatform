@@ -76,3 +76,23 @@ export const handleGoogleCallback = async (accessToken: string): Promise<AuthUse
   localStorage.setItem('user', JSON.stringify(userWithPermissions));
   return userWithPermissions;
 };
+
+export const loginLinkedIn = async (): Promise<void> => {
+  window.location.href = 'http://localhost:3000/api/auth/linkedin';
+};
+
+export const handleLinkedInCallback = async (accessToken: string): Promise<AuthUser> => {
+  localStorage.setItem('token', accessToken);
+  
+  const decodedToken = jwtDecode(accessToken) as { id: string, email: string };
+  const permissionsResponse = await axiosInstance.get('/user/me/permissions');
+  
+  const userWithPermissions: AuthUser = {
+    id: decodedToken.id,
+    email: decodedToken.email,
+    permissions: permissionsResponse.data
+  };
+
+  localStorage.setItem('user', JSON.stringify(userWithPermissions));
+  return userWithPermissions;
+};

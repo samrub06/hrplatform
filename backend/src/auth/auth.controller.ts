@@ -10,11 +10,13 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { CommandBus } from '@nestjs/cqrs';
+import { JwtService } from '@nestjs/jwt';
 import { AuthGuard } from '@nestjs/passport';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Request, Response } from 'express';
 import { Public } from 'src/casl/public.decorator';
 import { GoogleLoginCommand } from './commands/google-login.command';
+import { LinkedInLoginCommand } from './commands/linkedin-login.command';
 import { LoginAdminCommand } from './commands/login-admin.command';
 import { LoginCommand } from './commands/login.command';
 import { RefreshTokenCommand } from './commands/refresh-token.command';
@@ -32,7 +34,10 @@ import { RegisterResponseDto } from './dto/register.response.dto';
 @ApiTags('Auth')
 @Controller('auth')
 export class AuthController {
-  constructor(private readonly commandBus: CommandBus) {}
+  constructor(
+    private readonly commandBus: CommandBus,
+    private readonly jwtService: JwtService,
+  ) {}
 
   @Public()
   @Post('refresh-token')
@@ -132,6 +137,49 @@ export class AuthController {
   @ApiOperation({ summary: 'Google Authentication' })
   googleAuth() {
     // The redirection is handled by Passport
+  }
+
+  @Public()
+  @Get('linkedin')
+  @UseGuards(AuthGuard('linkedin'))
+  @ApiOperation({ summary: 'LinkedIn Auth' })
+  linkedinAuth() {
+    // La redirection est gérée par Passport
+  }
+
+  @Public()
+  @Get('linkedin/callback')
+  @UseGuards(AuthGuard('linkedin'))
+  @ApiOperation({ summary: 'LinkedIn Auth Callback' })
+  async linkedinAuthCallback(@Req() req: any, @Res() res: Response) {
+    try {
+      const { access_token, refresh_token } = await this.commandBus.execute(
+        new LinkedInLoginCommand({
+          email: req.user.email,
+          firstName: req.user.firstName,
+          lastName: req.user.lastName,
+          picture: req.user.picture,
+          linkedinId: req.user.linkedinId,
+        }),
+      );
+
+      res.cookie('refresh_token', refresh_token, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'lax',
+        maxAge: 30 * 24 * 60 * 60 * 1000,
+        path: '/api/auth/refresh-token',
+      });
+
+      return res.redirect(
+        `${process.env.FRONTEND_URL}/auth/linkedin/callback?token=${access_token}`,
+      );
+    } catch (error) {
+      console.error('Erreur LinkedIn Auth:', error);
+      return res.redirect(
+        `${process.env.FRONTEND_URL}/login?error=auth_failed`,
+      );
+    }
   }
 
   @Public()
