@@ -56,6 +56,8 @@ async function bootstrap() {
     credentials: true, // Si vous avez besoin d'envoyer des cookies
   });
 
+  console.log('RABBITMQ_URL:', process.env.RABBITMQ_URL);
+
   app.useGlobalPipes(
     new ValidationPipe({
       transform: true,
