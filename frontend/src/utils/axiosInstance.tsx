@@ -3,12 +3,13 @@ import axios from 'axios';
 
 // Créez une instance Axios avec la base URL
 const axiosInstance = axios.create({
-  baseURL: process.env.REACT_APP_API_URL,
+  baseURL: process.env.NODE_ENV === 'production' 
+    ? 'https://hrplatform.onrender.com/api'
+    : 'http://localhost:3000/api',
   withCredentials: true, // Important pour envoyer les cookies
   headers: {
-    'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
-    'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+    'Content-Type': 'application/json',
+    'Accept': 'application/json'
   },
 });
 
