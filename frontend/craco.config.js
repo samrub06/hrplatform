@@ -21,6 +21,11 @@ module.exports = {
         ],
       });
 
+      webpackConfig.output = {
+        ...webpackConfig.output,
+        publicPath: '/'
+      };
+
       return webpackConfig;
     },
   },
