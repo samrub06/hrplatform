@@ -32,16 +32,16 @@ const AdminDashboard = Loadable(lazy(() => import('./pages/AdminDashboard')));
 
 export const publicRoutes: RouteObject[] = [
   {
-    path: 'auth',
+    path: '/auth',
     element: <AuthenticationLayout />,
     children: [
-      { path: 'login', element: <Login /> },
-      { path: 'signup', element: <SignUp /> },
+      { path: '/login', element: <Login /> },
+      { path: '/signup', element: <SignUp /> },
       { path: '*', element: <Navigate to="/auth/login" /> },
     ],
   },
   {
-    path: 'user/profile/public/:token',
+    path: '/user/profile/public/:token',
     element: <PublicProfile />
   },
   {
@@ -81,7 +81,7 @@ export const adminRoutes: RouteObject[] = [
       <DashboardLayout />
     </ProtectedRoute>,
     children: [
-      { path: 'dashboard', element: <AdminDashboard /> },
+      { path: '/dashboard', element: <AdminDashboard /> },
       { path: '*', element: <Navigate to="/admin/dashboard" /> },
     ],
   },
