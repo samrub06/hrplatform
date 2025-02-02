@@ -49,11 +49,20 @@ async function bootstrap() {
 
   app.use(cookieParser());
 
-  // Activer CORS
+  // Activer CORS avec la configuration de production
   app.enableCors({
-    origin: 'http://localhost:3001', // Remplacez par l'origine de votre clien
+    origin:
+      process.env.NODE_ENV === 'production'
+        ? [
+            'https://hrplatform-frontend.onrender.com',
+            'https://hrplatform.onrender.com',
+          ]
+        : 'http://localhost:3001',
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-    credentials: true, // Si vous avez besoin d'envoyer des cookies
+    credentials: true,
+    allowedHeaders: ['Content-Type', 'Authorization'],
+    exposedHeaders: ['Content-Range', 'X-Content-Range'],
+    maxAge: 3600,
   });
 
   console.log('RABBITMQ_URL:', process.env.RABBITMQ_URL);
