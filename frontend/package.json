@@ -36,7 +36,8 @@
     "start": "craco start",
     "build:dev": "craco build",
     "build": "craco build",
-    "test": "craco test"
+    "test": "craco test",
+    "serve": "serve -s build"
   },
   "eslintConfig": {
     "extends": [
@@ -58,6 +59,7 @@
   },
   "devDependencies": {
     "@craco/craco": "^7.1.0",
+    "serve": "^14.2.1",
     "ts-loader": "^9.5.1"
   }
 }
