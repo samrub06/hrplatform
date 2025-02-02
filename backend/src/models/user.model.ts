@@ -167,4 +167,10 @@ export class User extends Model {
     allowNull: true,
   })
   googleId?: string;
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
+  linkedinId?: string;
 }

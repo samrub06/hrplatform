@@ -1,10 +1,10 @@
-import { GoogleOutlined, LockOutlined, MailOutlined } from "@ant-design/icons";
+import { GoogleOutlined, LinkedinOutlined, LockOutlined, MailOutlined } from "@ant-design/icons";
 import { Button, Form, Grid, Input, Space, theme, Typography } from "antd";
 import { useState } from "react";
 import { useNavigate } from "react-router";
 import { SEOHead } from "../components/SEOHead";
 import { useAuth } from "../context/AuthContext";
-import { login, loginGoogle } from "../services/auth.service";
+import { login, loginGoogle, loginLinkedIn } from "../services/auth.service";
 
 const { useToken } = theme;
 const { useBreakpoint } = Grid;
@@ -33,6 +33,10 @@ export default function LoginPage() {
 
   const handleGoogleLogin = () => {
     loginGoogle();
+  };
+
+  const handleLinkedInLogin = () => {
+    loginLinkedIn();
   };
 
   const styles = {
@@ -158,6 +162,14 @@ export default function LoginPage() {
                   style={styles.googleButton}
                 >
                   Continue with Google
+                </Button>
+                <Button
+                  block
+                  onClick={handleLinkedInLogin}
+                  icon={<LinkedinOutlined style={{ ...styles.googleIcon, color: '#0077B5' }} />}
+                  style={styles.googleButton}
+                >
+                  Continue with LinkedIn
                 </Button>
               </Space>
 

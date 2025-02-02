@@ -6,6 +6,7 @@ import {
   SwaggerModule,
 } from '@nestjs/swagger';
 import cookieParser from 'cookie-parser';
+import session from 'express-session';
 import * as winston from 'winston';
 import { AllExceptionsFilter } from './all-exceptions.filter';
 import { AppModule } from './app.module';
@@ -32,6 +33,20 @@ async function bootstrap() {
   });
 
   const app = await NestFactory.create(AppModule);
+
+  // Ajout du middleware session avant les autres middlewares
+  app.use(
+    session({
+      secret: process.env.SESSION_SECRET || 'your-secret-key',
+      resave: false,
+      saveUninitialized: false,
+      cookie: {
+        maxAge: 60000 * 60, // 1 heure
+        secure: process.env.NODE_ENV === 'production',
+      },
+    }),
+  );
+
   app.use(cookieParser());
 
   // Activer CORS
@@ -74,6 +89,5 @@ async function bootstrap() {
 
   logger.info(` 🚀 Application is running on: ${fullUrl}`);
   logger.info(` 📚 Swagger is available on: ${fullUrl}/swagger`);
-  logger.info(` 📚 GraphQL is available on: ${fullUrl}/graphql`);
 }
 bootstrap();

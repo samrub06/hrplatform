@@ -31,6 +31,10 @@ export class CreateUserRequestDto {
   @IsString()
   googleId?: string;
 
+  @ApiProperty({ description: 'linkedin id' })
+  @IsString()
+  linkedinId?: string;
+
   @ApiProperty({ description: 'The picture of the user' })
   @IsString()
   profilePicture?: string;

@@ -103,4 +103,9 @@ export class UpdateUserRequestDto {
   @IsOptional()
   @IsString()
   googleId?: string;
+
+  @ApiProperty({ required: false })
+  @IsOptional()
+  @IsString()
+  linkedinId?: string;
 }
