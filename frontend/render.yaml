@@ -5,7 +5,7 @@ services:
     staticPublishPath: ./build
     envVars:
       - key: REACT_APP_API_URL
-        value: https://hrplatform-1.onrender.com/api 
+        value: https://hrplatform-api.onrender.com
       - key: NODE_VERSION
         value: 18.x
     headers:

@@ -39,7 +39,7 @@ axiosInstance.interceptors.response.use(
       try {
         // Le refresh token est automatiquement envoyé dans les cookies
         const response = await axios.post(
-          'http://localhost:3000/api/auth/refresh-token',
+          `${process.env.REACT_APP_API_URL}/auth/refresh-token`,
           {},
           { withCredentials: true }
         );

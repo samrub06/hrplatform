@@ -89,7 +89,7 @@ export const handleGoogleCallback = async (accessToken: string): Promise<AuthUse
 };
 
 export const loginLinkedIn = async (): Promise<void> => {
-  window.location.href = 'http://localhost:3000/api/auth/linkedin';
+  window.location.href = `${process.env.REACT_APP_API_URL}/auth/linkedin`;
 };
 
 export const handleLinkedInCallback = async (accessToken: string): Promise<AuthUser> => {
