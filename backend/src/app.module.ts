@@ -38,7 +38,7 @@ import { UsersModule } from './users/users.module';
     OpenAIModule,
     NotificationsModule,
     ConfigModule.forRoot({
-      envFilePath: '.env',
+      envFilePath: ['.env', '.env.production'],
       isGlobal: true,
     }),
     SequelizeModule.forRoot({
