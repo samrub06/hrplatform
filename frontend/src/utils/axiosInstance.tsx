@@ -5,6 +5,11 @@ import axios from 'axios';
 const axiosInstance = axios.create({
   baseURL: process.env.NODE_ENV === 'production' ? 'https://hrplatform.onrender.com/api' : 'http://localhost:3000/api', // Remplacez par votre URL de base
   withCredentials: true, // Important pour envoyer les cookies
+  headers: {
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+    'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+  },
 });
 
 // Ajoutez un intercepteur pour inclure le token Bearer
