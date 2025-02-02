@@ -54,7 +54,7 @@ async function bootstrap() {
     origin:
       process.env.NODE_ENV === 'production'
         ? [
-            'https://hrplatform-frontend.onrender.com',
+            'https://hrplatform-1.onrender.com',
             'https://hrplatform.onrender.com',
           ]
         : 'http://localhost:3001',
