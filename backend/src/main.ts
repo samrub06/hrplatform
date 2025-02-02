@@ -51,18 +51,18 @@ async function bootstrap() {
 
   // Activer CORS avec la configuration de production
   app.enableCors({
-    origin:
-      process.env.NODE_ENV === 'production'
-        ? [
-            'https://hrplatform-1.onrender.com',
-            'https://hrplatform.onrender.com',
-          ]
-        : 'http://localhost:3001',
-    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+    origin: [
+      'https://hrplatform-1.onrender.com',
+      'https://hrplatform.onrender.com',
+      'http://localhost:3001',
+    ],
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
     credentials: true,
-    allowedHeaders: ['Content-Type', 'Authorization'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'Accept'],
     exposedHeaders: ['Content-Range', 'X-Content-Range'],
     maxAge: 3600,
+    preflightContinue: false,
+    optionsSuccessStatus: 204,
   });
 
   console.log('RABBITMQ_URL:', process.env.RABBITMQ_URL);
