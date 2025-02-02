@@ -34,6 +34,7 @@
   },
   "scripts": {
     "start": "craco start",
+    "build:dev": "craco build",
     "build": "craco build",
     "test": "craco test"
   },
