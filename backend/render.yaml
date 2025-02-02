@@ -1,35 +1,77 @@
 services:
   - type: web
-    name: hrplatform-api
-    runtime: node
-    buildCommand: npm install && npm run build
-    startCommand: npm run start:prod
+    name: hr-platform-api
+    env: docker
+    dockerfilePath: ./Dockerfile
+    region: frankfurt
+    plan: starter
+    branch: main
+    numInstances: 1
+    healthCheckPath: /health
     envVars:
       - key: NODE_ENV
         value: production
-      - key: PORT
-        value: 3000
-      - key: DATABASE_URL
+      - key: DB_HOST
         fromDatabase:
-          name: hrplatform-db
-          property: connectionString
+          name: postgres
+          property: host
+      - key: DB_PORT
+        fromDatabase:
+          name: postgres
+          property: port
+      - key: DB_USER
+        fromDatabase:
+          name: postgres
+          property: user
+      - key: DB_PASSWORD
+        fromDatabase:
+          name: postgres
+          property: password
+      - key: DB_NAME
+        fromDatabase:
+          name: postgres
+          property: database
+      - key: REDIS_HOST
+        fromService:
+          type: redis
+          name: redis
+          property: host
+      - key: REDIS_PORT
+        value: 6379
+      - key: RABBITMQ_URL
+        fromService:
+          type: pserv
+          name: rabbitmq
+          property: url
       - key: JWT_SECRET
-        sync: false
-      - key: AWS_ACCESS_KEY_ID
-        sync: false
-      - key: AWS_SECRET_ACCESS_KEY
-        sync: false
-      - key: AWS_REGION_S3
-        value: us-east-1
-      - key: RESEND_API_KEY
         sync: false
       - key: GOOGLE_CLIENT_ID
         sync: false
       - key: GOOGLE_CLIENT_SECRET
         sync: false
+      - key: GOOGLE_CALLBACK_URL
+        sync: false
+      - key: RESEND_API_KEY
+        sync: false
+
+  - type: redis
+    name: redis
+    ipAllowList: []
+    plan: starter
+    maxmemoryPolicy: noeviction
+
+  - type: pserv
+    name: rabbitmq
+    env: docker
+    repo: https://github.com/rabbitmq/rabbitmq-server.git
+    dockerfilePath: ./Dockerfile
+    plan: starter
+    disk:
+      name: data
+      mountPath: /var/lib/rabbitmq
+      sizeGB: 1
 
 databases:
-  - name: hrplatform-db
+  - name: postgres
+    databaseName: hr_platform
     plan: starter
-    databaseName: hrplatform
-    ipAllowList: []
