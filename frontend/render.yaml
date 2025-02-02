@@ -1,0 +1,18 @@
+services:
+  - type: web
+    name: hrplatform-frontend
+    buildCommand: npm install && npm run build
+    staticPublishPath: ./build
+    envVars:
+      - key: REACT_APP_API_URL
+        value: https://hrplatform.onrender.com
+      - key: NODE_VERSION
+        value: 18.x
+    headers:
+      - path: /*
+        name: Cache-Control
+        value: no-cache
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html 
