@@ -27,7 +27,6 @@ import { LoginAdminRequestDto } from './dto/login-admin.request.dto';
 import { LoginRequestDto } from './dto/login.request.dto';
 import { LoginResponseDto } from './dto/login.response.dto';
 import { RegisterAdminRequestDto } from './dto/register-admin.request.dto';
-import { RegisterGoogleRequestDto } from './dto/register-google.request.dto';
 import { RegisterRequestDto } from './dto/register.request.dto';
 import { RegisterResponseDto } from './dto/register.response.dto';
 
@@ -187,8 +186,8 @@ export class AuthController {
   @UseGuards(AuthGuard('google'))
   @ApiOperation({ summary: 'Google Auth Callback' })
   // req.user.email, req.user.first_name, req.user.last_name, req.user.picture, req.user.googleId
-  async googleAuthCallback(@Req() req: any, @Res() res) {
-    const user = req.user as RegisterGoogleRequestDto;
+  async googleAuthCallback(@Req() req: any, @Res() res: any) {
+    const user = req.user as any;
     try {
       const { access_token, refresh_token } = await this.commandBus.execute(
         new GoogleLoginCommand({
@@ -196,7 +195,7 @@ export class AuthController {
           firstName: user.firstName,
           lastName: user.lastName,
           picture: user.picture,
-          googleId: user.googleId,
+          googleId: user?.id,
         }),
       );
 
