@@ -41,19 +41,8 @@ export const login = async (credentials: LoginRequestDto): Promise<AuthUser> => 
 };
 
 export const loginGoogle = async (): Promise<void> => {
-  try {
-    const response = await axiosInstance.get('/auth/google');
-    // Si l'API renvoie une URL de redirection
-    if (response.data?.redirectUrl) {
-      window.location.href = response.data.redirectUrl;
-    } else {
-      // Sinon, utilisez l'URL de la réponse directement
-      window.location.href = response.request.responseURL;
-    }
-  } catch (error) {
-    console.error('Erreur lors de la redirection Google:', error);
-    throw error;
-  }
+  window.location.href = 'http://localhost:3000/api/auth/google';
+
 };
 
 export const register = async (data: RegisterDto): Promise<AuthUser> => {
@@ -89,7 +78,7 @@ export const handleGoogleCallback = async (accessToken: string): Promise<AuthUse
 };
 
 export const loginLinkedIn = async (): Promise<void> => {
-  window.location.href = `${process.env.REACT_APP_API_URL}/auth/linkedin`;
+  window.location.href = 'http://localhost:3000/api/auth/linkedin';
 };
 
 export const handleLinkedInCallback = async (accessToken: string): Promise<AuthUser> => {

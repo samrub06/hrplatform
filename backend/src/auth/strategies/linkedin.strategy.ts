@@ -1,34 +1,68 @@
 import { Injectable } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
-import { Strategy } from 'passport-linkedin-oauth2';
+import axios from 'axios';
+import { Strategy } from 'passport-oauth2';
 
 @Injectable()
 export class LinkedInStrategy extends PassportStrategy(Strategy, 'linkedin') {
   constructor() {
-    console.log('LinkedIn Strategy Initialization');
-    console.log('Callback URL:', process.env.LINKEDIN_CALLBACK_URL);
-
     super({
-      clientID: '7849cqrqoytm9c',
-      clientSecret: 'WPL_AP1.9kBo24GdV2Kd7gnE.JFK2tQ==',
-      callbackURL: 'http://localhost:3000/api/auth/linkedin/callback',
+      authorizationURL: 'https://www.linkedin.com/oauth/v2/authorization',
+      tokenURL: 'https://www.linkedin.com/oauth/v2/accessToken',
+      clientID: process.env.LINKEDIN_CLIENT_ID,
+      clientSecret: process.env.LINKEDIN_CLIENT_SECRET,
+      callbackURL: process.env.LINKEDIN_CALLBACK_URL,
       scope: ['openid', 'profile', 'email'],
     });
   }
 
-  async validate(accessToken: string, refreshToken: string, profile: any) {
+  async validate(accessToken: string): Promise<any> {
     try {
-      console.log('LinkedIn Profile:', profile);
+      console.log(
+        'Tentative de récupération du profil LinkedIn avec le token:',
+        accessToken,
+      );
 
-      return {
-        linkedinId: profile.id,
-        email: profile.emails[0].value,
-        firstName: profile.name.givenName,
-        lastName: profile.name.familyName,
-        picture: profile.photos?.[0]?.value,
+      const { data: userInfo } = await axios.get(
+        'https://api.linkedin.com/v2/userinfo',
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        },
+      );
+
+      console.log('Réponse LinkedIn userInfo:', userInfo);
+
+      if (!userInfo) {
+        throw new Error('Aucune donnée de profil reçue de LinkedIn');
+      }
+
+      const userData = {
+        linkedinId: userInfo.sub,
+        email: userInfo.email,
+        firstName: userInfo.given_name || userInfo.name?.split(' ')[0] || '',
+        lastName:
+          userInfo.family_name ||
+          userInfo.name?.split(' ').slice(1).join(' ') ||
+          '',
+        picture: userInfo.picture,
       };
+
+      console.log('Données utilisateur structurées:', userData);
+
+      if (!userData.email) {
+        console.warn('Email manquant dans le profil LinkedIn');
+      }
+
+      return userData;
     } catch (error) {
-      console.error('Erreur lors de la validation LinkedIn:', error);
+      console.error('Erreur lors de la validation LinkedIn:', {
+        message: error.message,
+        response: error.response?.data,
+        status: error.response?.status,
+        headers: error.response?.headers,
+      });
       throw error;
     }
   }

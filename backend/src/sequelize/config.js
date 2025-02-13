@@ -1,22 +1,9 @@
-import * as dotenv from 'dotenv';
-import { Dialect } from 'sequelize';
-
+const dotenv = require('dotenv');
 dotenv.config();
 
-interface ISequelizeConfig {
-  [key: string]: {
-    dialect: Dialect;
-    username: string;
-    password: string;
-    database: string;
-    host: string;
-    port: number;
-  };
-}
-
-const config: ISequelizeConfig = {
+const config = {
   development: {
-    dialect: 'postgres' as Dialect,
+    dialect: 'postgres',
     host: process.env.DB_HOST,
     port: parseInt(process.env.DB_PORT, 10),
     username: process.env.DB_USER,
