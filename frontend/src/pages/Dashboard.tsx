@@ -2,6 +2,7 @@ import { PlusOutlined } from '@ant-design/icons';
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Button, Col, Input, message, Row, Space, Typography } from "antd";
 import { useCallback, useState } from "react";
+import JobDetailsView from '../components/JobDetailsView';
 import JobOfferModal from "../components/JobOfferModal";
 import JobTable from "../components/JobTable";
 import UserFormModal from "../components/UserFormModal";
@@ -24,12 +25,11 @@ const Dashboard = () => {
 	const [selectedJob, setSelectedJob] = useState<Job | null>(null);
 	const [selectedUser, setSelectedUser] = useState<UserData | null>(null);
 	const [isJobModalVisible, setIsJobModalVisible] = useState(false);
+	const [showJobDetailsView, setShowJobDetailsView] = useState(false);
 	const [isUserModalVisible, setIsUserModalVisible] = useState(false);
 	const queryClient = useQueryClient();
 	const [currentPage, setCurrentPage] = useState(1);
 	const [pageSize, setPageSize] = useState(5);
-
-	
 
 	const { data: jobsData, isLoading: isLoadingJobs } = useQuery({
 		queryKey: ['jobs', currentPage, pageSize],
@@ -84,9 +84,6 @@ const Dashboard = () => {
 		debouncedSearchUser(e.target.value);
 	};
 
-
-
-
 	const handleEditJob = (job: Job) => {
 		setSelectedJob(job);
 		setIsJobModalVisible(true);
@@ -101,6 +98,12 @@ const Dashboard = () => {
 	const handleModalClose = () => {
 		setSelectedJob(null);
 		setIsJobModalVisible(false);
+	};
+
+	const handleRowClick = (job: Job) => {
+		setSelectedJob(job);
+		setShowJobDetailsView(true);
+		setIsJobModalVisible(true);
 	};
 
 	const handleEditUser = (user: UserData) => {
@@ -171,6 +174,7 @@ const Dashboard = () => {
 							canEdit={true}
 							canDelete={true}
 							currentUserId={user?.id}
+							onRowClick={handleRowClick}
 							onEdit={handleEditJob}
 							onDelete={handleDeleteJob}
 							pagination={{
@@ -264,7 +268,13 @@ const Dashboard = () => {
 			</Space>
 
 			{/* Modals */}
-			{isJobModalVisible && (
+			{isJobModalVisible && showJobDetailsView && selectedJob ? (
+				<JobDetailsView
+					isVisible={isJobModalVisible}
+					onClose={handleModalClose}
+					job={selectedJob}
+				/>
+			) : (
 				<JobOfferModal
 					isVisible={isJobModalVisible}
 					onClose={handleModalClose}

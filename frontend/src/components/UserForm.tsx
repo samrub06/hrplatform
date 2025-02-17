@@ -17,6 +17,7 @@ interface UserFormProps {
   setUploading: (loading: boolean) => void;
   partialForm?: 'personal' | 'documents' | 'skills' | 'links' | 'education';
   mode?: 'signup' | 'edit';
+  isReadOnly?: boolean;
 }
 
 const UserForm = React.forwardRef<any, UserFormProps>(({
@@ -25,7 +26,8 @@ const UserForm = React.forwardRef<any, UserFormProps>(({
   onClose,
   setUploading,
   mode,
-  partialForm
+  partialForm,
+  isReadOnly
 }, ref) => {
   const [form] = Form.useForm();
   const [existingCV, setExistingCV] = useState<string | null>(initialData?.cv || null);
@@ -204,6 +206,7 @@ const UserForm = React.forwardRef<any, UserFormProps>(({
                     maxCount={1}
                     listType="picture-card"
                     showUploadList={true}
+                    disabled={isReadOnly}
                   >
                     <div>
                       <PlusOutlined />
@@ -214,23 +217,23 @@ const UserForm = React.forwardRef<any, UserFormProps>(({
               </Col>
               <Col span={12}>
                 <Form.Item name="first_name" label="First Name" rules={[{ required: true }]}>
-                  <Input />
+                  <Input disabled={isReadOnly} />
                 </Form.Item>
               </Col>
               <Col span={12}>
                 <Form.Item name="last_name" label="Last Name" rules={[{ required: true }]}>
-                  <Input />
+                  <Input disabled={isReadOnly} />
                 </Form.Item>
               </Col>
             </Row>
             <Form.Item name="email" label="Email" rules={[{ required: true, type: 'email' }]}>
-              <Input />
+              <Input disabled={isReadOnly} />
             </Form.Item>
             
             { user?.role === 'candidate' && (
               <>
                 <Form.Item name="desired_position" label="Desired Position">
-                  <Input />
+                  <Input disabled={isReadOnly} />
                 </Form.Item>
                 <Form.Item name="salary_expectation" label="Expected Salary (k€)">
                   <Slider
@@ -249,6 +252,7 @@ const UserForm = React.forwardRef<any, UserFormProps>(({
                     tooltip={{
                       formatter: (value) => `${value}k₪/month`
                     }}
+                    disabled={isReadOnly}
                   />
                 </Form.Item>
               </>
@@ -257,16 +261,16 @@ const UserForm = React.forwardRef<any, UserFormProps>(({
             {user?.role === 'publisher' && (
               <>
                 <Form.Item name="current_position" label="Current Position">
-                  <Input />
+                  <Input disabled={isReadOnly} />
                 </Form.Item>
                 <Form.Item name="current_company" label="Current Company">
-                  <Input />
-                </Form.Item>
+                  <Input disabled={isReadOnly} />
+                </Form.Item>  
               </>
             )}
             {mode !== 'signup' && (
               <Form.Item name="role" label="Status">
-                <Select>
+                <Select disabled={isReadOnly}>
                   <Select.Option value="publisher">Publisher</Select.Option>
                   <Select.Option value="candidate">Candidate</Select.Option>
                 </Select>

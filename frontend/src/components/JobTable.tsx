@@ -13,9 +13,10 @@ interface JobTableProps {
   onDelete?: (jobId: string) => void;
   currentUserId?: string;
   pagination?: TablePaginationConfig;
+  onRowClick?: (job: Job) => void;
 }
 
-const JobTable: React.FC<JobTableProps> = ({ jobs, isLoading, onEdit, onDelete, canEdit, canDelete, currentUserId, pagination }) => {
+const JobTable: React.FC<JobTableProps> = ({ jobs, isLoading, onEdit, onDelete, canEdit, canDelete, currentUserId, pagination, onRowClick }) => {
  
   const getBadgeColor = (yearsRequired: number) => {
     if (yearsRequired <= 2) return 'green';
@@ -101,7 +102,10 @@ const JobTable: React.FC<JobTableProps> = ({ jobs, isLoading, onEdit, onDelete, 
       rowKey="id"
       pagination={pagination}
       scroll={{ x: 'max-content' }}
-
+      onRow={(record) => ({
+        onClick: () => onRowClick?.(record), // Gestionnaire de clic
+        style: { cursor: 'pointer' } // Curseur pointer au survol
+      })}
     />
   );
 };

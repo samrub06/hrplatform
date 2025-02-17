@@ -13,9 +13,10 @@ interface JobOfferModalProps {
   onClose: () => void;
   userId: string;
   initialData?: Job | null;
+  isReadOnly?: boolean;
 }
 
-const JobOfferModal = ({ isVisible, onClose, userId, initialData }: JobOfferModalProps) => {
+const JobOfferModal = ({ isVisible, onClose, userId, initialData, isReadOnly }: JobOfferModalProps) => {
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
   const queryClient = useQueryClient();
@@ -112,6 +113,7 @@ const JobOfferModal = ({ isVisible, onClose, userId, initialData }: JobOfferModa
         onFinish={handleSubmit}
         onFieldsChange={handleFieldChange}
         initialValues={{ skills: [] }}
+
       >
         <Row gutter={16}>
           <Col span={24}>

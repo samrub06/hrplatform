@@ -8,6 +8,7 @@ interface UserFormModalProps {
   onClose: () => void;
   initialData?: UserData | null;
   onSuccess: () => void;
+  isReadOnly?: boolean;
 }
 
 const UserFormModal: React.FC<UserFormModalProps> = ({
@@ -15,6 +16,7 @@ const UserFormModal: React.FC<UserFormModalProps> = ({
   onClose,
   initialData,
   onSuccess,
+  isReadOnly
 }) => {
   const isEditMode = !!initialData;
   const formRef = React.useRef<any>();
@@ -39,6 +41,7 @@ const UserFormModal: React.FC<UserFormModalProps> = ({
         onSuccess={onSuccess}
         onClose={onClose}
         setUploading={setUploading}
+        isReadOnly={isReadOnly}
 
       />
     </Modal>
