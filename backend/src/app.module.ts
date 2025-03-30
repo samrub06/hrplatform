@@ -14,10 +14,12 @@ import { Admin } from './models/admin.model';
 import { CVEducation } from './models/cv-education.model';
 import { CVSkill } from './models/cv-skill.model';
 import { CV } from './models/cv.model';
+import { Email } from './models/emails.model';
 import { Job } from './models/job.model';
 import { Permission } from './models/permission.model';
 import { RolePermission } from './models/role-permission.model';
 import { Role } from './models/role.model';
+import { RefreshToken } from './models/token.model';
 import { User } from './models/user.model';
 import { NotificationsModule } from './notifications/notifications.module';
 import { OpenAIModule } from './openai/openai.module';
@@ -49,19 +51,21 @@ import { UsersModule } from './users/users.module';
       password: process.env.DB_PASSWORD,
       database: process.env.DB_NAME,
       models: [
+        User,
+        CV,
         Admin,
         Role,
         Permission,
-        User,
         AdminNote,
         RolePermission,
         Job,
-        CV,
         CVEducation,
         CVSkill,
+        RefreshToken,
+        Email,
       ],
       autoLoadModels: true,
-      synchronize: true,
+      synchronize: false,
     }),
     RabbitMQModule,
   ],

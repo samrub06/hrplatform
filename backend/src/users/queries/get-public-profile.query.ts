@@ -38,7 +38,7 @@ export class GetPublicProfileHandler
       last_name: user.last_name,
       desired_position: user.desired_position,
       profilePicture: user.profilePicture,
-      cv: user.cv,
+      cv: user.cv.fileName,
       phone_number: user.phone_number,
       github_link: user.github_link,
       linkedin_link: user.linkedin_link,

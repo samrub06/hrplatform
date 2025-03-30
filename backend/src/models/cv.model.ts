@@ -31,13 +31,28 @@ export class CV extends Model {
     type: DataType.STRING,
     allowNull: false,
   })
-  name?: string;
+  name: string;
 
   @Column({
     type: DataType.STRING,
     allowNull: true,
   })
   email?: string;
+
+  @ForeignKey(() => User)
+  @Column({
+    type: DataType.UUID,
+    allowNull: false,
+    field: 'user_id',
+  })
+  user_id: string;
+
+  @BelongsTo(() => User, {
+    foreignKey: 'user_id',
+    as: 'user',
+    onDelete: 'CASCADE',
+  })
+  user: User;
 
   @Column({
     type: DataType.STRING,
@@ -50,21 +65,6 @@ export class CV extends Model {
     allowNull: true,
   })
   location: string;
-
-  @ForeignKey(() => User)
-  @Column({
-    type: DataType.UUID,
-    allowNull: false,
-    field: 'user_id',
-    references: {
-      model: 'user',
-      key: 'id',
-    },
-  })
-  user_id: string;
-
-  @BelongsTo(() => User)
-  user: User;
 
   @HasMany(() => CVSkill, {
     foreignKey: 'cv_id',

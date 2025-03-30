@@ -1,4 +1,5 @@
-import { Column, DataType, Model, Table } from 'sequelize-typescript';
+import { Column, DataType, HasMany, Model, Table } from 'sequelize-typescript';
+import { AdminNote } from './admin-note.model';
 
 @Table({ tableName: 'admin' })
 export class Admin extends Model {
@@ -28,12 +29,16 @@ export class Admin extends Model {
   })
   password: string;
 
+  @HasMany(() => AdminNote, {
+    foreignKey: 'admin_id',
+    as: 'adminNotes',
+    onDelete: 'CASCADE',
+  })
+  adminNotes: AdminNote;
+
   @Column
   createdAt: Date;
 
   @Column
   updatedAt: Date;
-
-  /*   @HasOne(() => AdminNote)
-  adminNote: AdminNote; */
 }

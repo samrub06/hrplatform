@@ -24,9 +24,22 @@ export class RefreshToken extends Model {
   token: string;
 
   @ForeignKey(() => User)
+  @Column({
+    type: DataType.UUID,
+    allowNull: false,
+    field: 'userId',
+    references: {
+      model: 'user',
+      key: 'id',
+    },
+  })
   userId: string;
 
-  @BelongsTo(() => User)
+  @BelongsTo(() => User, {
+    foreignKey: 'userId',
+    as: 'user',
+    onDelete: 'CASCADE',
+  })
   user: User;
 
   @Column({
