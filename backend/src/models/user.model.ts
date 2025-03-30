@@ -4,16 +4,44 @@ import {
   Column,
   DataType,
   ForeignKey,
+  HasMany,
   HasOne,
   Model,
   Table,
 } from 'sequelize-typescript';
 import { CV } from 'src/models/cv.model';
 import { AdminNote } from './admin-note.model';
+import { Email } from './emails.model';
 import { Role } from './role.model';
+import { RefreshToken } from './token.model';
 
 @Table({ tableName: 'user', timestamps: true })
 export class User extends Model {
+  @HasOne(() => RefreshToken, {
+    foreignKey: 'userId',
+    as: 'refreshToken',
+  })
+  refreshToken: RefreshToken;
+
+  @HasOne(() => CV, {
+    foreignKey: 'user_id',
+    as: 'cv',
+  })
+  cv: CV;
+
+  @HasMany(() => Email, {
+    foreignKey: 'user_id',
+    as: 'emails',
+  })
+  emails: Email[];
+
+  @HasOne(() => AdminNote, {
+    foreignKey: 'user_id',
+    as: 'adminNotes',
+    onDelete: 'CASCADE',
+  })
+  adminNotes: AdminNote;
+
   @Column({
     type: DataType.UUID,
     defaultValue: DataType.UUIDV4,
@@ -55,12 +83,6 @@ export class User extends Model {
     allowNull: true,
   })
   profilePicture?: string;
-
-  @Column({
-    type: DataType.STRING,
-    allowNull: true,
-  })
-  cv?: string;
 
   @Column({
     type: DataType.STRING,
@@ -109,6 +131,7 @@ export class User extends Model {
     type: DataType.UUID,
     allowNull: true,
     field: 'role_id',
+    onDelete: 'SET NULL',
   })
   role_id: string;
 
@@ -146,15 +169,6 @@ export class User extends Model {
     defaultValue: DataType.NOW,
   })
   updatedAt: Date;
-
-  @HasOne(() => CV)
-  cv_id: CV;
-
-  @HasOne(() => AdminNote, {
-    foreignKey: 'user_id',
-    as: 'adminNotes',
-  })
-  adminNotes: AdminNote[];
 
   @Column({
     type: DataType.DATE,

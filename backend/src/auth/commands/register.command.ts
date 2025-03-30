@@ -1,14 +1,10 @@
-import { ConflictException, UnauthorizedException } from '@nestjs/common';
-import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
+import { BadRequestException, ConflictException } from '@nestjs/common';
+import { CommandBus, CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { UserRepository } from '../../users/user.repository';
 
-import {
-  RABBITMQ_EXCHANGES,
-  RABBITMQ_ROUTING_KEYS,
-} from 'src/rabbitmq/rabbitmq.config';
-import { RabbitMQService } from 'src/rabbitmq/rabbitmq.service';
+import { SendWelcomeEmailCommand } from 'src/notifications/commands/send-welcome-email.command';
 import { RegisterRequestDto } from '../dto/register.request.dto';
 import { RegisterResponseDto } from '../dto/register.response.dto';
 import { RegisterValidator } from './register.command.validator';
@@ -25,14 +21,16 @@ export class RegisterHandler
     private readonly userRepository: UserRepository,
     private readonly jwtService: JwtService,
     private readonly validator: RegisterValidator,
-    private readonly rabbitMQService: RabbitMQService,
+    private readonly commandBus: CommandBus,
   ) {}
 
   async execute(command: RegisterCommand): Promise<RegisterResponseDto> {
     const { request } = command;
 
-    if (!this.validator.validate(request)) {
-      throw new UnauthorizedException('Registration Invalid');
+    // Validation métier après validation syntaxique
+    const validationResult = this.validator.validate(request);
+    if (!validationResult.isValid) {
+      throw new BadRequestException(validationResult.errors);
     }
 
     const existingUser = await this.userRepository.findByEmail(request.email);
@@ -49,19 +47,15 @@ export class RegisterHandler
       last_name: request.last_name,
     });
 
-    // todo rabbit envoyer les donnees du cv + skilss ensuite manoua va toujours chercher les skills dans la base de donnee il va trouver un match de job avec les skills et sur le queue en reponse il renvoie une notfication qu il a trouve un match et au candidat il envoie un mail avec le job et le cv
-    await this.rabbitMQService.publishToExchange(
-      RABBITMQ_EXCHANGES.USER_EVENTS,
-      RABBITMQ_ROUTING_KEYS.USER_CREATED,
-      {
-        userId: newUser.id,
-        email: newUser.email,
-        event: 'NEW_USER_REGISTERED',
-        timestamp: new Date().toISOString(),
-        firstName: newUser.first_name,
-        lastName: newUser.last_name,
-      },
-    );
+    const emailData = {
+      user_id: newUser.id,
+      email: newUser.email,
+      first_name: newUser.first_name,
+      last_name: newUser.last_name,
+    };
+
+    // send to dispatcher to send email to user
+    await this.commandBus.execute(new SendWelcomeEmailCommand(emailData));
 
     const payload = {
       email: newUser.email,

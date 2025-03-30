@@ -22,19 +22,27 @@ export class RolePermission extends Model {
   @Column({
     type: DataType.UUID,
     allowNull: false,
+    field: 'role_id',
   })
   role_id: string;
+
+  @BelongsTo(() => Role, {
+    foreignKey: 'role_id',
+    as: 'role',
+  })
+  role: Role;
 
   @ForeignKey(() => Permission)
   @Column({
     type: DataType.UUID,
     allowNull: false,
+    field: 'permission_id',
   })
   permission_id: string;
 
-  @BelongsTo(() => Role)
-  role: Role;
-
-  @BelongsTo(() => Permission)
+  @BelongsTo(() => Permission, {
+    foreignKey: 'permission_id',
+    as: 'permission',
+  })
   permission: Permission;
 }

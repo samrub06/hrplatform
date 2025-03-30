@@ -34,26 +34,31 @@ export class NotificationService implements OnModuleInit {
     );
   }
 
-  private async handleUserNotification(message: any) {
-    switch (message.event) {
+  private async handleUserNotification(emailData: any) {
+    switch (emailData.event) {
       case 'NEW_USER_REGISTERED':
-        await this.sendWelcomeEmail(message);
-        await this.logUserRegistration(message);
+        await this.sendWelcomeEmail(emailData);
+        await this.logUserRegistration(emailData);
         break;
       case 'USER_UPDATED':
-        await this.handleUserUpdate(message);
+        await this.handleUserUpdate(emailData);
         break;
       case 'CV_JOB_MATCHED':
-        await this.handleCVMatched(message);
+        await this.handleCVMatched(emailData);
         break;
       case 'JOB_OFFER_CREATED':
-        await this.handleJobOfferCreated(message);
+        await this.handleJobOfferCreated(emailData);
         break;
     }
   }
 
   private async sendWelcomeEmail(userData: any) {
-    await this.emailService.sendWelcomeEmail(userData);
+    await this.emailService.sendEmail({
+      to: userData.email,
+      from: 'HR Platform <onboarding@resend.dev>',
+      subject: `Welcome ${userData.firstName} to HR Platform`,
+      body: userData.body,
+    });
   }
 
   private async logUserRegistration(userData: any) {

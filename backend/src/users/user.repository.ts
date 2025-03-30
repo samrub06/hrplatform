@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
 import { Role } from 'src/models/role.model';
+import { CV } from '../models/cv.model';
 import { User } from '../models/user.model';
 import { CreateUserRequestDto } from './commands/create-user.command.request.dto';
 import { UpdateUserRequestDto } from './commands/update-user.command.request.dto';
@@ -45,7 +46,15 @@ export class UserRepository {
   }
 
   async findById(id: string): Promise<User | null> {
-    return this.userModel.findByPk(id);
+    return this.userModel.findByPk(id, {
+      include: [
+        {
+          model: CV,
+          required: false,
+          attributes: ['id', 'fileName', 'name'],
+        },
+      ],
+    });
   }
 
   async findByPublicToken(code: string): Promise<User | null> {

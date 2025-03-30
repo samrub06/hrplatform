@@ -6,6 +6,7 @@ import { PassportModule } from '@nestjs/passport';
 import { SequelizeModule } from '@nestjs/sequelize';
 import { AdminModule } from 'src/admin/admin.module';
 import { RefreshToken } from 'src/models/token.model';
+import { NotificationsModule } from 'src/notifications/notifications.module';
 import { UsersModule } from '../users/users.module';
 import { AuthController } from './auth.controller';
 import { AuthGuard } from './auth.guards';
@@ -22,7 +23,6 @@ import { RevokeUserTokensHandler } from './commands/revoke-token.command';
 import { RefreshTokenRepository } from './refresh-token.repository';
 import { GoogleStrategy } from './strategies/google.strategy';
 import { LinkedInStrategy } from './strategies/linkedin.strategy';
-
 const CommandHandlers = [
   LoginHandler,
   LoginAdminHandler,
@@ -43,6 +43,7 @@ const Validators = [LoginValidator, RegisterValidator];
     PassportModule,
     forwardRef(() => UsersModule),
     forwardRef(() => AdminModule),
+    NotificationsModule,
     SequelizeModule.forFeature([RefreshToken]),
     JwtModule.registerAsync({
       imports: [ConfigModule],

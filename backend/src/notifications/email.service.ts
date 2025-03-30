@@ -1,7 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { render } from '@react-email/render';
 import { Resend } from 'resend';
-import WelcomeEmail from './react-templates/emails/WelcomeEmail';
 
 @Injectable()
 export class EmailService {
@@ -11,18 +9,17 @@ export class EmailService {
     this.resend = new Resend(process.env.RESEND_API_KEY);
   }
 
-  async sendWelcomeEmail(userData: any) {
-    const html = await render(
-      WelcomeEmail({
-        firstName: userData.firstName,
-      }),
-    );
-
+  async sendEmail(emailData: {
+    from: string;
+    to: string;
+    subject: string;
+    body: string;
+  }) {
     return this.resend.emails.send({
-      from: 'HR Platform <onboarding@resend.dev>',
-      to: 'delivered@resend.dev',
-      subject: `Welcome ${userData.firstName} to HR Platform`,
-      html: html,
+      from: emailData.from,
+      to: emailData.to,
+      subject: emailData.subject,
+      html: emailData.body,
     });
   }
 }

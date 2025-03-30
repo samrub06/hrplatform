@@ -1,4 +1,12 @@
-import { Column, DataType, HasMany, Model, Table } from 'sequelize-typescript';
+import {
+  BelongsToMany,
+  Column,
+  DataType,
+  HasMany,
+  Model,
+  Table,
+} from 'sequelize-typescript';
+import { Permission } from './permission.model';
 import { RolePermission } from './role-permission.model';
 import { User } from './user.model';
 
@@ -23,6 +31,14 @@ export class Role extends Model {
   @HasMany(() => RolePermission, {
     foreignKey: 'role_id',
     as: 'rolePermissions',
+    onDelete: 'CASCADE',
   })
   rolePermissions: RolePermission[];
+
+  @BelongsToMany(() => Permission, {
+    through: () => RolePermission,
+    foreignKey: 'role_id',
+    otherKey: 'permission_id',
+  })
+  permissions: Permission[];
 }

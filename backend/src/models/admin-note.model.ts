@@ -51,16 +51,13 @@ export class AdminNote extends Model {
     type: DataType.UUID,
     allowNull: false,
     field: 'admin_id',
-    references: {
-      model: 'admin',
-      key: 'id',
-    },
   })
   admin_id: string;
 
   @BelongsTo(() => Admin, {
     foreignKey: 'admin_id',
     as: 'admin',
+    onDelete: 'SET NULL',
   })
   admin: Admin;
 }

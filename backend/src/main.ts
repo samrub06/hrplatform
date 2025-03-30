@@ -74,6 +74,7 @@ async function bootstrap() {
         enableImplicitConversion: true,
       },
       whitelist: true,
+      forbidNonWhitelisted: true,
     }),
   );
   app.useGlobalFilters(new AllExceptionsFilter());

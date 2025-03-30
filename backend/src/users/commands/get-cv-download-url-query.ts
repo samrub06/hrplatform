@@ -18,12 +18,12 @@ export class GetCvDownloadUrlHandler
 
   async execute(query: GetCvDownloadUrlQuery) {
     const user = await this.userRepository.findById(query.userId);
-    if (!user || !user.cv) {
+    if (!user || !user?.cv.id) {
       throw new NotFoundException('File not found');
     }
 
     const presignedUrl = await this.awsService.generateDownloadUrl(
-      user.cv,
+      user.cv.fileName,
       user.id.toString(),
       FileType.CV,
     );
