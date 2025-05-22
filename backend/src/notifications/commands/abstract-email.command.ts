@@ -1,6 +1,6 @@
 import { Logger } from '@nestjs/common';
-import { ICommandHandler } from '@nestjs/cqrs';
-import { EmailDispatcherService } from '../email-dispatcher.service';
+import { CommandBus, ICommandHandler } from '@nestjs/cqrs';
+import { QueueEmailCommand } from './queue-email.command';
 
 export abstract class AbstractEmailCommand {
   abstract get type(): string;
@@ -10,11 +10,7 @@ export abstract class AbstractEmailHandler<T extends AbstractEmailCommand>
   implements ICommandHandler<T>
 {
   protected readonly logger = new Logger(this.constructor.name);
-
-  constructor(
-    protected readonly emailDispatcherService: EmailDispatcherService,
-  ) {}
-
+  constructor(protected readonly commandBus: CommandBus) {}
   abstract execute(command: T): Promise<any>;
 
   protected async queueEmail(emailData: {
@@ -32,8 +28,9 @@ export abstract class AbstractEmailHandler<T extends AbstractEmailCommand>
     this.logger.log(`Queueing email to ${emailData.recipient_email}`);
 
     try {
-      const queuedEmail =
-        await this.emailDispatcherService.queueEmail(emailData);
+      const queuedEmail = await this.commandBus.execute(
+        new QueueEmailCommand(emailData),
+      );
       this.logger.log(`Email queued successfully with ID: ${queuedEmail.id}`);
       return queuedEmail;
     } catch (error) {

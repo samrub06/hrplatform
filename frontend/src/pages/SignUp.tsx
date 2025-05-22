@@ -106,6 +106,7 @@ const SignUp = () => {
 
 					<Form.Item
 						name="password"
+						type="password"
 						rules={[{ required: true, message: 'Password required' }]}
 					>
 						<Input.Password prefix={<LockOutlined />} placeholder="Password" />

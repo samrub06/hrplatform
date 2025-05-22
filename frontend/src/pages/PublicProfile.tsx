@@ -11,7 +11,7 @@ const { Title, Text } = Typography;
 
 const PersonalInfoDisplay = ({ profile }: { profile: any }) => {
   const [imageUrl, setImageUrl] = useState<string | null>(null);
-
+console.log(imageUrl);
   useEffect(() => {
     const loadProfilePicture = async () => {
       if (profile?.profilePicture && profile?.id) {
@@ -119,7 +119,6 @@ const PublicProfile = () => {
           <PersonalInfoDisplay profile={profile} />
 
           <DocumentsDisplay profile={profile} />
-
           <SkillsDisplay skills={profile.skills} />
         </Col>
       </Row>

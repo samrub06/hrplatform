@@ -30,7 +30,7 @@ const UserForm = React.forwardRef<any, UserFormProps>(({
   isReadOnly
 }, ref) => {
   const [form] = Form.useForm();
-  const [existingCV, setExistingCV] = useState<string | null>(initialData?.cv || null);
+  const [existingCV, setExistingCV] = useState<string | null>(initialData?.cv?.fileName || null);
   const [fileToUpload, setFileToUpload] = useState<File | null>(null);
   const isEditMode = !!initialData;
   const { user, setUser } = useAuth();
@@ -390,7 +390,6 @@ const UserForm = React.forwardRef<any, UserFormProps>(({
                             {...restField}
                             name={[name, 'fieldOfStudy']}
                             label="Field of study"
-                            rules={[{ required: true, message: 'Field of study is required' }]}
                           >
                             <Input placeholder="Field of study" />
                           </Form.Item>
@@ -400,7 +399,6 @@ const UserForm = React.forwardRef<any, UserFormProps>(({
                             {...restField}
                             name={[name, 'period']}
                             label="Period"
-                            rules={[{ required: true, message: 'Period is required' }]}
                           >
                             <RangePicker />
                           </Form.Item>

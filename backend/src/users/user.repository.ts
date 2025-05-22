@@ -58,7 +58,14 @@ export class UserRepository {
   }
 
   async findByPublicToken(code: string): Promise<User | null> {
-    return this.userModel.findOne({ where: { public_link_code: code } });
+    return this.userModel.findOne({
+      where: { public_link_code: code },
+      include: [
+        {
+          model: CV,
+        },
+      ],
+    });
   }
 
   async update(
