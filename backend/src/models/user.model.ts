@@ -13,6 +13,7 @@ import { CV } from 'src/models/cv.model';
 import { AdminNote } from './admin-note.model';
 import { Email } from './emails.model';
 import { Role } from './role.model';
+import { SessionUser } from './sessionUser.model';
 import { RefreshToken } from './token.model';
 
 @Table({ tableName: 'user', timestamps: true })
@@ -41,6 +42,12 @@ export class User extends Model {
     onDelete: 'CASCADE',
   })
   adminNotes: AdminNote;
+
+  @HasMany(() => SessionUser, {
+    foreignKey: 'userId',
+    as: 'sessionUsers',
+  })
+  sessionUsers: SessionUser[];
 
   @Column({
     type: DataType.UUID,

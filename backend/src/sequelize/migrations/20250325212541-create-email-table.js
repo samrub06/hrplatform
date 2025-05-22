@@ -35,13 +35,10 @@ module.exports = {
         allowNull: false,
       },
       body: {
-        type: Sequelize.STRING,
+        type: Sequelize.TEXT,
         allowNull: true,
       },
-      body_html: {
-        type: Sequelize.STRING,
-        allowNull: false,
-      },
+     
       status: {
         type: Sequelize.STRING,
         allowNull: false,

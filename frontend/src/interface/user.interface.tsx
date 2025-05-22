@@ -9,7 +9,11 @@ export interface UserData {
   github_link?: string;
   linkedin_link?: string;
   public_profile_url?: string;
-  cv?: string | null;
+  cv?: {
+    fileName: string;
+    id: string;
+    name: string;
+  } | null;
   role?: string;
   adminNotes?: string;
   profilePicture?: string;

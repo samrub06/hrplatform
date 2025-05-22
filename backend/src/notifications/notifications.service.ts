@@ -5,14 +5,10 @@ import {
   RABBITMQ_ROUTING_KEYS,
 } from '../rabbitmq/rabbitmq.config';
 import { RabbitMQService } from '../rabbitmq/rabbitmq.service';
-import { EmailService } from './email.service';
 
 @Injectable()
 export class NotificationService implements OnModuleInit {
-  constructor(
-    private readonly rabbitMQService: RabbitMQService,
-    private readonly emailService: EmailService,
-  ) {}
+  constructor(private readonly rabbitMQService: RabbitMQService) {}
 
   async onModuleInit() {
     await this.setupQueuesAndBindings();
@@ -37,7 +33,6 @@ export class NotificationService implements OnModuleInit {
   private async handleUserNotification(emailData: any) {
     switch (emailData.event) {
       case 'NEW_USER_REGISTERED':
-        await this.sendWelcomeEmail(emailData);
         await this.logUserRegistration(emailData);
         break;
       case 'USER_UPDATED':
@@ -50,15 +45,6 @@ export class NotificationService implements OnModuleInit {
         await this.handleJobOfferCreated(emailData);
         break;
     }
-  }
-
-  private async sendWelcomeEmail(userData: any) {
-    await this.emailService.sendEmail({
-      to: userData.email,
-      from: 'HR Platform <onboarding@resend.dev>',
-      subject: `Welcome ${userData.firstName} to HR Platform`,
-      body: userData.body,
-    });
   }
 
   private async logUserRegistration(userData: any) {

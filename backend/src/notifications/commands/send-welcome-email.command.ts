@@ -1,7 +1,6 @@
-import { CommandHandler } from '@nestjs/cqrs';
+import { CommandBus, CommandHandler } from '@nestjs/cqrs';
 import { renderAsync } from '@react-email/render';
 import { SendWelcomeEmailRequestDto } from '../dto/send-welcome-email.request.dto';
-import { EmailDispatcherService } from '../email-dispatcher.service';
 import WelcomeEmail from '../react-templates/emails/WelcomeEmail';
 import {
   AbstractEmailCommand,
@@ -26,8 +25,8 @@ export class SendWelcomeEmailCommand extends AbstractEmailCommand {
 // Handler pour envoyer un email
 @CommandHandler(SendWelcomeEmailCommand)
 export class SendWelcomeEmailHandler extends AbstractEmailHandler<SendWelcomeEmailCommand> {
-  constructor(readonly emailDispatcherService: EmailDispatcherService) {
-    super(emailDispatcherService);
+  constructor(readonly commandBus: CommandBus) {
+    super(commandBus);
   }
 
   async execute(command: SendWelcomeEmailCommand) {
@@ -42,7 +41,7 @@ export class SendWelcomeEmailHandler extends AbstractEmailHandler<SendWelcomeEma
     );
     const emailData = {
       user_id: userData.user_id,
-      sender_email: 'onboarding@hrplatform.com',
+      sender_email: 'Acme <onboarding@resend.dev>',
       sender_name: 'HR Platform',
       type: command.type,
       subject: subject,

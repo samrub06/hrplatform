@@ -1,4 +1,9 @@
-import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
+import {
+  CanActivate,
+  ExecutionContext,
+  ForbiddenException,
+  Injectable,
+} from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { Role } from 'src/app.enum';
 import { CaslAbilityFactory } from './casl-ability.factory';
@@ -28,9 +33,17 @@ export class PoliciesGuard implements CanActivate {
 
     const ability = await this.caslAbilityFactory.createForUser(user);
 
-    return policyHandlers.every((handler) =>
+    const hasPermission = policyHandlers.every((handler) =>
       this.execPolicyHandler(handler, ability),
     );
+
+    if (!hasPermission) {
+      throw new ForbiddenException({
+        message: 'Access denied: insufficient permissions',
+      });
+    }
+
+    return true;
   }
 
   private execPolicyHandler(handler: PolicyHandler, ability: any) {

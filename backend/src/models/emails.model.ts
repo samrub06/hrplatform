@@ -58,16 +58,10 @@ export class Email extends Model {
   subject: string;
 
   @Column({
-    type: DataType.STRING,
+    type: DataType.TEXT,
     allowNull: true,
   })
   body: string;
-
-  @Column({
-    type: DataType.STRING,
-    allowNull: false,
-  })
-  body_html: string;
 
   @Column({
     type: DataType.STRING,

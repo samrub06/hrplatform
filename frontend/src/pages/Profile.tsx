@@ -35,6 +35,7 @@ const PersonalInfoDisplay = ({ userData }: { userData: UserData }) => {
 		};
 		loadProfilePicture();
 	}, [userData?.profilePicture, userData?.id]);
+	console.log(userData);
 
 	return (
 		<div style={{ textAlign: 'center' }}>
@@ -60,7 +61,7 @@ const DocumentsDisplay = ({ userData, onDownloadCv }: { userData: UserData; onDo
 			Download CV
 		</Button>
 		{userData?.cv && (
-			<Text type="secondary">Current CV : {userData.cv}</Text>
+			<Text type="secondary">Current CV : {userData?.cv?.fileName}</Text>
 		)}
 	</Space>
 );
@@ -68,7 +69,7 @@ const DocumentsDisplay = ({ userData, onDownloadCv }: { userData: UserData; onDo
 // frontend/src/components/profile/SkillsDisplay.tsx
 const SkillsDisplay = ({ skills }: { skills: any }) => (
 	<Row gutter={[16, 16]}>
-		{skills?.skills?.map((skill: Skill, index: number) => (
+		{skills?.map((skill: Skill, index: number) => (
 			<Col xs={24} sm={24} md={24} lg={12} key={index}>
 				<SkillCard skill={skill} />
 			</Col>
@@ -232,7 +233,7 @@ const Profile = () => {
 
 				<Col xs={24} md={16}>
 					<Space direction="vertical" style={{ width: '100%' }} size="large">
-						{user?.role === 'candidate' && (
+				 	{user?.role === 'candidate' && (
 						<ProfileSection
 							title="Documents"
 							onEdit={() => handleSectionEdit('documents')}
@@ -251,7 +252,7 @@ const Profile = () => {
 								<DocumentsDisplay userData={userData} onDownloadCv={downloadCv} />
 							)}
 						</ProfileSection>
-						)}
+						)} 
 
 						{user?.role === 'candidate' && (
 						<ProfileSection
@@ -290,7 +291,7 @@ const Profile = () => {
 									partialForm="education"
 								/>
 							) : (
-								<EducationDisplay education={education?.education || []} />
+							<EducationDisplay education={education || []} />
 								)}
 							</ProfileSection>
 						)}

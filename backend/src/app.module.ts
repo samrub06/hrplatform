@@ -4,6 +4,7 @@ import { APP_FILTER } from '@nestjs/core';
 import { SequelizeModule } from '@nestjs/sequelize';
 import { AdminModule } from './admin/admin.module';
 
+import { ScheduleModule } from '@nestjs/schedule';
 import { AllExceptionsFilter } from './all-exceptions.filter';
 import { CaslModule } from './casl/casl.module';
 import { JsonValidatorMiddleware } from './common/middleware/json-validator.middleware';
@@ -19,6 +20,7 @@ import { Job } from './models/job.model';
 import { Permission } from './models/permission.model';
 import { RolePermission } from './models/role-permission.model';
 import { Role } from './models/role.model';
+import { SessionUser } from './models/sessionUser.model';
 import { RefreshToken } from './models/token.model';
 import { User } from './models/user.model';
 import { NotificationsModule } from './notifications/notifications.module';
@@ -39,6 +41,7 @@ import { UsersModule } from './users/users.module';
     AdminModule,
     OpenAIModule,
     NotificationsModule,
+    ScheduleModule.forRoot(),
     ConfigModule.forRoot({
       envFilePath: ['.env', '.env.production'],
       isGlobal: true,
@@ -63,6 +66,7 @@ import { UsersModule } from './users/users.module';
         CVSkill,
         RefreshToken,
         Email,
+        SessionUser,
       ],
       autoLoadModels: true,
       synchronize: false,
