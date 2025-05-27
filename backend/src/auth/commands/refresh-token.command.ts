@@ -39,8 +39,12 @@ export class RefreshTokenHandler
       id: tokenDoc.user.id,
     };
 
-    const access_token = this.jwtService.sign(payload);
+    const accessToken = this.jwtService.sign(payload);
 
-    return { access_token, refresh_token: tokenDoc.token };
+    return {
+      accessToken,
+      refreshToken: tokenDoc.token,
+      userId: tokenDoc.user.id,
+    };
   }
 }

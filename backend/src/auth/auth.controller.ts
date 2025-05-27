@@ -15,6 +15,7 @@ import { AuthGuard } from '@nestjs/passport';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Request, Response } from 'express';
 import { Public } from 'src/casl/public.decorator';
+import { CreateSessionCommand } from 'src/sessions/commands/create-session.command';
 import { GoogleLoginCommand } from './commands/google-login.command';
 import { LinkedInLoginCommand } from './commands/linkedin-login.command';
 import { LoginAdminCommand } from './commands/login-admin.command';
@@ -83,23 +84,31 @@ export class AuthController {
   @ApiResponse({ status: 401, description: 'Information Invalid' })
   async login(
     @Body() loginRequestDto: LoginRequestDto,
-    @Res({ passthrough: true }) response: Response,
+    @Req() request: Request,
   ) {
-    const result = await this.commandBus.execute(
+    // Login
+    const credentials = await this.commandBus.execute(
       new LoginCommand(loginRequestDto),
     );
 
-    // Configuration du cookie HTTP-only pour le refresh token
-    response.cookie('refresh_token', result.refresh_token, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production', // true en production
-      sameSite: 'strict',
-      maxAge: 30 * 24 * 60 * 60 * 1000, // 30 jours en millisecondes
-      path: '/api/auth/refresh-token', // Restreint le cookie à la route de refresh
-    });
+    // Creation of the session
+    const addSession = await this.commandBus.execute(
+      new CreateSessionCommand({
+        userId: credentials.userId,
+        token: credentials.refreshToken,
+        ipAddress: request.ip,
+        userAgent: request.headers['user-agent'],
+      }),
+    );
 
-    // On ne renvoie que l'access token dans la réponse
-    return { access_token: result.access_token };
+    if (!addSession) {
+      throw new UnauthorizedException('Session not created');
+    }
+
+    return {
+      accessToken: credentials.accessToken,
+      refreshToken: credentials.refreshToken,
+    };
   }
 
   @Public()

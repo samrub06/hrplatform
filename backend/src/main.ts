@@ -59,6 +59,8 @@ async function bootstrap() {
       'https://hrplatform-1.onrender.com',
       'https://hrplatform.onrender.com',
       'http://localhost:3001',
+      'http://localhost:3002',
+      'http://localhost:3000',
     ],
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
     credentials: true,

@@ -35,6 +35,8 @@ export class AllExceptionsFilter implements ExceptionFilter {
     } else if (exception instanceof Error) {
       message = exception.message;
     }
+
+    console.error(exception);
     response.status(status).json({
       statusCode: status,
       url: request.url,

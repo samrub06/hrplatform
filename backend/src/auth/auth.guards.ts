@@ -6,6 +6,7 @@ import {
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { JwtService } from '@nestjs/jwt';
+import { Request } from 'express';
 import { IS_PUBLIC_KEY } from 'src/casl/public.decorator';
 
 @Injectable()
@@ -50,7 +51,9 @@ export class AuthGuard implements CanActivate {
   }
 
   private extractTokenFromHeader(request: Request): string | undefined {
+    // Si pas de cookie, vérifier le header Bearer
     const [type, token] = request.headers['authorization']?.split(' ') ?? [];
+    console.log('Header Authorization:', request.headers['authorization']);
     return type === 'Bearer' ? token : undefined;
   }
 }
