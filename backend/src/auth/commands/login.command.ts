@@ -57,6 +57,7 @@ export class LoginHandler
       expiresIn: '30d',
     });
 
+    // Creation of the refresh token
     await this.refreshTokenRepository.create({
       token: refresh_token,
       userId: user.id,
@@ -64,8 +65,9 @@ export class LoginHandler
     });
 
     return {
-      access_token,
-      refresh_token,
+      accessToken: access_token,
+      refreshToken: refresh_token,
+      userId: user.id,
     };
   }
 }

@@ -4,8 +4,8 @@ import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { Role } from 'src/app.enum';
 import { AdminRepository } from '../../admin/admin.repository';
+import { LoginAdminResponseDto } from '../dto/login-admin-response.dto';
 import { LoginAdminRequestDto } from '../dto/login-admin.request.dto';
-import { LoginResponseDto } from '../dto/login.response.dto';
 
 export class LoginAdminCommand {
   constructor(public readonly request: LoginAdminRequestDto) {}
@@ -13,14 +13,14 @@ export class LoginAdminCommand {
 
 @CommandHandler(LoginAdminCommand)
 export class LoginAdminHandler
-  implements ICommandHandler<LoginAdminCommand, LoginResponseDto>
+  implements ICommandHandler<LoginAdminCommand, LoginAdminResponseDto>
 {
   constructor(
     private readonly adminRepository: AdminRepository,
     private readonly jwtService: JwtService,
   ) {}
 
-  async execute(command: LoginAdminCommand): Promise<LoginResponseDto> {
+  async execute(command: LoginAdminCommand): Promise<LoginAdminResponseDto> {
     const { request } = command;
 
     const admin = await this.adminRepository.findAdminByEmail(request.email);
@@ -43,8 +43,8 @@ export class LoginAdminHandler
     };
 
     return {
-      access_token: this.jwtService.sign(payload),
-      refresh_token: this.jwtService.sign(payload),
+      accessToken: this.jwtService.sign(payload),
+      refreshToken: this.jwtService.sign(payload),
     };
   }
 }

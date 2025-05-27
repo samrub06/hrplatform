@@ -61,8 +61,9 @@ export class LinkedInLoginHandler
     });
 
     return {
-      access_token,
-      refresh_token,
+      accessToken: access_token,
+      refreshToken: refresh_token,
+      userId: user.id,
     };
   }
 }

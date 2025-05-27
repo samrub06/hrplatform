@@ -28,6 +28,7 @@ import { OpenAIModule } from './openai/openai.module';
 import { PermissionModule } from './permission/permission.module';
 import { RabbitMQModule } from './rabbitmq/rabbitmq.module';
 import { RateLimitModule } from './rate-limit/rate-limit.module';
+import { SessionsModule } from './sessions/sessions.module';
 import { UsersModule } from './users/users.module';
 
 @Module({
@@ -41,6 +42,7 @@ import { UsersModule } from './users/users.module';
     AdminModule,
     OpenAIModule,
     NotificationsModule,
+    SessionsModule,
     ScheduleModule.forRoot(),
     ConfigModule.forRoot({
       envFilePath: ['.env', '.env.production'],

@@ -49,6 +49,6 @@ export class RegisterAdminHandler
       email: admin.email,
     });
 
-    return { accessToken };
+    return { accessToken, refreshToken: accessToken };
   }
 }
