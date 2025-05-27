@@ -9,8 +9,8 @@ import {
   Model,
   Table,
 } from 'sequelize-typescript';
-import { CV } from 'src/models/cv.model';
 import { AdminNote } from './admin-note.model';
+import { CV } from './cv.model';
 import { Email } from './emails.model';
 import { Role } from './role.model';
 import { SessionUser } from './sessionUser.model';

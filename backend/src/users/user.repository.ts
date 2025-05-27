@@ -1,10 +1,18 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
-import { Role } from 'src/models/role.model';
 import { CV } from '../models/cv.model';
+import { Role } from '../models/role.model';
 import { User } from '../models/user.model';
 import { CreateUserRequestDto } from './commands/create-user.command.request.dto';
 import { UpdateUserRequestDto } from './commands/update-user.command.request.dto';
+
+// Interface de pagination
+interface PaginationOptions {
+  page: number;
+  limit: number;
+  order?: [string, 'ASC' | 'DESC'][];
+  where?: any;
+}
 
 @Injectable()
 export class UserRepository {
@@ -101,5 +109,32 @@ export class UserRepository {
     isRevoked: boolean,
   ): Promise<void> {
     await this.userModel.update({ isRevoked }, { where: { id: userId } });
+  }
+
+  async findAllWithPagination(options: PaginationOptions): Promise<{
+    data: User[];
+    total: number;
+    page: number;
+    totalPages: number;
+  }> {
+    const { page, limit, order, where } = options;
+    const offset = (page - 1) * limit;
+
+    const [data, total] = await Promise.all([
+      this.userModel.findAll({
+        where,
+        limit,
+        offset,
+        order: order || [['createdAt', 'DESC']],
+      }),
+      this.userModel.count({ where }),
+    ]);
+
+    return {
+      data,
+      total,
+      page,
+      totalPages: Math.ceil(total / limit),
+    };
   }
 }

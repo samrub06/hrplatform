@@ -1,115 +1,99 @@
 import { BadRequestException, ConflictException } from '@nestjs/common';
-import { Test } from '@nestjs/testing';
+import { Test, TestingModule } from '@nestjs/testing';
 import { UserRepository } from '../user.repository';
 import { CreateUserCommand, CreateUserHandler } from './create-user.command';
 import { CreateUserValidator } from './create-user.commande.validator';
 
 describe('CreateUserHandler', () => {
   let handler: CreateUserHandler;
-  let mockUserRepository: jest.Mocked<UserRepository>;
-  let mockValidator: jest.Mocked<CreateUserValidator>;
+  let userRepository: UserRepository;
+  let validator: CreateUserValidator;
 
-  const mockCreateUserRequest = {
-    email: 'test@example.com',
-    password: 'password123',
-    password_confirmation: 'password123',
-    first_name: 'John',
-    last_name: 'Doe',
-    role_id: 'role-123',
-  };
-
+  // Arrange
   beforeEach(async () => {
-    mockUserRepository = {
-      findByEmail: jest.fn(),
-      create: jest.fn(),
-    } as any;
-
-    mockValidator = {
-      validate: jest.fn(),
-    } as any;
-
-    const moduleRef = await Test.createTestingModule({
+    const moduleRef: TestingModule = await Test.createTestingModule({
       providers: [
         CreateUserHandler,
         {
+          // Mock the UserRepository
           provide: UserRepository,
-          useValue: mockUserRepository,
+          useValue: {
+            findByEmail: jest.fn(),
+            create: jest.fn(),
+          },
         },
         {
+          // Mock the CreateUserValidator
           provide: CreateUserValidator,
-          useValue: mockValidator,
+          useValue: {
+            validate: jest.fn().mockReturnValue(true),
+          },
         },
       ],
     }).compile();
 
+    // Get the handler, userRepository and validator from the module
     handler = moduleRef.get<CreateUserHandler>(CreateUserHandler);
+    userRepository = moduleRef.get<UserRepository>(UserRepository);
+    validator = moduleRef.get<CreateUserValidator>(CreateUserValidator);
   });
 
-  describe('execute', () => {
-    it('need to create a user', async () => {
-      // Arrange
-      const expectedUser = { id: '1', ...mockCreateUserRequest };
-      mockValidator.validate.mockReturnValue(true);
-      mockUserRepository.findByEmail.mockResolvedValue(null);
-      mockUserRepository.create.mockResolvedValue(expectedUser as any);
+  it('should create a user successfully', async () => {
+    // Arrange : Prepare the mock data
+    const mockUser = {
+      email: 'test@test.com',
+      password: 'password123',
+      first_name: 'John',
+      last_name: 'Doe',
+      role: 'user',
+    };
 
-      // Act
-      const result = await handler.execute(
-        new CreateUserCommand(mockCreateUserRequest),
-      );
+    // Mock the UserRepository
+    userRepository.findByEmail = jest.fn().mockResolvedValue(null);
+    userRepository.create = jest.fn().mockResolvedValue(mockUser);
 
-      // Assert
-      expect(result).toEqual(expectedUser);
-      expect(mockValidator.validate).toHaveBeenCalledWith(
-        mockCreateUserRequest,
-      );
-      expect(mockUserRepository.findByEmail).toHaveBeenCalledWith(
-        mockCreateUserRequest.email,
-      );
-      expect(mockUserRepository.create).toHaveBeenCalledWith(
-        mockCreateUserRequest,
-      );
-    });
+    // Act : Execute the command
+    const result = await handler.execute(new CreateUserCommand(mockUser));
 
-    it('need to throw a BadRequestException if the validation fails', async () => {
-      // Arrange
-      mockValidator.validate.mockReturnValue(false);
-      mockUserRepository.findByEmail.mockClear();
-      mockUserRepository.create.mockClear();
+    // Assert : Check the result
+    expect(result).toEqual(mockUser);
+    expect(userRepository.create).toHaveBeenCalledWith(mockUser);
+    expect(userRepository.findByEmail).toHaveBeenCalledWith(mockUser.email);
+  });
 
-      // Act & Assert
-      await expect(
-        handler.execute(new CreateUserCommand(mockCreateUserRequest)),
-      ).rejects.toThrow(BadRequestException);
+  it('should throw ConflictException when email already exists', async () => {
+    // Arrange
+    const mockUser = {
+      email: 'existing@test.com',
+      password: 'password123',
+      first_name: 'John',
+      last_name: 'Doe',
+      role: 'user',
+    };
 
-      expect(mockValidator.validate).toHaveBeenCalledWith(
-        mockCreateUserRequest,
-      );
-      expect(mockUserRepository.findByEmail).not.toHaveBeenCalled();
-      expect(mockUserRepository.create).not.toHaveBeenCalled();
-    });
+    userRepository.findByEmail = jest.fn().mockResolvedValue(mockUser);
 
-    it('need to throw a ConflictException if the email already exists', async () => {
-      // Arrange
-      mockValidator.validate.mockReturnValue(true);
-      mockUserRepository.findByEmail.mockResolvedValue({
-        id: '2',
-        email: mockCreateUserRequest.email,
-      } as any);
-      mockUserRepository.create.mockClear();
+    // Act & Assert
+    await expect(
+      handler.execute(new CreateUserCommand(mockUser)),
+    ).rejects.toThrow(ConflictException);
+  });
 
-      // Act & Assert
-      await expect(
-        handler.execute(new CreateUserCommand(mockCreateUserRequest)),
-      ).rejects.toThrow(ConflictException);
+  it('should throw BadRequestException when validation fails', async () => {
+    // Arrange
+    const mockUser = {
+      email: 'invalid@test.com',
+      password: 'password123',
+      first_name: 'John',
+      last_name: 'Doe',
+      role: 'user',
+    };
 
-      expect(mockValidator.validate).toHaveBeenCalledWith(
-        mockCreateUserRequest,
-      );
-      expect(mockUserRepository.findByEmail).toHaveBeenCalledWith(
-        mockCreateUserRequest.email,
-      );
-      expect(mockUserRepository.create).not.toHaveBeenCalled();
-    });
+    validator.validate = jest.fn().mockReturnValue(false);
+
+    // Act & Assert
+    await expect(
+      handler.execute(new CreateUserCommand(mockUser)),
+    ).rejects.toThrow(BadRequestException);
   });
 });

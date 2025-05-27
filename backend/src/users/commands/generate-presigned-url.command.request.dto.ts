@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsNotEmpty, IsString } from 'class-validator';
-import { FileType } from 'src/aws/aws.service';
+import { FileKey } from 'src/aws/aws.service';
 
 export class GeneratePresignedUrlRequestDto {
   @ApiProperty()
@@ -11,9 +11,10 @@ export class GeneratePresignedUrlRequestDto {
   @ApiProperty()
   @IsNotEmpty()
   @IsString()
-  folderUserId: string;
+  fileKey: FileKey;
 
-  @ApiProperty({ enum: FileType })
+  @ApiProperty()
   @IsNotEmpty()
-  fileType: FileType;
+  @IsString()
+  folderUserId: string;
 }

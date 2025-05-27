@@ -10,7 +10,7 @@ import {
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import { Injectable } from '@nestjs/common';
 
-export enum FileType {
+export enum FileKey {
   CV = 'cv',
   PROFILE_PICTURE = 'profile-picture',
 }
@@ -41,27 +41,27 @@ export class AwsService {
 
   private getFilePath(
     userId: string,
-    fileType: FileType,
+    fileKey: FileKey,
     fileName: string,
   ): string {
-    return `${userId}/${fileType}/${fileName}`;
+    return `${userId}/${fileKey}/${fileName}`;
   }
 
   /**
    * Génère une URL présignée pour l'upload d'un fichier.
    * @param fileName Nom du fichier.
    * @param userId ID de l'utilisateur.
-   * @param fileType Type de fichier.
+   * @param fileKey Type de fichier.
    * @param contentType Type MIME du fichier.
    * @returns URL présignée valide pour 1 heure (3600 secondes).
    */
   async generatePresignedUrl(
     fileName: string,
     userId: string,
-    fileType: FileType,
+    fileKey: FileKey,
     contentType: string,
   ): Promise<string> {
-    const filePath = this.getFilePath(userId, fileType, fileName);
+    const filePath = this.getFilePath(userId, fileKey, fileName);
 
     const command = new PutObjectCommand({
       Bucket: this.bucketName,
@@ -82,9 +82,9 @@ export class AwsService {
   async generateDownloadUrl(
     fileName: string,
     userId: string,
-    fileType: FileType,
+    fileKey: FileKey,
   ): Promise<string> {
-    const filePath = this.getFilePath(userId, fileType, fileName);
+    const filePath = this.getFilePath(userId, fileKey, fileName);
 
     const command = new GetObjectCommand({
       Bucket: this.bucketName,
@@ -106,7 +106,7 @@ export class AwsService {
 
   async extractCVData(userId: string, fileName: string): Promise<string> {
     // Récupérer le fichier depuis S3
-    const filePath = this.getFilePath(userId, FileType.CV, fileName);
+    const filePath = this.getFilePath(userId, FileKey.CV, fileName);
     const getObjectCommand = new GetObjectCommand({
       Bucket: this.bucketName,
       Key: filePath,

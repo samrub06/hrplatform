@@ -7,9 +7,9 @@ import {
   Model,
   Table,
 } from 'sequelize-typescript';
-import { User } from 'src/models/user.model';
 import { CVEducation } from './cv-education.model';
 import { CVSkill } from './cv-skill.model';
+import { User } from './user.model';
 
 @Table({ tableName: 'cv' })
 export class CV extends Model {
