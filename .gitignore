@@ -1,0 +1,11 @@
+# macOS system files
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# ... existing code ... 
+
+# Node.js
+node_modules/
+
+# Environment variables
