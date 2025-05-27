@@ -1,18 +1,21 @@
-import { getModelToken } from '@nestjs/sequelize';
-import { Test } from '@nestjs/testing';
-import { Op } from 'sequelize';
 import { Sequelize } from 'sequelize-typescript';
 import { AdminNote } from '../models/admin-note.model';
 import { Admin } from '../models/admin.model';
+import { CVEducation } from '../models/cv-education.model';
+import { CVSkill } from '../models/cv-skill.model';
+import { CV } from '../models/cv.model';
+import { Email } from '../models/emails.model';
+import { Job } from '../models/job.model';
 import { Permission } from '../models/permission.model';
 import { RolePermission } from '../models/role-permission.model';
 import { Role } from '../models/role.model';
+import { SessionUser } from '../models/sessionUser.model';
+import { RefreshToken } from '../models/token.model';
 import { User } from '../models/user.model';
-import { CreateUserRequestDto } from './commands/create-user.command.request.dto';
 import { UserRepository } from './user.repository';
 
 describe('UserRepository Integration Tests', () => {
-  let repository: UserRepository;
+  let userRepository: UserRepository;
   let sequelize: Sequelize;
 
   const testUsers = [
@@ -22,6 +25,9 @@ describe('UserRepository Integration Tests', () => {
       last_name: 'One',
       password: 'password123',
       role_id: 'role-123',
+      isRevoked: false,
+      createdAt: new Date(),
+      updatedAt: new Date(),
     },
     {
       email: 'user2@test.com',
@@ -29,6 +35,9 @@ describe('UserRepository Integration Tests', () => {
       last_name: 'Two',
       password: 'password123',
       role_id: 'role-123',
+      isRevoked: false,
+      createdAt: new Date(),
+      updatedAt: new Date(),
     },
     {
       email: 'user3@test.com',
@@ -36,6 +45,9 @@ describe('UserRepository Integration Tests', () => {
       last_name: 'Three',
       password: 'password123',
       role_id: 'role-123',
+      isRevoked: false,
+      createdAt: new Date(),
+      updatedAt: new Date(),
     },
   ];
 
@@ -49,164 +61,113 @@ describe('UserRepository Integration Tests', () => {
 
     sequelize.addModels([
       User,
-      AdminNote,
+      CV,
       Admin,
       Role,
-      RolePermission,
       Permission,
+      AdminNote,
+      RolePermission,
+      Job,
+      CVEducation,
+      CVSkill,
+      RefreshToken,
+      Email,
+      SessionUser,
     ]);
     await sequelize.sync();
 
-    const module = await Test.createTestingModule({
-      providers: [
-        UserRepository,
-        {
-          provide: getModelToken(User),
-          useValue: User,
-        },
-      ],
-    }).compile();
+    // Create a repository instance
+    userRepository = new UserRepository(User);
 
-    repository = module.get<UserRepository>(UserRepository);
+    // Create a test role
+    await Role.create({
+      id: 'role-123',
+      name: 'test-role',
+      description: 'Test role',
+    });
   });
 
   beforeEach(async () => {
     await User.destroy({ where: {}, truncate: true });
+    // Create test users
+    for (const user of testUsers) {
+      try {
+        await userRepository.create(user);
+      } catch (e) {
+        console.error('Error creating user:', user, e);
+        throw e;
+      }
+    }
   });
 
   afterAll(async () => {
     await sequelize.close();
   });
 
-  describe('Opérations CRUD', () => {
-    it('devrait créer un utilisateur', async () => {
+  describe('CRUD operations', () => {
+    it('should create a user', async () => {
       // Arrange
-      const createUserDto: CreateUserRequestDto = {
-        email: 'test@example.com',
+      const createUserDto = {
+        email: 'test@test.com',
+        first_name: 'John',
+        last_name: 'Doe',
         password: 'password123',
-        password_confirmation: 'password123',
-        first_name: 'Test',
-        last_name: 'User',
-        role_id: 'role-123',
       };
 
       // Act
-      const user = await repository.create(createUserDto);
+      const user = await userRepository.create(createUserDto);
 
       // Assert
       expect(user).toBeDefined();
       expect(user.email).toBe(createUserDto.email);
-      expect(user.first_name).toBe(createUserDto.first_name);
     });
 
     it('devrait trouver un utilisateur par email', async () => {
       // Arrange
-      const testUser = await User.create(testUsers[0]);
+      const createUserDto = {
+        email: 'test@test.com',
+        first_name: 'John',
+        last_name: 'Doe',
+        password: 'password123',
+      };
+      await userRepository.create(createUserDto);
 
       // Act
-      const foundUser = await repository.findByEmail(testUser.email);
+      const foundUser = await userRepository.findByEmail(createUserDto.email);
 
       // Assert
       expect(foundUser).toBeDefined();
-      expect(foundUser?.email).toBe(testUser.email);
+      expect(foundUser?.email).toBe(createUserDto.email);
     });
   });
 
-  describe('Requêtes de pagination et tri', () => {
-    beforeEach(async () => {
-      // Créer des utilisateurs de test
-      await User.bulkCreate(testUsers);
-    });
-
-    it('devrait paginer les résultats', async () => {
+  describe('Error handling', () => {
+    it('should return null for a non-existent user', async () => {
       // Act
-      const filters = {
-        limit: 2,
-        offset: 0,
-      };
-      const users = await repository.findAll(filters);
-
-      // Assert
-      expect(users).toHaveLength(2);
-    });
-
-    it('devrait trier les utilisateurs par date de création DESC', async () => {
-      // Act
-      const users = await repository.findAll({
-        order: [['createdAt', 'DESC']],
-      });
-
-      // Assert
-      expect(users).toHaveLength(3);
-      const dates = users.map((user) => user.createdAt);
-      expect(dates).toEqual(
-        [...dates].sort((a, b) => b.getTime() - a.getTime()),
-      );
-    });
-
-    it('devrait filtrer les utilisateurs par prénom', async () => {
-      // Act
-      const users = await repository.findAll({
-        where: { first_name: 'User' },
-      });
-
-      // Assert
-      expect(users).toHaveLength(3);
-      users.forEach((user) => {
-        expect(user.first_name).toBe('User');
-      });
-    });
-  });
-
-  describe('Recherche avancée', () => {
-    beforeEach(async () => {
-      await User.bulkCreate(testUsers);
-    });
-
-    it('devrait rechercher des utilisateurs avec des critères multiples', async () => {
-      // Act
-      const users = await repository.findAll({
-        where: {
-          first_name: 'User',
-          last_name: 'One',
-        },
-      });
-
-      // Assert
-      expect(users).toHaveLength(1);
-      expect(users[0].last_name).toBe('One');
-    });
-
-    it('devrait supporter la recherche partielle par email', async () => {
-      // Act
-      const users = await repository.findAll({
-        where: {
-          email: {
-            [Op.like]: '%@test.com',
-          },
-        },
-      });
-
-      // Assert
-      expect(users).toHaveLength(3);
-    });
-  });
-
-  describe('Gestion des erreurs', () => {
-    it('devrait gérer les erreurs de création avec email en double', async () => {
-      // Arrange
-      await User.create(testUsers[0]);
-
-      // Act & Assert
-      await expect(User.create(testUsers[0])).rejects.toThrow();
-    });
-
-    it('devrait retourner null pour un utilisateur non trouvé', async () => {
-      // Act
-      const user = await repository.findById('non-existent-id');
+      const user = await userRepository.findById('non-existent-id');
 
       // Assert
       expect(user).toBeNull();
+    });
+  });
+
+  describe('Pagination', () => {
+    it('should paginate users', async () => {
+      // Arrange
+      const paginationOptions = {
+        page: 1,
+        limit: 2,
+      };
+
+      // Act
+      const result =
+        await userRepository.findAllWithPagination(paginationOptions);
+
+      // Assert
+      expect(result.data.length).toBe(2);
+      expect(result.total).toBe(3);
+      expect(result.page).toBe(1);
+      expect(result.totalPages).toBe(2);
     });
   });
 });

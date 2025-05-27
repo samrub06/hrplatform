@@ -1,5 +1,5 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { AwsService } from 'src/aws/aws.service';
+import { AwsService } from './../../aws/aws.service';
 import { GeneratePresignedUrlRequestDto } from './generate-presigned-url.command.request.dto';
 
 export class GeneratePresignedUrlCommand {
@@ -13,11 +13,14 @@ export class GeneratePresignedUrlHandler
   constructor(private readonly awsService: AwsService) {}
 
   async execute(command: GeneratePresignedUrlCommand) {
-    const { fileName, folderUserId, fileType } = command.request;
+    const { fileName, folderUserId, fileKey } = command.request;
+
+    // fileKey is CV pdf type // if fileKey is profilepicture, then fileType is image/jpeg
+
     const presignedUrl = await this.awsService.generatePresignedUrl(
       fileName,
       folderUserId,
-      fileType,
+      fileKey,
       'application/octet-stream',
     );
     return { presignedUrl };
