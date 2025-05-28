@@ -1,9 +1,0 @@
-#le fichier robots.txt pour mieux guider les crawlers :
-# https://www.robotstxt.org/robotstxt.html
-User-agent: *
-Allow: /
-Disallow: /private/
-Disallow: /admin/
-Disallow: /api/
-
-Sitemap: https://votre-domaine.com/sitemap.xml
