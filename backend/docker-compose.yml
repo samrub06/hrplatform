@@ -34,11 +34,11 @@ services:
 
   postgres:
     image: postgres:15-alpine
-    ports:
-      - "5433:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
     environment:
+      - DB_HOST=${DB_HOST}
+      - DB_PORT=${DB_PORT}
       - POSTGRES_USER=${DB_USER}
       - POSTGRES_PASSWORD=${DB_PASSWORD}
       - POSTGRES_DB=${DB_NAME}
