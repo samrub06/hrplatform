@@ -72,6 +72,7 @@ import { UsersModule } from './users/users.module';
       ],
       autoLoadModels: true,
       synchronize: false,
+      logging: console.log,
     }),
     RabbitMQModule,
   ],
@@ -83,6 +84,15 @@ import { UsersModule } from './users/users.module';
   ],
 })
 export class AppModule implements NestModule {
+  constructor() {
+    console.log('Database configuration:', {
+      host: process.env.DB_HOST,
+      port: process.env.DB_PORT,
+      user: process.env.DB_USER,
+      database: process.env.DB_NAME,
+    });
+  }
+
   configure(consumer: MiddlewareConsumer) {
     consumer.apply(JsonValidatorMiddleware).forRoutes('*');
   }
