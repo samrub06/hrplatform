@@ -3,9 +3,9 @@
 .AppleDouble
 .LSOverride
 
-# ... existing code ... 
 
 # Node.js
 node_modules/
 
 # Environment variables
+.DS_Store

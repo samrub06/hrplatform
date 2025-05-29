@@ -19,7 +19,7 @@ import {
 } from '@nestjs/swagger';
 import { Action } from 'src/app.enum';
 import { AuthGuard } from 'src/auth/auth.guards';
-import { AwsService, FileType } from 'src/aws/aws.service';
+import { AwsService, FileKey } from 'src/aws/aws.service';
 import { AppAbility } from 'src/casl/casl-ability.factory';
 import { CheckPolicies } from 'src/casl/check-policies.decorator';
 import { PoliciesGuard } from 'src/casl/policies.guard';
@@ -185,13 +185,13 @@ export class UsersController {
   @CheckPolicies((ability: AppAbility) => ability.can(Action.Update, User))
   async getFileUrl(
     @Param('userId') userId: string,
-    @Param('fileType') fileType: FileType,
+    @Param('fileKey') fileKey: FileKey,
     @Param('fileName') fileName: string,
   ) {
     const url = await this.awsService.generateDownloadUrl(
       fileName,
       userId,
-      fileType,
+      fileKey,
     );
     return { url };
   }
