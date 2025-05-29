@@ -4,7 +4,7 @@
 /* eslint-disable */
 export type GeneratePresignedUrlRequestDto = {
     fileName: string;
-    fileType: string;
+    fileKey: string;
     folderUserId: string;
 };
 

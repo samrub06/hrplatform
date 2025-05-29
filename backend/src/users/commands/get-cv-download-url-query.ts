@@ -1,6 +1,6 @@
 import { NotFoundException } from '@nestjs/common';
 import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
-import { AwsService, FileType } from 'src/aws/aws.service';
+import { AwsService, FileKey } from 'src/aws/aws.service';
 import { UserRepository } from '../user.repository';
 
 export class GetCvDownloadUrlQuery {
@@ -25,7 +25,7 @@ export class GetCvDownloadUrlHandler
     const presignedUrl = await this.awsService.generateDownloadUrl(
       user.cv.fileName,
       user.id.toString(),
-      FileType.CV,
+      FileKey.CV,
     );
     return { presignedUrl };
   }

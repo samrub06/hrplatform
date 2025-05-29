@@ -73,11 +73,11 @@ export class AwsService {
   }
 
   /**
-   * Génère une URL présignée pour le téléchargement d'un fichier.
-   * @param fileName Nom du fichier.
-   * @param userId ID de l'utilisateur.
-   * @param fileType Type de fichier.
-   * @returns URL présignée valide pour 1 heure (3600 secondes).
+   * Generate a presigned URL for the download of a file.
+   * @param fileName Name of the file.
+   * @param userId ID of the user.
+   * @param fileKey Key of the file.
+   * @returns Presigned URL valid for 1 hour (3600 seconds).
    */
   async generateDownloadUrl(
     fileName: string,

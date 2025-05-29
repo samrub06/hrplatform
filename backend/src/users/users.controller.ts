@@ -178,7 +178,7 @@ export class UsersController {
     return this.queryBus.execute(new GetPublicProfileQuery(token));
   }
 
-  @Get('file/:userId/:fileType/:fileName')
+  @Get('file/:userId/:fileKey/:fileName')
   @UseGuards(AuthGuard, PoliciesGuard)
   @ApiOperation({ summary: 'Get File URL' })
   @ApiResponse({ status: 403, description: 'Forbidden.' })
