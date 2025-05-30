@@ -3,6 +3,7 @@ import { ConfigModule } from '@nestjs/config';
 import { APP_FILTER } from '@nestjs/core';
 import { SequelizeModule } from '@nestjs/sequelize';
 import { AdminModule } from './admin/admin.module';
+import { AppController } from './app.controller';
 
 import { ScheduleModule } from '@nestjs/schedule';
 import { AllExceptionsFilter } from './all-exceptions.filter';
@@ -76,6 +77,7 @@ import { UsersModule } from './users/users.module';
     }),
     RabbitMQModule,
   ],
+  controllers: [AppController],
   providers: [
     {
       provide: APP_FILTER,
