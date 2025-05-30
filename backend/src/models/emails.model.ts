@@ -8,15 +8,20 @@ import {
 } from 'sequelize-typescript';
 import { User } from './user.model';
 
-@Table({ tableName: 'emails' })
+@Table({
+  tableName: 'emails',
+  timestamps: true,
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+})
 export class Email extends Model {
   @Column({
     type: DataType.UUID,
     defaultValue: DataType.UUIDV4,
     primaryKey: true,
-    allowNull: false,
   })
   id: string;
+
   @ForeignKey(() => User)
   @Column({
     type: DataType.STRING,
@@ -64,20 +69,21 @@ export class Email extends Model {
   body: string;
 
   @Column({
-    type: DataType.STRING,
+    type: DataType.ENUM('pending', 'sent', 'failed'),
     allowNull: false,
+    defaultValue: 'pending',
   })
   status: string;
 
   @Column({
     type: DataType.BOOLEAN,
     allowNull: false,
+    defaultValue: false,
   })
   has_attachment: boolean;
 
   @Column({
-    type: DataType.ENUM,
-    values: ['new email', 'registration', 'forgot password'],
+    type: DataType.ENUM('new email', 'registration', 'forgot password'),
     allowNull: false,
   })
   template_name: string;
@@ -85,6 +91,7 @@ export class Email extends Model {
   @Column({
     type: DataType.BOOLEAN,
     allowNull: false,
+    defaultValue: false,
   })
   is_read: boolean;
 
