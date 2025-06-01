@@ -72,7 +72,7 @@ import { UsersModule } from './users/users.module';
         SessionUser,
       ],
       autoLoadModels: true,
-      synchronize: true,
+      synchronize: process.env.NODE_ENV !== 'production' ? true : false,
       logging: console.log,
     }),
     RabbitMQModule,
