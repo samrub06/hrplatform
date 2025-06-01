@@ -22,12 +22,14 @@ export class SessionUser extends Model {
   @Column({
     type: DataType.UUID,
     allowNull: false,
+    field: 'user_id',
   })
   userId: string;
 
   @BelongsTo(() => User, {
-    foreignKey: 'userId',
+    foreignKey: 'user_id',
     as: 'user',
+    onDelete: 'CASCADE',
   })
   user: User;
 

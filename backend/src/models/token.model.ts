@@ -27,7 +27,7 @@ export class RefreshToken extends Model {
   @Column({
     type: DataType.UUID,
     allowNull: false,
-    field: 'userId',
+    field: 'user_id',
     references: {
       model: 'user',
       key: 'id',
@@ -36,7 +36,7 @@ export class RefreshToken extends Model {
   userId: string;
 
   @BelongsTo(() => User, {
-    foreignKey: 'userId',
+    foreignKey: 'user_id',
     as: 'user',
     onDelete: 'CASCADE',
   })
