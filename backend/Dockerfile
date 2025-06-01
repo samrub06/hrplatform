@@ -21,6 +21,7 @@ RUN npm ci --only=production
 
 COPY --from=builder /app/dist ./dist
 COPY --from=builder /app/src/sequelize ./src/sequelize
+COPY --from=builder /app/src/config ./src/config
 COPY start.sh /start.sh
 
 ENV NODE_ENV=production
