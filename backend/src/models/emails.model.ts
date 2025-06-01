@@ -30,7 +30,11 @@ export class Email extends Model {
   })
   user_id: string;
 
-  @BelongsTo(() => User)
+  @BelongsTo(() => User, {
+    foreignKey: 'user_id',
+    as: 'user',
+    onDelete: 'CASCADE',
+  })
   user: User;
 
   @Column({
