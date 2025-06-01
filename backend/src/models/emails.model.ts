@@ -27,11 +27,15 @@ export class Email extends Model {
     type: DataType.STRING,
     allowNull: false,
     field: 'user_id',
+    references: {
+      model: 'user',
+      key: 'id',
+    },
   })
   user_id: string;
 
   @BelongsTo(() => User, {
-    foreignKey: 'user_id',
+    foreignKey: 'userId',
     as: 'user',
     onDelete: 'CASCADE',
   })
