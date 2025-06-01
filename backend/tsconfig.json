@@ -15,6 +15,6 @@
     "esModuleInterop": true,
     "jsx": "react"
   },
-  "include": ["src/**/*.ts","test/**/*.ts","migrations/**/*.js","models/**/*.js"],
+  "include": ["src/**/*.ts", "test/**/*.ts", "src/sequelize/migrations/**/*.js", "src/sequelize/models/**/*.js", "src/sequelize/config/**/*.js"],
   "exclude": ["node_modules", "dist"]
 }
