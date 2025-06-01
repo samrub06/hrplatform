@@ -1,20 +1,10 @@
-# start.sh
-#!/bin/bash
+#!/bin/sh
 
-# Attendre la base de données
 echo "En attente de la base de données..."
-while ! nc -z $DB_HOST $DB_PORT; do
-  sleep 1
-done
+sleep 10
 
-# Vérifier si les migrations sont nécessaires
 echo "Vérification des migrations..."
-npx sequelize-cli db:migrate:status
-
-# Exécuter les migrations
-echo "Exécution des migrations..."
 npx sequelize-cli db:migrate
 
-# Démarrer l'application
 echo "Démarrage de l'application..."
-npm run start:prod
+npm run start:prod 

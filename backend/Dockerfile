@@ -21,14 +21,13 @@ RUN npm ci --only=production
 
 COPY --from=builder /app/dist ./dist
 COPY --from=builder /app/src/sequelize ./src/sequelize
+COPY start.sh /start.sh
 
 ENV NODE_ENV=production
 ENV PORT=3000
 
 EXPOSE 3000
 
-# Script de démarrage
-COPY start.sh /start.sh
 RUN chmod +x /start.sh
 
 CMD ["/start.sh"]
