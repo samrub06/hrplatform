@@ -3,395 +3,395 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    // Users table
-    await queryInterface.createTable('Users', {
+    // user table
+    await queryInterface.createTable('user', {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
-        type: Sequelize.INTEGER
+        type: Sequelize.INTEGER,
       },
       email: {
         type: Sequelize.STRING,
         allowNull: false,
-        unique: true
+        unique: true,
       },
       password: {
         type: Sequelize.STRING,
-        allowNull: false
+        allowNull: false,
       },
       firstName: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
       },
       lastName: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
       },
       createdAt: {
         allowNull: false,
-        type: Sequelize.DATE
+        type: Sequelize.DATE,
       },
       updatedAt: {
         allowNull: false,
-        type: Sequelize.DATE
-      }
+        type: Sequelize.DATE,
+      },
     });
 
-    // CVs table
-    await queryInterface.createTable('CVs', {
+    // cvs table
+    await queryInterface.createTable('cvs', {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
-        type: Sequelize.INTEGER
+        type: Sequelize.INTEGER,
       },
       userId: {
         type: Sequelize.INTEGER,
         references: {
-          model: 'Users',
-          key: 'id'
-        }
+          model: 'user',
+          key: 'id',
+        },
       },
       title: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
       },
       createdAt: {
         allowNull: false,
-        type: Sequelize.DATE
+        type: Sequelize.DATE,
       },
       updatedAt: {
         allowNull: false,
-        type: Sequelize.DATE
-      }
+        type: Sequelize.DATE,
+      },
     });
 
-    // Admins table
-    await queryInterface.createTable('Admins', {
+    // admins table
+    await queryInterface.createTable('admins', {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
-        type: Sequelize.INTEGER
+        type: Sequelize.INTEGER,
       },
       userId: {
         type: Sequelize.INTEGER,
         references: {
-          model: 'Users',
-          key: 'id'
-        }
+          model: 'user',
+          key: 'id',
+        },
       },
       createdAt: {
         allowNull: false,
-        type: Sequelize.DATE
+        type: Sequelize.DATE,
       },
       updatedAt: {
         allowNull: false,
-        type: Sequelize.DATE
-      }
+        type: Sequelize.DATE,
+      },
     });
 
-    // Roles table
-    await queryInterface.createTable('Roles', {
+    // roles table
+    await queryInterface.createTable('roles', {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
-        type: Sequelize.INTEGER
+        type: Sequelize.INTEGER,
       },
       name: {
         type: Sequelize.STRING,
-        allowNull: false
+        allowNull: false,
       },
       createdAt: {
         allowNull: false,
-        type: Sequelize.DATE
+        type: Sequelize.DATE,
       },
       updatedAt: {
         allowNull: false,
-        type: Sequelize.DATE
-      }
+        type: Sequelize.DATE,
+      },
     });
 
-    // Permissions table
-    await queryInterface.createTable('Permissions', {
+    // permissions table
+    await queryInterface.createTable('permissions', {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
-        type: Sequelize.INTEGER
+        type: Sequelize.INTEGER,
       },
       name: {
         type: Sequelize.STRING,
-        allowNull: false
+        allowNull: false,
       },
       createdAt: {
         allowNull: false,
-        type: Sequelize.DATE
+        type: Sequelize.DATE,
       },
       updatedAt: {
         allowNull: false,
-        type: Sequelize.DATE
-      }
+        type: Sequelize.DATE,
+      },
     });
 
-    // AdminNotes table
-    await queryInterface.createTable('AdminNotes', {
+    // adminNotes table
+    await queryInterface.createTable('adminNotes', {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
-        type: Sequelize.INTEGER
+        type: Sequelize.INTEGER,
       },
       adminId: {
         type: Sequelize.INTEGER,
         references: {
-          model: 'Admins',
-          key: 'id'
-        }
+          model: 'admins',
+          key: 'id',
+        },
       },
       content: {
-        type: Sequelize.TEXT
+        type: Sequelize.TEXT,
       },
       createdAt: {
         allowNull: false,
-        type: Sequelize.DATE
+        type: Sequelize.DATE,
       },
       updatedAt: {
         allowNull: false,
-        type: Sequelize.DATE
-      }
+        type: Sequelize.DATE,
+      },
     });
 
-    // RolePermissions table
-    await queryInterface.createTable('RolePermissions', {
+    // rolePermissions table
+    await queryInterface.createTable('rolePermissions', {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
-        type: Sequelize.INTEGER
+        type: Sequelize.INTEGER,
       },
       roleId: {
         type: Sequelize.INTEGER,
         references: {
-          model: 'Roles',
-          key: 'id'
-        }
+          model: 'roles',
+          key: 'id',
+        },
       },
       permissionId: {
         type: Sequelize.INTEGER,
         references: {
-          model: 'Permissions',
-          key: 'id'
-        }
+          model: 'permissions',
+          key: 'id',
+        },
       },
       createdAt: {
         allowNull: false,
-        type: Sequelize.DATE
+        type: Sequelize.DATE,
       },
       updatedAt: {
         allowNull: false,
-        type: Sequelize.DATE
-      }
+        type: Sequelize.DATE,
+      },
     });
 
-    // Jobs table
-    await queryInterface.createTable('Jobs', {
+    // jobs table
+    await queryInterface.createTable('jobs', {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
-        type: Sequelize.INTEGER
+        type: Sequelize.INTEGER,
       },
       title: {
         type: Sequelize.STRING,
-        allowNull: false
+        allowNull: false,
       },
       description: {
-        type: Sequelize.TEXT
+        type: Sequelize.TEXT,
       },
       createdAt: {
         allowNull: false,
-        type: Sequelize.DATE
+        type: Sequelize.DATE,
       },
       updatedAt: {
         allowNull: false,
-        type: Sequelize.DATE
-      }
+        type: Sequelize.DATE,
+      },
     });
 
-    // CVEducations table
-    await queryInterface.createTable('CVEducations', {
+    // cveducations table
+    await queryInterface.createTable('cveducations', {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
-        type: Sequelize.INTEGER
+        type: Sequelize.INTEGER,
       },
       cvId: {
         type: Sequelize.INTEGER,
         references: {
-          model: 'CVs',
-          key: 'id'
-        }
+          model: 'cvs',
+          key: 'id',
+        },
       },
       institution: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
       },
       degree: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
       },
       startDate: {
-        type: Sequelize.DATE
+        type: Sequelize.DATE,
       },
       endDate: {
-        type: Sequelize.DATE
+        type: Sequelize.DATE,
       },
       createdAt: {
         allowNull: false,
-        type: Sequelize.DATE
+        type: Sequelize.DATE,
       },
       updatedAt: {
         allowNull: false,
-        type: Sequelize.DATE
-      }
+        type: Sequelize.DATE,
+      },
     });
 
-    // CVSkills table
-    await queryInterface.createTable('CVSkills', {
+    // cvsSkills table
+    await queryInterface.createTable('cvsSkills', {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
-        type: Sequelize.INTEGER
+        type: Sequelize.INTEGER,
       },
       cvId: {
         type: Sequelize.INTEGER,
         references: {
-          model: 'CVs',
-          key: 'id'
-        }
+          model: 'cvs',
+          key: 'id',
+        },
       },
       name: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
       },
       level: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
       },
       createdAt: {
         allowNull: false,
-        type: Sequelize.DATE
+        type: Sequelize.DATE,
       },
       updatedAt: {
         allowNull: false,
-        type: Sequelize.DATE
-      }
+        type: Sequelize.DATE,
+      },
     });
 
-    // RefreshTokens table
-    await queryInterface.createTable('RefreshTokens', {
+    // refreshTokens table
+    await queryInterface.createTable('refreshTokens', {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
-        type: Sequelize.INTEGER
+        type: Sequelize.INTEGER,
       },
       token: {
         type: Sequelize.STRING,
-        allowNull: false
+        allowNull: false,
       },
       userId: {
         type: Sequelize.INTEGER,
         references: {
-          model: 'Users',
-          key: 'id'
-        }
+          model: 'user',
+          key: 'id',
+        },
       },
       expiresAt: {
-        type: Sequelize.DATE
+        type: Sequelize.DATE,
       },
       createdAt: {
         allowNull: false,
-        type: Sequelize.DATE
+        type: Sequelize.DATE,
       },
       updatedAt: {
         allowNull: false,
-        type: Sequelize.DATE
-      }
+        type: Sequelize.DATE,
+      },
     });
 
-    // Emails table
-    await queryInterface.createTable('Emails', {
+    // emails table
+    await queryInterface.createTable('emails', {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
-        type: Sequelize.INTEGER
+        type: Sequelize.INTEGER,
       },
       to: {
         type: Sequelize.STRING,
-        allowNull: false
+        allowNull: false,
       },
       subject: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
       },
       content: {
-        type: Sequelize.TEXT
+        type: Sequelize.TEXT,
       },
       status: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
       },
       createdAt: {
         allowNull: false,
-        type: Sequelize.DATE
+        type: Sequelize.DATE,
       },
       updatedAt: {
         allowNull: false,
-        type: Sequelize.DATE
-      }
+        type: Sequelize.DATE,
+      },
     });
 
-    // SessionUsers table
-    await queryInterface.createTable('SessionUsers', {
+    // sessionUsers table
+    await queryInterface.createTable('sessionUsers', {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
-        type: Sequelize.INTEGER
+        type: Sequelize.INTEGER,
       },
       userId: {
         type: Sequelize.INTEGER,
         references: {
-          model: 'Users',
-          key: 'id'
-        }
+          model: 'user',
+          key: 'id',
+        },
       },
       sessionId: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
       },
       createdAt: {
         allowNull: false,
-        type: Sequelize.DATE
+        type: Sequelize.DATE,
       },
       updatedAt: {
         allowNull: false,
-        type: Sequelize.DATE
-      }
+        type: Sequelize.DATE,
+      },
     });
   },
 
-  async down(queryInterface, Sequelize) {
+  async down(queryInterface) {
     // Drop tables in reverse order to handle foreign key constraints
-    await queryInterface.dropTable('SessionUsers');
-    await queryInterface.dropTable('Emails');
-    await queryInterface.dropTable('RefreshTokens');
-    await queryInterface.dropTable('CVSkills');
-    await queryInterface.dropTable('CVEducations');
-    await queryInterface.dropTable('Jobs');
-    await queryInterface.dropTable('RolePermissions');
-    await queryInterface.dropTable('AdminNotes');
-    await queryInterface.dropTable('Permissions');
-    await queryInterface.dropTable('Roles');
-    await queryInterface.dropTable('Admins');
-    await queryInterface.dropTable('CVs');
-    await queryInterface.dropTable('Users');
-  }
-}; 
+    await queryInterface.dropTable('sessionUsers');
+    await queryInterface.dropTable('emails');
+    await queryInterface.dropTable('refreshTokens');
+    await queryInterface.dropTable('cvsSkills');
+    await queryInterface.dropTable('cveducations');
+    await queryInterface.dropTable('jobs');
+    await queryInterface.dropTable('rolePermissions');
+    await queryInterface.dropTable('adminNotes');
+    await queryInterface.dropTable('permissions');
+    await queryInterface.dropTable('roles');
+    await queryInterface.dropTable('admins');
+    await queryInterface.dropTable('cvs');
+    await queryInterface.dropTable('user');
+  },
+};
