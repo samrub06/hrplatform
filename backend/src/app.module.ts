@@ -72,7 +72,7 @@ import { UsersModule } from './users/users.module';
         SessionUser,
       ],
       autoLoadModels: true,
-      synchronize: false,
+      synchronize: true,
       logging: console.log,
     }),
     RabbitMQModule,
