@@ -26,6 +26,7 @@ export class Email extends Model {
   @Column({
     type: DataType.STRING,
     allowNull: false,
+    field: 'user_id',
   })
   user_id: string;
 
