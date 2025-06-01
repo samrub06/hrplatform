@@ -1,7 +1,7 @@
 # start.sh
-#!/bin/sh
+#!/bin/bash
 
-# Attendre que la base de données soit prête
+# Attendre la base de données
 echo "En attente de la base de données..."
 while ! nc -z $DB_HOST $DB_PORT; do
   sleep 1
