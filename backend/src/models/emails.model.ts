@@ -35,7 +35,7 @@ export class Email extends Model {
   user_id: string;
 
   @BelongsTo(() => User, {
-    foreignKey: 'userId',
+    foreignKey: 'user_id',
     as: 'user',
     onDelete: 'CASCADE',
   })
