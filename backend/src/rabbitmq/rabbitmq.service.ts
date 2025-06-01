@@ -24,13 +24,20 @@ export class RabbitMQService implements OnModuleInit, OnModuleDestroy {
   }
 
   private async initialize() {
-    if (this.initialized) return;
+    if (this.initialized && this.channel) return;
 
     try {
+      // Réinitialiser l'état
+      this.initialized = false;
+      this.channel = null;
+
       const rabbitmqUrl = this.configService.get<string>('RABBITMQ_URL');
+      console.log('Tentative de connexion à RabbitMQ avec URL:', rabbitmqUrl);
+
       this.connection = await amqp.connect(rabbitmqUrl, {
         heartbeat: 60,
         timeout: 30000,
+        family: 4, // Force l'utilisation d'IPv4
       });
 
       // Gestion des événements de connexion
@@ -44,8 +51,9 @@ export class RabbitMQService implements OnModuleInit, OnModuleDestroy {
         this.handleConnectionError();
       });
 
+      console.log('Création du canal RabbitMQ...');
       this.channel = await this.connection.createChannel();
-      await this.channel.prefetch(1); // Un message à la fois pour une meilleure gestion
+      await this.channel.prefetch(1);
 
       // Gestion des événements du channel
       this.channel.on('error', (err) => {
@@ -58,6 +66,7 @@ export class RabbitMQService implements OnModuleInit, OnModuleDestroy {
         this.handleConnectionError();
       });
 
+      console.log('Création des exchanges...');
       // Création des exchanges
       await Promise.all([
         this.channel.assertExchange(RABBITMQ_EXCHANGES.USER_EVENTS, 'topic', {
@@ -79,9 +88,11 @@ export class RabbitMQService implements OnModuleInit, OnModuleDestroy {
 
       this.initialized = true;
       this.retryCount = 0;
-      console.log('RabbitMQ Established with success');
+      console.log('RabbitMQ initialisé avec succès');
     } catch (error) {
-      console.error('Error connecting to RabbitMQ:', error);
+      console.error("Erreur lors de l'initialisation de RabbitMQ:", error);
+      this.initialized = false;
+      this.channel = null;
       this.handleConnectionError();
     }
   }
@@ -168,8 +179,20 @@ export class RabbitMQService implements OnModuleInit, OnModuleDestroy {
     exchange: string,
     routingKey: string,
   ) {
-    if (!this.initialized) {
+    if (!this.initialized || !this.channel) {
       await this.initialize();
+      // Attendre que le canal soit disponible
+      let attempts = 0;
+      while (!this.channel && attempts < 5) {
+        await new Promise((resolve) => setTimeout(resolve, 1000));
+        attempts++;
+      }
+    }
+
+    if (!this.channel) {
+      throw new Error(
+        "Impossible d'initialiser le canal RabbitMQ après plusieurs tentatives",
+      );
     }
 
     try {
@@ -183,6 +206,9 @@ export class RabbitMQService implements OnModuleInit, OnModuleDestroy {
       );
     } catch (error) {
       console.error('Erreur lors de la liaison de la queue:', error);
+      // Réinitialiser l'état en cas d'erreur
+      this.initialized = false;
+      this.channel = null;
       throw error;
     }
   }
