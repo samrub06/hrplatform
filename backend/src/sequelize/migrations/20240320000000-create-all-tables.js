@@ -144,7 +144,7 @@ module.exports = {
       adminId: {
         type: Sequelize.INTEGER,
         references: {
-          model: 'admins',
+          model: 'admin',
           key: 'id',
         },
       },
