@@ -4,16 +4,16 @@ FROM node:18-alpine as builder
 # Dossier de travail
 WORKDIR /app
 
-# Copie des fichiers nécessaires depuis le dossier backend
-COPY backend/package*.json ./
-COPY backend/tsconfig*.json ./
-COPY backend/.sequelizerc ./
+# Copie des fichiers nécessaires
+COPY package*.json ./
+COPY tsconfig*.json ./
+COPY .sequelizerc ./
 
 # Installation des dépendances
 RUN npm ci
 
-# Copie du code source du backend
-COPY backend/ ./
+# Copie du code source
+COPY . .
 
 # Construction du projet
 RUN npm run build
@@ -25,8 +25,8 @@ FROM node:18-alpine
 WORKDIR /app
 
 # Copie des fichiers nécessaires
-COPY backend/package*.json ./
-COPY backend/.sequelizerc ./
+COPY package*.json ./
+COPY .sequelizerc ./
 
 # Installation des dépendances
 RUN npm ci --only=production
@@ -35,7 +35,7 @@ RUN npm ci --only=production
 COPY --from=builder /app/dist ./dist
 COPY --from=builder /app/src/sequelize ./src/sequelize
 COPY --from=builder /app/src/config ./src/config
-COPY backend/start.sh /start.sh
+COPY start.sh /start.sh
 
 # Variables d'environnement
 ENV NODE_ENV=production
