@@ -8,6 +8,10 @@ module.exports = {
         type: Sequelize.UUID,
         defaultValue: Sequelize.UUIDV4,
         primaryKey: true,
+        references: {
+          model: 'role',
+          key: 'id',
+        },
       },
       name: {
         type: Sequelize.STRING,
@@ -46,7 +50,7 @@ module.exports = {
     });
   },
 
-  async down(queryInterface) {
+  async down(queryInterface, Sequelize) {
     await queryInterface.dropTable('permission');
   },
 };
