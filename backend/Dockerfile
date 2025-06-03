@@ -22,7 +22,7 @@ RUN npm run build
 FROM node:18-alpine
 
 # Dossier de travail
-WORKDIR /app
+WORKDIR /backend
 
 # Copie des fichiers nécessaires
 COPY package*.json ./
@@ -32,9 +32,9 @@ COPY .sequelizerc ./
 RUN npm ci --only=production
 
 # Copie des fichiers nécessaires
-COPY --from=builder /app/dist ./dist
-COPY --from=builder /app/src/sequelize ./src/sequelize
-COPY --from=builder /app/src/config ./src/config
+COPY --from=builder /backend/dist ./dist
+COPY --from=builder /backend/src/sequelize ./src/sequelize
+COPY --from=builder /backend/src/config ./src/config
 COPY start.sh /start.sh
 
 # Variables d'environnement
