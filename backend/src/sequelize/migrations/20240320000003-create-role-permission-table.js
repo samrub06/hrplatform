@@ -13,6 +13,7 @@ module.exports = {
       role_id: {
         type: Sequelize.UUID,
         allowNull: false,
+        field: 'role_id',
         references: {
           model: 'role',
           key: 'id',
@@ -22,6 +23,7 @@ module.exports = {
       permission_id: {
         type: Sequelize.UUID,
         allowNull: false,
+        field: 'permission_id',
         references: {
           model: 'permission',
           key: 'id',
