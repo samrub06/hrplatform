@@ -3,6 +3,7 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
+    // create if no exists
     await queryInterface.createTable('role_permission', {
       id: {
         type: Sequelize.UUID,
@@ -39,7 +40,7 @@ module.exports = {
       },
     });
 
-    // Ajout d'un index composite pour éviter les doublons
+    // add composite index to avoid duplicates if no exists
     await queryInterface.addIndex(
       'role_permission',
       ['role_id', 'permission_id'],
