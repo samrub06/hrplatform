@@ -36,8 +36,8 @@ module.exports = {
       },
     });
 
-    // cvs table
-    await queryInterface.createTable('cvs', {
+    // cv table
+    await queryInterface.createTable('cv', {
       id: {
         allowNull: false,
         autoIncrement: true,
@@ -65,7 +65,7 @@ module.exports = {
     });
 
     // admins table
-    await queryInterface.createTable('admins', {
+    await queryInterface.createTable('admin', {
       id: {
         allowNull: false,
         autoIncrement: true,
@@ -89,8 +89,8 @@ module.exports = {
       },
     });
 
-    // roles table
-    await queryInterface.createTable('roles', {
+    // role table
+    await queryInterface.createTable('role', {
       id: {
         allowNull: false,
         autoIncrement: true,
@@ -111,8 +111,8 @@ module.exports = {
       },
     });
 
-    // permissions table
-    await queryInterface.createTable('permissions', {
+    // permission table
+    await queryInterface.createTable('permission', {
       id: {
         allowNull: false,
         autoIncrement: true,
@@ -133,8 +133,8 @@ module.exports = {
       },
     });
 
-    // adminNotes table
-    await queryInterface.createTable('adminNotes', {
+    // admin_note table
+    await queryInterface.createTable('admin_note', {
       id: {
         allowNull: false,
         autoIncrement: true,
@@ -161,8 +161,8 @@ module.exports = {
       },
     });
 
-    // rolePermissions table
-    await queryInterface.createTable('rolePermissions', {
+    // role_permission table
+    await queryInterface.createTable('role_permission', {
       id: {
         allowNull: false,
         autoIncrement: true,
@@ -172,14 +172,14 @@ module.exports = {
       roleId: {
         type: Sequelize.INTEGER,
         references: {
-          model: 'roles',
+          model: 'role',
           key: 'id',
         },
       },
       permissionId: {
         type: Sequelize.INTEGER,
         references: {
-          model: 'permissions',
+          model: 'permission',
           key: 'id',
         },
       },
@@ -193,8 +193,8 @@ module.exports = {
       },
     });
 
-    // jobs table
-    await queryInterface.createTable('jobs', {
+    // job table
+    await queryInterface.createTable('job', {
       id: {
         allowNull: false,
         autoIncrement: true,
@@ -218,8 +218,8 @@ module.exports = {
       },
     });
 
-    // cveducations table
-    await queryInterface.createTable('cveducations', {
+    // cv_education table
+    await queryInterface.createTable('cv_education', {
       id: {
         allowNull: false,
         autoIncrement: true,
@@ -255,8 +255,8 @@ module.exports = {
       },
     });
 
-    // cvsSkills table
-    await queryInterface.createTable('cvsSkills', {
+    // cv_skills table
+    await queryInterface.createTable('cv_skills', {
       id: {
         allowNull: false,
         autoIncrement: true,
@@ -286,8 +286,8 @@ module.exports = {
       },
     });
 
-    // refreshTokens table
-    await queryInterface.createTable('refreshTokens', {
+    // refreshToken table
+    await queryInterface.createTable('refreshToken', {
       id: {
         allowNull: false,
         autoIncrement: true,
@@ -349,8 +349,8 @@ module.exports = {
       },
     });
 
-    // sessionUsers table
-    await queryInterface.createTable('sessionUsers', {
+    // sessionUser table
+    await queryInterface.createTable('sessionUser', {
       id: {
         allowNull: false,
         autoIncrement: true,
@@ -380,18 +380,18 @@ module.exports = {
 
   async down(queryInterface) {
     // Drop tables in reverse order to handle foreign key constraints
-    await queryInterface.dropTable('sessionUsers');
+    await queryInterface.dropTable('sessionUser');
     await queryInterface.dropTable('emails');
-    await queryInterface.dropTable('refreshTokens');
-    await queryInterface.dropTable('cvsSkills');
-    await queryInterface.dropTable('cveducations');
-    await queryInterface.dropTable('jobs');
-    await queryInterface.dropTable('rolePermissions');
-    await queryInterface.dropTable('adminNotes');
-    await queryInterface.dropTable('permissions');
-    await queryInterface.dropTable('roles');
-    await queryInterface.dropTable('admins');
-    await queryInterface.dropTable('cvs');
+    await queryInterface.dropTable('refreshToken');
+    await queryInterface.dropTable('cv_skills');
+    await queryInterface.dropTable('cv_education');
+    await queryInterface.dropTable('job');
+    await queryInterface.dropTable('role_permission');
+    await queryInterface.dropTable('admin_note');
+    await queryInterface.dropTable('permission');
+    await queryInterface.dropTable('role');
+    await queryInterface.dropTable('admin');
+    await queryInterface.dropTable('cv');
     await queryInterface.dropTable('user');
   },
 };
