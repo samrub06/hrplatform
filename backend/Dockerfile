@@ -34,6 +34,7 @@ RUN npm ci --only=production
 # Copie des fichiers nécessaires
 COPY --from=builder /app/dist ./dist
 COPY --from=builder /app/src/sequelize ./src/sequelize
+COPY --from=builder /app/src/config ./src/config
 COPY start.sh /start.sh
 
 # Variables d'environnement
