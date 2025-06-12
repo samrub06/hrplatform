@@ -1,12 +1,11 @@
 import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { APP_FILTER } from '@nestjs/core';
+import { ScheduleModule } from '@nestjs/schedule';
 import { SequelizeModule } from '@nestjs/sequelize';
 import { AdminModule } from './admin/admin.module';
-import { AppController } from './app.controller';
-
-import { ScheduleModule } from '@nestjs/schedule';
 import { AllExceptionsFilter } from './all-exceptions.filter';
+import { AppController } from './app.controller';
 import { CaslModule } from './casl/casl.module';
 import { JsonValidatorMiddleware } from './common/middleware/json-validator.middleware';
 import { CVModule } from './cv/cv.module';
