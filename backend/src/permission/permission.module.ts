@@ -1,12 +1,12 @@
 import { forwardRef, Module } from '@nestjs/common';
 import { SequelizeModule } from '@nestjs/sequelize';
-import { CaslModule } from 'src/casl/casl.module';
-import { RolePermission } from 'src/models/role-permission.model';
-import { Role } from 'src/models/role.model';
-import { User } from 'src/models/user.model';
-import { UserRepository } from 'src/users/user.repository';
-import { UsersModule } from 'src/users/users.module';
+import { CaslModule } from '../casl/casl.module';
 import { Permission } from '../models/permission.model';
+import { RolePermission } from '../models/role-permission.model';
+import { Role } from '../models/role.model';
+import { User } from '../models/user.model';
+import { UserRepository } from '../users/user.repository';
+import { UsersModule } from '../users/users.module';
 import { PermissionController } from './permission.controller';
 import { PermissionRepository } from './permission.repository';
 import { PermissionService } from './permission.service';

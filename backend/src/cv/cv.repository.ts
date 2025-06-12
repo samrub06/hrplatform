@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
-import { CVEducation } from 'src/models/cv-education.model';
-import { CVSkill } from 'src/models/cv-skill.model';
-import { CV } from 'src/models/cv.model';
-import { User } from 'src/models/user.model';
+import { CVEducation } from '../models/cv-education.model';
+import { CVSkill } from '../models/cv-skill.model';
+import { CV } from '../models/cv.model';
+import { User } from '../models/user.model';
 import { UpdateCVEducationRequestDto } from './commands/update-cv-education.request.command.dto';
 import { PersonalInfo } from './interfaces/cv-extracted-data.interface';
 

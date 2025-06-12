@@ -17,13 +17,13 @@ import {
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
-import { Action } from 'src/app.enum';
-import { AuthGuard } from 'src/auth/auth.guards';
-import { AwsService, FileKey } from 'src/aws/aws.service';
-import { AppAbility } from 'src/casl/casl-ability.factory';
-import { CheckPolicies } from 'src/casl/check-policies.decorator';
-import { PoliciesGuard } from 'src/casl/policies.guard';
-import { Public } from 'src/casl/public.decorator';
+import { Action } from '../app.enum';
+import { AuthGuard } from '../auth/auth.guards';
+import { AwsService, FileKey } from '../aws/aws.service';
+import { AppAbility } from '../casl/casl-ability.factory';
+import { CheckPolicies } from '../casl/check-policies.decorator';
+import { PoliciesGuard } from '../casl/policies.guard';
+import { Public } from '../casl/public.decorator';
 import { User } from '../models/user.model';
 import { CreateUserCommand } from './commands/create-user.command';
 import { CreateUserRequestDto } from './commands/create-user.command.request.dto';

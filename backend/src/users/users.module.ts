@@ -2,20 +2,19 @@ import { Module } from '@nestjs/common';
 
 import { CqrsModule } from '@nestjs/cqrs';
 import { SequelizeModule } from '@nestjs/sequelize';
-import { AwsModule } from 'src/aws/aws.module';
+import { AwsModule } from '../aws/aws.module';
+import { CaslModule } from '../casl/casl.module';
+import { CVSkill } from '../models/cv-skill.model';
 import { User } from '../models/user.model';
+import { PermissionModule } from '../permission/permission.module';
 import { CreateUserHandler } from './commands/create-user.command';
-import { UpdateUserHandler } from './commands/update-user.command';
-
-import { CaslModule } from 'src/casl/casl.module';
-import { CVSkill } from 'src/models/cv-skill.model';
-import { PermissionModule } from 'src/permission/permission.module';
 import { CreateUserValidator } from './commands/create-user.commande.validator';
 import { GeneratePresignedUrlHandler } from './commands/generate-presigned-url.command';
 import { GeneratePublicLinkHandler } from './commands/generate-public-link.command';
 import { GetCvDownloadUrlHandler } from './commands/get-cv-download-url-query';
 import { RemoveUserHandler } from './commands/remove-user.command';
 import { UpdateUserRoleHandler } from './commands/update-user-role.command';
+import { UpdateUserHandler } from './commands/update-user.command';
 import { UpdateUserValidator } from './commands/update-user.command.validator';
 import { CheckUserPermissionHandler } from './queries/check-user-permission.query';
 import { GetAllAlumniQueryHandler } from './queries/get-all-alumni.query';

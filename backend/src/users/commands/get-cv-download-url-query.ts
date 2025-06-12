@@ -1,6 +1,6 @@
 import { NotFoundException } from '@nestjs/common';
 import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
-import { AwsService, FileKey } from 'src/aws/aws.service';
+import { AwsService, FileKey } from '../../aws/aws.service';
 import { UserRepository } from '../user.repository';
 
 export class GetCvDownloadUrlQuery {

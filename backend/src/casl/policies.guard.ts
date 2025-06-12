@@ -5,7 +5,7 @@ import {
   Injectable,
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
-import { Role } from 'src/app.enum';
+import { Role } from '../app.enum';
 import { CaslAbilityFactory } from './casl-ability.factory';
 import { CHECK_POLICIES_KEY } from './check-policies.decorator';
 import { PolicyHandler } from './policy-handler.interface';

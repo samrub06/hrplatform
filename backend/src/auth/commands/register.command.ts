@@ -4,7 +4,7 @@ import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { UserRepository } from '../../users/user.repository';
 
-import { SendWelcomeEmailCommand } from 'src/notifications/commands/send-welcome-email.command';
+import { SendWelcomeEmailCommand } from '../../notifications/commands/send-welcome-email.command';
 import { RegisterRequestDto } from '../dto/register.request.dto';
 import { RegisterResponseDto } from '../dto/register.response.dto';
 import { RegisterValidator } from './register.command.validator';

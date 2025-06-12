@@ -5,12 +5,12 @@ import {
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
-import { Action } from 'src/app.enum';
-import { AuthGuard } from 'src/auth/auth.guards';
-import { AppAbility } from 'src/casl/casl-ability.factory';
-import { CheckPolicies } from 'src/casl/check-policies.decorator';
-import { PoliciesGuard } from 'src/casl/policies.guard';
-import { Permission } from 'src/models/permission.model';
+import { Action } from '../app.enum';
+import { AuthGuard } from '../auth/auth.guards';
+import { AppAbility } from '../casl/casl-ability.factory';
+import { CheckPolicies } from '../casl/check-policies.decorator';
+import { PoliciesGuard } from '../casl/policies.guard';
+import { Permission } from '../models/permission.model';
 import { CreatePermissionDto } from './dto/create-permission.dto';
 import { PermissionRepository } from './permission.repository';
 

@@ -1,6 +1,6 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { JwtService } from '@nestjs/jwt';
-import { UserRepository } from 'src/users/user.repository';
+import { UserRepository } from '../../users/user.repository';
 import { LoginResponseDto } from '../dto/login.response.dto';
 import { RefreshTokenRepository } from '../refresh-token.repository';
 

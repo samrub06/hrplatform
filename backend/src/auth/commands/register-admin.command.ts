@@ -3,7 +3,7 @@ import { ConfigService } from '@nestjs/config';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
-import { AdminRepository } from 'src/admin/admin.repository';
+import { AdminRepository } from '../../admin/admin.repository';
 import { LoginAdminResponseDto } from '../dto/login-admin-response.dto';
 import { RegisterAdminRequestDto } from '../dto/register-admin.request.dto';
 

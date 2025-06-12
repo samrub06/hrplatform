@@ -1,6 +1,6 @@
 import { Logger } from '@nestjs/common';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { AwsService } from 'src/aws/aws.service';
+import { AwsService } from '../../aws/aws.service';
 import { OpenAIService } from '../../openai/openai.service';
 import {
   RABBITMQ_EXCHANGES,

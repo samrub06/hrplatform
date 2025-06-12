@@ -1,5 +1,5 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { sessionRequestDto } from 'src/auth/dto/session.request.dto';
+import { sessionRequestDto } from '../../auth/dto/session.request.dto';
 import { SessionUser } from '../../models/sessionUser.model';
 import { SessionsRepository } from '../sessions.repository';
 

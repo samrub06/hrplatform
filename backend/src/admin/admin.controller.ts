@@ -15,11 +15,11 @@ import {
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
-import { Action } from 'src/app.enum';
-import { AuthGuard } from 'src/auth/auth.guards';
-import { AppAbility } from 'src/casl/casl-ability.factory';
-import { CheckPolicies } from 'src/casl/check-policies.decorator';
-import { PoliciesGuard } from 'src/casl/policies.guard';
+import { Action } from '../app.enum';
+import { AuthGuard } from '../auth/auth.guards';
+import { AppAbility } from '../casl/casl-ability.factory';
+import { CheckPolicies } from '../casl/check-policies.decorator';
+import { PoliciesGuard } from '../casl/policies.guard';
 import { Admin } from '../models/admin.model';
 import { CreateAdminRequestDto } from './commands/create-admin-command.request.dto';
 import { CreateAdminNoteRequestDto } from './commands/create-admin-note-command.request.dto';

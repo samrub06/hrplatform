@@ -6,11 +6,11 @@ import {
   PureAbility,
 } from '@casl/ability';
 import { Injectable } from '@nestjs/common';
-import { Action } from 'src/app.enum';
-import { CV } from 'src/models/cv.model';
-import { Permission } from 'src/models/permission.model';
+import { Action } from '../app.enum';
 import { Admin } from '../models/admin.model';
+import { CV } from '../models/cv.model';
 import { Job } from '../models/job.model';
+import { Permission } from '../models/permission.model';
 import { User } from '../models/user.model';
 import { PermissionService } from '../permission/permission.service';
 

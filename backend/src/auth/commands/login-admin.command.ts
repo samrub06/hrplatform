@@ -2,8 +2,8 @@ import { UnauthorizedException } from '@nestjs/common';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
-import { Role } from 'src/app.enum';
 import { AdminRepository } from '../../admin/admin.repository';
+import { Role } from '../../app.enum';
 import { LoginAdminResponseDto } from '../dto/login-admin-response.dto';
 import { LoginAdminRequestDto } from '../dto/login-admin.request.dto';
 

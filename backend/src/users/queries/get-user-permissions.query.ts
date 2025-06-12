@@ -1,5 +1,5 @@
 import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
-import { PermissionService } from 'src/permission/permission.service';
+import { PermissionService } from '../../permission/permission.service';
 
 export class GetUserPermissionsQuery {
   constructor(public readonly userId: string) {}

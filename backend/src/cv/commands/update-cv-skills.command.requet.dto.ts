@@ -2,7 +2,7 @@
 
 import { ApiProperty } from '@nestjs/swagger';
 import { IsEnum, IsNumber, Min } from 'class-validator';
-import { ProgrammingLanguage } from 'src/enums/programming-languages.enum';
+import { ProgrammingLanguage } from '../../enums/programming-languages.enum';
 
 export class UpdateCVSkillsRequestDto {
   @ApiProperty({
