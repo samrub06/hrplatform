@@ -14,12 +14,8 @@ export interface Permission {
   can_edit: boolean;
   can_delete: boolean;
 }
-interface User {
-  userId: string;
-  email: string;
-  role: string;
-  permissions: string[];
-}
+
+
 
 export interface UserJwtPayload {
   id: string;
