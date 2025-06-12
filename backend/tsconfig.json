@@ -16,8 +16,9 @@
     "incremental": true,
     "skipLibCheck": true,
     "esModuleInterop": true,
-    "jsx": "react"
+    "jsx": "react",
+    "allowJs": true
   },
-  "include": ["src/**/*.ts", "test/**/*.ts", "src/sequelize/migrations/**/*.js", "src/sequelize/models/**/*.js", "src/sequelize/config/**/*.js", "src/sequelize/seeders/**/*.js", "src/config/database.js"],
+  "include": ["src/**/*.ts", "test/**/*.ts", "test/**/*.js", "src/sequelize/migrations/**/*.js", "src/sequelize/models/**/*.js", "src/sequelize/config/**/*.js", "src/sequelize/seeders/**/*.js", "src/config/database.js"],
   "exclude": ["node_modules", "dist"]
 }
