@@ -4,14 +4,7 @@
   "testEnvironment": "node",
   "testRegex": "\\.e2e-spec\\.ts$",
   "transform": {
-    "^.+\\.(t|j)sx?$": ["ts-jest", {
-      "tsconfig": "./tsconfig.json",
-      "jsx": "react"
-    }]
-  },
-  "moduleNameMapper": {
-    "^src/(.*)$": "<rootDir>/../src/$1",
-    "^../react-templates/(.*)$": "<rootDir>/../src/notifications/react-templates/$1"
-  },
-  "setupFiles": ["<rootDir>/jest.setup.js"]
+    "^.+\\.(t|j)sx?$": "ts-jest"
+  }
+
 }

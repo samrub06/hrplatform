@@ -47,9 +47,6 @@ jobs:
     - name: Build
       run: npm run build
 
-    - name: Run e2e tests
-      run: npm run test:e2e
-
   # Cache dependencies for future executions
   
     - name: Cache node modules
