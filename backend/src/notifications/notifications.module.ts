@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { CqrsModule } from '@nestjs/cqrs';
 import { SequelizeModule } from '@nestjs/sequelize';
-import { Email } from '../models/emails.model';
+import { Email } from '../models/email_logs.model';
 import { RabbitMQModule } from '../rabbitmq/rabbitmq.module';
 import { EmailSchedulerService } from './commands/email-scheduler.command';
 import { ProcessEmailQueueHandler } from './commands/process-email-queue.command';

@@ -4,7 +4,7 @@ import { Admin } from '../models/admin.model';
 import { CVEducation } from '../models/cv-education.model';
 import { CVSkill } from '../models/cv-skill.model';
 import { CV } from '../models/cv.model';
-import { Email } from '../models/emails.model';
+import { Email } from '../models/email_logs.model';
 import { Job } from '../models/job.model';
 import { Permission } from '../models/permission.model';
 import { RolePermission } from '../models/role-permission.model';

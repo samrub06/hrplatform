@@ -11,7 +11,8 @@ import {
 } from 'sequelize-typescript';
 import { AdminNote } from './admin-note.model';
 import { CV } from './cv.model';
-import { Email } from './emails.model';
+import { EmailLogs } from './email_logs.model';
+import { ReferralPost } from './referral-post-model';
 import { Role } from './role.model';
 import { SessionUser } from './sessionUser.model';
 import { RefreshToken } from './token.model';
@@ -30,11 +31,17 @@ export class User extends Model {
   })
   cv: CV;
 
-  @HasMany(() => Email, {
+  @HasMany(() => EmailLogs, {
     foreignKey: 'user_id',
-    as: 'emails',
+    as: 'email_logs',
   })
-  emails: Email[];
+  email_logs: EmailLogs[];
+
+  @HasMany(() => ReferralPost, {
+    foreignKey: 'user_id',
+    as: 'referralPosts',
+  })
+  referralPosts: ReferralPost[];
 
   @HasOne(() => AdminNote, {
     foreignKey: 'user_id',

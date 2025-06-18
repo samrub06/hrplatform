@@ -39,6 +39,37 @@ export class CV extends Model {
   })
   email?: string;
 
+  @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
+  s3_url?: string;
+
+  @Column({
+    type: DataType.INTEGER,
+    allowNull: true,
+  })
+  file_size?: number;
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
+  mime_type?: string;
+
+  @Column({
+    type: DataType.BOOLEAN,
+    allowNull: false,
+    defaultValue: false,
+  })
+  ocr_processed: boolean;
+
+  @Column({
+    type: DataType.JSON,
+    allowNull: true,
+  })
+  ocr_raw_data?: object;
+
   @ForeignKey(() => User)
   @Column({
     type: DataType.UUID,

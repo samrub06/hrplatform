@@ -9,12 +9,12 @@ import {
 import { User } from './user.model';
 
 @Table({
-  tableName: 'emails',
+  tableName: 'email_logs',
   timestamps: true,
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
 })
-export class Email extends Model {
+export class EmailLogs extends Model {
   @Column({
     type: DataType.UUID,
     defaultValue: DataType.UUIDV4,

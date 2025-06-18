@@ -10,7 +10,6 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Slider } from "@/components/ui/slider"
 import { useFormContext } from "react-hook-form"
 
@@ -33,11 +32,6 @@ export function PersonalInfoForm() {
 
   return (
     <div className="space-y-2">
-      <div className="text-center">
-        <h2 className="text-xl font-bold">Tell us about yourself</h2>
-        <p className="text-sm text-muted-foreground">Let&apos;s start with your basic information</p>
-      </div>
-
       <div className="flex justify-center mb-2">
         <FormField
           control={control}
@@ -77,7 +71,6 @@ export function PersonalInfoForm() {
           )}
         />
       </div>
-
       <div className="grid gap-2 md:grid-cols-2">
         <FormField
           control={control}
@@ -107,7 +100,6 @@ export function PersonalInfoForm() {
           )}
         />
       </div>
-
       <FormField
         control={control}
         name="email"
@@ -121,34 +113,6 @@ export function PersonalInfoForm() {
           </FormItem>
         )}
       />
-
-      <FormField
-        control={control}
-        name="role"
-        render={({ field }) => (
-          <FormItem className="space-y-1">
-            <FormLabel className="text-sm">I am a...</FormLabel>
-            <FormControl>
-              <RadioGroup onValueChange={field.onChange} defaultValue={field.value} className="flex flex-col space-y-0.5">
-                <FormItem className="flex items-center space-x-2 space-y-0">
-                  <FormControl>
-                    <RadioGroupItem value="candidate" />
-                  </FormControl>
-                  <FormLabel className="font-normal text-sm">Candidate looking for a job</FormLabel>
-                </FormItem>
-                <FormItem className="flex items-center space-x-2 space-y-0">
-                  <FormControl>
-                    <RadioGroupItem value="publisher" />
-                  </FormControl>
-                  <FormLabel className="font-normal text-sm">Publisher/Recruiter</FormLabel>
-                </FormItem>
-              </RadioGroup>
-            </FormControl>
-            <FormMessage />
-          </FormItem>
-        )}
-      />
-
       {role === "candidate" && (
         <div className="space-y-2">
           <FormField

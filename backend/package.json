@@ -27,6 +27,7 @@
     "@aws-sdk/s3-request-presigner": "^3.705.0",
     "@casl/ability": "^6.7.2",
     "@casl/prisma": "^1.5.0",
+    "@datadog/browser-rum": "^6.10.1",
     "@nestjs/axios": "^4.0.0",
     "@nestjs/common": "^10.4.15",
     "@nestjs/config": "^3.2.3",
@@ -50,9 +51,11 @@
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.1",
     "cookie-parser": "^1.4.7",
+    "dd-trace": "^5.56.0",
     "express-session": "^1.18.1",
     "graphql": "^16.8.1",
     "handlebars": "^4.7.8",
+    "hot-shots": "^10.2.1",
     "install": "^0.13.0",
     "ioredis": "^5.4.2",
     "jest-mock-extended": "^3.0.7",
@@ -108,13 +111,13 @@
     "openapi-typescript-codegen": "^0.29.0",
     "prettier": "^3.2.5",
     "source-map-support": "^0.5.21",
+    "sqlite3": "^5.1.7",
     "supertest": "^6.3.4",
     "ts-jest": "^29.2.5",
     "ts-loader": "^9.5.1",
     "ts-node": "^10.9.2",
     "tsconfig-paths": "^4.2.0",
-    "typescript": "^5.3.3",
-    "sqlite3": "^5.1.7"
+    "typescript": "^5.3.3"
   },
   "jest": {
     "moduleFileExtensions": [

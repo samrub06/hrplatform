@@ -12,7 +12,7 @@ interface FormSuccessProps {
 export function FormSuccess({ data }: FormSuccessProps) {
   const router = useRouter()
   return (
-    <div className="flex flex-col items-center justify-center py-10 text-center">
+    <div className="flex flex-col items-center justify-center text-center">
       <Confetti />
 
       <motion.div
@@ -44,7 +44,7 @@ export function FormSuccess({ data }: FormSuccessProps) {
         animate={{ opacity: 1 }}
         transition={{ delay: 0.7 }}
       >
-        Thank you, {data.first_name}! Your profile has been submitted successfully. We'll review your information and
+        Thank you, {data.first_name}! Your profile has been submitted successfully. We&apos;ll review your information and
         get back to you soon.
       </motion.p>
 
@@ -54,7 +54,7 @@ export function FormSuccess({ data }: FormSuccessProps) {
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.9 }}
       >
-        <div className="rounded-lg bg-muted p-4 text-left">
+        <div className="rounded-lg bg-muted p-4 text-left ">
           <h3 className="mb-2 font-medium">Profile Summary</h3>
           <ul className="space-y-1 text-sm">
             <li>

@@ -103,7 +103,7 @@ export function SignupForm() {
                     <FormItem>
                       <FormLabel>First name</FormLabel>
                       <FormControl>
-                        <Input placeholder="John" {...field} />
+                        <Input placeholder="John" autoComplete="given-name" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>

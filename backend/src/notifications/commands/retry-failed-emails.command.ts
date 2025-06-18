@@ -1,7 +1,7 @@
 import { Logger } from '@nestjs/common';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { InjectModel } from '@nestjs/sequelize';
-import { Email } from '../../models/emails.model';
+import { Email } from '../../models/email_logs.model';
 
 export class RetryFailedEmailsCommand {
   constructor() {}

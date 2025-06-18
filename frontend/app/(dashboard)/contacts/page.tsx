@@ -201,7 +201,7 @@ export default function ContactsPage() {
 
   return (
     <div className="container mx-auto py-8">
-      <h1 className="text-3xl font-bold mb-8">Contact Directory</h1>
+      <h1 className="text-3xl font-bold mb-8">Contacts Directory</h1>
 
       <SearchBar
         searchQuery={searchQuery}

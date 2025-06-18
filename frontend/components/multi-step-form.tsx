@@ -72,12 +72,32 @@ const STEPS = [
   { id: "complete", label: "Complete" },
 ]
 
-// Animation variants
-const variants = {
-  hidden: { opacity: 0, y: 20 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.5 } },
-  exit: { opacity: 0, y: -20, transition: { duration: 0.3 } },
-}
+// Titres et sous-titres pour chaque étape
+const STEP_TITLES = [
+  {
+    title: "Personal Information",
+    subtitle: "Start by entering your basic information."
+  },
+  {
+    title: "Documents",
+    subtitle: "Add your CV and other relevant documents."
+  },
+  {
+    title: "Skills",
+    subtitle: "Indicate your main skills."
+  },
+  {
+    title: "Contact Links",
+    subtitle: "Add your professional links and contact methods."
+  },
+  {
+    title: "Education",
+    subtitle: "Describe your academic journey."
+  },
+
+]
+
+
 
 export function MultiStepForm() {
   const [currentStep, setCurrentStep] = useState(0)
@@ -202,29 +222,39 @@ export function MultiStepForm() {
   }
 
   return (
-    <div className="">
+    <div className="min-h-screen flex flex-col items-center justify-start  py-8 px-2">
+      {/* Header dynamique */}
+      {STEP_TITLES[currentStep]?.title && (
+        <div className="w-full max-w-2xl mx-auto mb-6 text-center">
+          <h2 className="text-3xl md:text-4xl font-bold text-[#1a202c] tracking-tight mb-2">
+            {STEP_TITLES[currentStep].title}
+          </h2>
+        <p className="text-slate-500 mt-1 md:mt-2 text-base md:text-lg font-medium">
+          {STEP_TITLES[currentStep].subtitle}
+          </p>
+        </div>
+      )}
       {currentStep < STEPS.length - 1 && (
         <motion.div
-          className="space-y-2"
+          className="space-y-2 w-full max-w-2xl mx-auto"
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
         >
-          <div className="flex justify-between text-sm">
+          <div className="flex justify-between text-sm text-[#1a202c] font-medium">
             <span>
               Step {currentStep + 1} of {STEPS.length - 1}
             </span>
             <span>{STEPS[currentStep].label}</span>
           </div>
-          <Progress value={progress} className="h-2" />
+          <Progress value={progress} className="h-2 bg-[#e2e8f0]" />
         </motion.div>
       )}
 
-      <Card className="border-none shadow-lg overflow-hidden">
-        <CardContent className="pt-1">
+      <Card className="border-none shadow-xl rounded-2xl overflow-hidden bg-white max-w-2xl w-full mt-6">
+        <CardContent className="pt-1 px-6 md:px-10 pb-8">
           <form onSubmit={handleSubmit(onSubmit)}>
             {renderStepContent()}
-
             {currentStep < STEPS.length - 1 && (
               <motion.div
                 className="mt-8 flex justify-between"
@@ -239,12 +269,11 @@ export function MultiStepForm() {
                   disabled={currentStep === 0 || isSubmitting}
                 >
                   <ChevronLeftIcon className="mr-2 h-4 w-4" />
-                  Back
+                  Previous
                 </Button>
-
                 {currentStep === STEPS.length - 2 ? (
-                  <Button 
-                    type="button" 
+                  <Button
+                    type="button"
                     onClick={async () => {
                       const isValid = await trigger()
                       if (isValid) {
@@ -257,7 +286,11 @@ export function MultiStepForm() {
                     Submit
                   </Button>
                 ) : (
-                  <Button type="button" onClick={goToNextStep} disabled={isSubmitting}>
+                  <Button
+                    type="button"
+                    onClick={goToNextStep}
+                    disabled={isSubmitting}
+                  >
                     Next
                     <ChevronRightIcon className="ml-2 h-4 w-4" />
                   </Button>

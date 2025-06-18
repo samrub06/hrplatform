@@ -22,20 +22,12 @@ export class Permission extends Model {
   name: string;
 
   @Column
-  domain: string;
+  resource: string;
 
-  @Column({ type: DataType.BOOLEAN, defaultValue: false })
-  can_read: boolean;
+  @Column({ type: DataType.STRING})
+  action: string;
 
-  @Column({ type: DataType.BOOLEAN, defaultValue: false })
-  can_create: boolean;
-
-  @Column({ type: DataType.BOOLEAN, defaultValue: false })
-  can_edit: boolean;
-
-  @Column({ type: DataType.BOOLEAN, defaultValue: false })
-  can_delete: boolean;
-
+ 
   @Column
   createdAt?: Date;
 
