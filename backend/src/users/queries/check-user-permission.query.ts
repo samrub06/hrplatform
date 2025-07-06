@@ -4,7 +4,7 @@ import { PermissionService } from 'src/permission/permission.service';
 export class CheckUserPermissionQuery {
   constructor(
     public readonly userId: string,
-    public readonly domain: string,
+    public readonly resource: string,
     public readonly action: 'create' | 'read' | 'edit' | 'delete',
   ) {}
 }
@@ -18,8 +18,8 @@ export class CheckUserPermissionHandler
   async execute(query: CheckUserPermissionQuery) {
     return this.permissionService.canUserDo(
       query.userId,
-      query.domain,
       query.action,
+      query.resource,
     );
   }
 }

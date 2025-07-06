@@ -1,7 +1,7 @@
 import { Logger } from '@nestjs/common';
 import { CommandBus, CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { InjectModel } from '@nestjs/sequelize';
-import { Email } from '../../models/email_logs.model';
+import { EmailLogs } from '../../models/email_logs.model';
 import { SendEmailCommand } from './send-email.command';
 
 export class ProcessEmailQueueCommand {
@@ -15,8 +15,8 @@ export class ProcessEmailQueueHandler
   private readonly logger = new Logger(ProcessEmailQueueHandler.name);
 
   constructor(
-    @InjectModel(Email)
-    private emailModel: typeof Email,
+    @InjectModel(EmailLogs)
+    private emailModel: typeof EmailLogs,
     private commandBus: CommandBus,
   ) {}
 

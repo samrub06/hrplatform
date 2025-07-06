@@ -15,7 +15,7 @@ export class GeneratePresignedUrlHandler
   async execute(command: GeneratePresignedUrlCommand) {
     const { fileName, folderUserId, fileKey } = command.request;
 
-    // fileKey is CV pdf type // if fileKey is profilepicture, then fileKey is image/jpeg
+    // fileKey is CV pdf type // if fileKey is profilePicture, then fileKey is image/jpeg
 
     const presignedUrl = await this.awsService.generatePresignedUrl(
       fileName,

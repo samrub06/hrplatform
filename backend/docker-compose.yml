@@ -35,9 +35,10 @@ services:
   postgres:
     image: postgres:15-alpine
     ports:
-      - '8083:8083'
+      - '${DB_PORT}:5432'
     volumes:
       - postgres_data:/var/lib/postgresql/data
+      - ./src/script/init-db.sql:/docker-entrypoint-initdb.d/init-db.sql
     environment:
       - POSTGRES_USER=${DB_USER}
       - POSTGRES_PASSWORD=${DB_PASSWORD}

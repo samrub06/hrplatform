@@ -1,7 +1,3 @@
-import * as crypto from 'crypto';
-// Assurez-vous que crypto est disponible globalement
-(global as any).crypto = crypto;
-
 import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import {

@@ -3,8 +3,7 @@ import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { UserRepository } from '../user.repository';
 import { CreateUserRequestDto } from './create-user.command.request.dto';
 import { CreateUserResponseDto } from './create-user.command.response.dto';
-import { CreateUserValidator } from './create-user.commande.validator';
-
+import { CreateUserValidator } from './create-user.command.validator';
 export class CreateUserCommand {
   constructor(public readonly request: CreateUserRequestDto) {}
 }

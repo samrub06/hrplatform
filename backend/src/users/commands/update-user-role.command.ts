@@ -18,10 +18,10 @@ export class UpdateUserRoleHandler
   async execute(command: UpdateUserRoleCommand) {
     const { id, role } = command;
 
-    // Mettre à jour le role_id de l'utilisateur
+    // Assign Role to the user
     const updatedUser = await this.userRepository.updateRole(id, role);
     if (!updatedUser) {
-      throw new NotFoundException(`Utilisateur avec l'ID ${id} non trouvé`);
+      throw new NotFoundException(`User with ID ${id} not found`);
     }
 
     return updatedUser;

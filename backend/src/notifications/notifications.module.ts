@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { CqrsModule } from '@nestjs/cqrs';
 import { SequelizeModule } from '@nestjs/sequelize';
-import { Email } from '../models/email_logs.model';
+import { EmailLogs } from '../models/email_logs.model';
 import { RabbitMQModule } from '../rabbitmq/rabbitmq.module';
 import { EmailSchedulerService } from './commands/email-scheduler.command';
 import { ProcessEmailQueueHandler } from './commands/process-email-queue.command';
@@ -20,7 +20,11 @@ const CommandHandlers = [
 ];
 
 @Module({
-  imports: [RabbitMQModule, SequelizeModule.forFeature([Email]), CqrsModule],
+  imports: [
+    RabbitMQModule,
+    SequelizeModule.forFeature([EmailLogs]),
+    CqrsModule,
+  ],
   providers: [NotificationService, EmailSchedulerService, ...CommandHandlers],
   exports: [NotificationService],
 })

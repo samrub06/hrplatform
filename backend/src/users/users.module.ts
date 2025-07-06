@@ -8,7 +8,7 @@ import { CVSkill } from '../models/cv-skill.model';
 import { User } from '../models/user.model';
 import { PermissionModule } from '../permission/permission.module';
 import { CreateUserHandler } from './commands/create-user.command';
-import { CreateUserValidator } from './commands/create-user.commande.validator';
+import { CreateUserValidator } from './commands/create-user.command.validator';
 import { GeneratePresignedUrlHandler } from './commands/generate-presigned-url.command';
 import { GeneratePublicLinkHandler } from './commands/generate-public-link.command';
 import { GetCvDownloadUrlHandler } from './commands/get-cv-download-url-query';

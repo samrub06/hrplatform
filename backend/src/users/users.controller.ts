@@ -57,11 +57,6 @@ export class UsersController {
   @ApiOperation({ summary: 'Create User' })
   @ApiResponse({ status: 403, description: 'Forbidden.' })
   @CheckPolicies((ability: AppAbility) => ability.can(Action.Create, User))
-  /* @RateLimit({
-    ttl: 60, // 1 minute window
-    limit: 10, // 10 requests per minute
-    keyPrefix: 'api', // Optional prefix for Redis key
-  }) */
   createUser(@Body() createUserDto: CreateUserRequestDto) {
     return this.commandBus.execute(new CreateUserCommand(createUserDto));
   }

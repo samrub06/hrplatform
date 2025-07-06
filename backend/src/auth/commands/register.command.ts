@@ -27,7 +27,7 @@ export class RegisterHandler
   async execute(command: RegisterCommand): Promise<RegisterResponseDto> {
     const { request } = command;
 
-    // Validation métier après validation syntaxique
+    //Validate Logic after syntax validation
     const validationResult = this.validator.validate(request);
     if (!validationResult.isValid) {
       throw new BadRequestException(validationResult.errors);

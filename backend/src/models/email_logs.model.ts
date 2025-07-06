@@ -24,7 +24,7 @@ export class EmailLogs extends Model {
 
   @ForeignKey(() => User)
   @Column({
-    type: DataType.STRING,
+    type: DataType.UUID,
     allowNull: false,
     field: 'user_id',
     references: {

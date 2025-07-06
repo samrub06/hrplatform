@@ -35,14 +35,14 @@ export class PermissionService {
 
   async canUserDo(
     userId: string,
-    domain: string,
     action: 'create' | 'read' | 'edit' | 'delete',
+    resource: string,
   ): Promise<boolean> {
     const permissions = await this.getUserPermissions(userId);
 
     return permissions.some(
       (permission) =>
-        permission.domain === domain && permission[`can_${action}`] === true,
+        permission.resource === resource && permission[`can_${action}`] === true,
     );
   }
 }

@@ -1,7 +1,7 @@
 import { Logger } from '@nestjs/common';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { InjectModel } from '@nestjs/sequelize';
-import { Email } from '../../models/email_logs.model';
+import { EmailLogs } from '../../models/email_logs.model';
 
 export class QueueEmailCommand {
   constructor(
@@ -25,11 +25,11 @@ export class QueueEmailHandler implements ICommandHandler<QueueEmailCommand> {
   private readonly logger = new Logger(QueueEmailHandler.name);
 
   constructor(
-    @InjectModel(Email)
-    private emailModel: typeof Email,
+    @InjectModel(EmailLogs)
+    private emailModel: typeof EmailLogs,
   ) {}
 
-  async execute(command: QueueEmailCommand): Promise<Email> {
+  async execute(command: QueueEmailCommand): Promise<EmailLogs> {
     this.logger.log(`Queueing email for ${command.emailData.recipient_email}`);
 
     return this.emailModel.create({

@@ -2,7 +2,7 @@ import { BadRequestException, ConflictException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { UserRepository } from '../user.repository';
 import { CreateUserCommand, CreateUserHandler } from './create-user.command';
-import { CreateUserValidator } from './create-user.commande.validator';
+import { CreateUserValidator } from './create-user.command.validator';
 
 describe('CreateUserHandler', () => {
   let handler: CreateUserHandler;
