@@ -62,7 +62,7 @@ export class AuthController {
   @ApiOperation({ summary: 'Register User' })
   @ApiResponse({
     status: 201,
-    description: 'Register Sucess',
+    description: 'Register Success',
     type: RegisterResponseDto,
   })
   @ApiResponse({ status: 400, description: 'Invalid data' })
@@ -131,10 +131,10 @@ export class AuthController {
   @ApiOperation({ summary: 'Create Admin' })
   @ApiResponse({
     status: 201,
-    description: 'Administrateur créé avec succès',
+    description: 'Administrator created successfully',
   })
-  @ApiResponse({ status: 401, description: 'Code secret invalide' })
-  @ApiResponse({ status: 409, description: 'Email déjà utilisé' })
+  @ApiResponse({ status: 401, description: 'Invalid secret code' })
+  @ApiResponse({ status: 409, description: 'Email already used' })
   async RegisterAdmin(@Body() registerAdminDto: RegisterAdminRequestDto) {
     return this.commandBus.execute(new RegisterAdminCommand(registerAdminDto));
   }
@@ -152,7 +152,7 @@ export class AuthController {
   @UseGuards(AuthGuard('linkedin'))
   @ApiOperation({ summary: 'LinkedIn Auth' })
   linkedinAuth() {
-    // La redirection est gérée par Passport
+    // The redirection is managed by Passport
   }
 
   @Public()
@@ -183,7 +183,7 @@ export class AuthController {
         `${process.env.FRONTEND_URL}/auth/linkedin/callback?token=${access_token}`,
       );
     } catch (error) {
-      console.error('Erreur LinkedIn Auth:', error);
+      console.error('LinkedIn Auth Error:', error);
       return res.redirect(
         `${process.env.FRONTEND_URL}/login?error=auth_failed`,
       );
@@ -218,7 +218,7 @@ export class AuthController {
       const redirectUrl = `${process.env.FRONTEND_URL}/auth/google/callback?token=${access_token}`;
       return res.redirect(redirectUrl);
     } catch (error) {
-      console.error('Erreur Google Auth:', error);
+      console.error('Google Auth Error:', error);
       return res.redirect(
         `${process.env.FRONTEND_URL}/login?error=auth_failed`,
       );

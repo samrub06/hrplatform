@@ -1,10 +1,14 @@
 "use client"
 
 import {
+  BarChart3,
   BookOpen,
   Bot,
   GalleryVerticalEnd,
-  SquareTerminal
+  Settings,
+  SquareTerminal,
+  Users,
+  type LucideIcon
 } from "lucide-react"
 import * as React from "react"
 
@@ -19,54 +23,71 @@ import {
   SidebarRail,
 } from "@/components/ui/sidebar"
 
-// This is sample data.
-const data = {
-  user: {
-    name: "shadcn",
-    email: "m@example.com",
-    avatar: "/avatars/shadcn.jpg",
-  },
-  teams: [
-    {
-      name: "Acme Inc",
-      logo: GalleryVerticalEnd,
-      plan: "Enterprise",
-    },
-   
-  ],
-  navMain: [
-    {
-      title: "Home",
-      url: "/",
-      icon: SquareTerminal,      
-    },
-    {
-      title: "Contacts",
-      url: "/contacts",
-      icon: Bot,
-    },
-    {
-      title: "Referals",
-      url: "/referals",
-      icon: BookOpen,
-    
-    },
-
-  ]
-   
+interface AppSidebarProps extends React.ComponentProps<typeof Sidebar> {
+  userData: {
+    user: {
+      id: string
+      name: string
+      email: string
+      avatar?: string
+      role?: string
+    }
+    teams: Array<{
+      name: string
+      logo: LucideIcon | null
+      plan: string
+    }>
+    navMain: Array<{
+      title: string
+      url: string
+      icon: LucideIcon | null
+    }>
+  }
 }
 
-export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+// Icon mapping for navigation items
+const getIconForTitle = (title: string): LucideIcon => {
+  switch (title.toLowerCase()) {
+    case "dashboard":
+      return SquareTerminal
+    case "users":
+      return Users
+    case "contacts":
+      return Bot
+    case "referrals":
+      return BookOpen
+    case "reports":
+      return BarChart3
+    case "settings":
+      return Settings
+    default:
+      return SquareTerminal
+  }
+}
+
+export function AppSidebar({ userData, ...props }: AppSidebarProps) {
+  // Map icons to navigation items
+  const navMainWithIcons = userData.navMain.map(item => ({
+    ...item,
+    icon: item.icon || getIconForTitle(item.title)
+  }))
+
+  // Map icons to teams
+  const teamsWithIcons = userData.teams.map(team => ({
+    ...team,
+    logo: team.logo || GalleryVerticalEnd
+  }))
+
   return (
     <Sidebar collapsible="icon" {...props}>
       <SidebarHeader>
-        <TeamSwitcher teams={data.teams} />
+        <TeamSwitcher teams={teamsWithIcons} />
       </SidebarHeader>
       <SidebarContent>
-       {<NavMain items={data.navMain} />}
+        <NavMain items={navMainWithIcons} />
       </SidebarContent>
       <SidebarFooter>
-        <NavUser user={data.user} />
+        <NavUser user={userData.user} />
       </SidebarFooter>
       <SidebarRail />
     </Sidebar>

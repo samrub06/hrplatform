@@ -55,9 +55,9 @@ export const loginGoogle = async (): Promise<void> => {
 
 export const register = async (data: RegisterDto): Promise<AuthUser> => {
   const response = await axiosInstance.post('/auth/register', data);
-  const { access_token } = response.data;
+  const { accessToken } = response.data;
 
-  const decodedToken = jwtDecode(access_token) as { id: string, email: string };
+  const decodedToken = jwtDecode(accessToken) as { id: string, email: string };
   return decodedToken;
 };
 

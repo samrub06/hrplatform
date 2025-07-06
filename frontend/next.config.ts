@@ -1,18 +1,18 @@
 import type { NextConfig } from 'next';
 
 const nextConfig: NextConfig = {
- // output: 'export',
- env: {
-  PORT: process.env.REACT_APP_PORT || '3001',
-},
- async rewrites() {
-  return [
-   {
-    source: '/api/:path*',
-    destination: process.env.REACT_APP_API_URL || 'http://localhost:3001/api/:path*',
-   },
-  ];
- },
+  // Configuration basique
+  experimental: {
+    serverActions: {
+      allowedOrigins: ['localhost:3001'],
+    },
+  },
+  
+  // Disable Tailwind CSS logs completely
+  env: {
+    TAILWIND_MODE: 'build',
+    TAILWIND_VERBOSE: 'false',
+  },
 };
 
 export default nextConfig;

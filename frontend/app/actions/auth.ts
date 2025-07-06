@@ -1,9 +1,23 @@
 'use server'
-import { cookies } from 'next/headers';
-import { login, LoginRequestDto } from '../api/login/route';
+import axiosInstance from '@/lib/axiosInstance';
+import {
+  ActionResult,
+  createErrorResult,
+  createSuccessResult,
+  handleServerError,
+  validateFormData
+} from '@/lib/errorHandler';
+import { TokenService } from '@/lib/services/tokenService';
 
+interface LoginRequestDto {
+  email: string;
+  password: string;
+}
 
-
+interface LoginResponse {
+  accessToken: string;
+  refreshToken: string;
+}
 
 class LoginFormData {
 private email: string 
@@ -26,105 +40,86 @@ toLoginRequestDto(): LoginRequestDto{
 }
 }
 
+// Direct login function to avoid circular imports
+async function performLogin(credentials: LoginRequestDto): Promise<LoginResponse> {
+  const response = await axiosInstance.post('/auth/login', credentials);
+  return response.data;
+}
 
-
-
-export async function loginAction(prevState: { error: string | null; success: boolean }, formData: FormData) {
+export async function loginAction(prevState: { error: string | null; success: boolean }, formData: FormData): Promise<ActionResult> {
   const loginFormData = new LoginFormData(formData)
   const validation = loginFormData.validate()
 
   if (!validation.isValid) {
-    return {
-      error: validation.error || "Invalid form data",
-      success: false
-    }
+    return createErrorResult(validation.error || "Invalid form data");
   }
 
   try {
-    const response = await login(loginFormData.toLoginRequestDto());
+    const response = await performLogin(loginFormData.toLoginRequestDto());
     const { accessToken, refreshToken } = response;
-        // Stockage dans les cookies
-        const cookieStore = await cookies();
-        cookieStore.set('accessToken', accessToken, {
-          httpOnly: true,
-          secure: process.env.NODE_ENV === 'production',
-          sameSite: 'lax',
-          path: '/'
-        });
-        cookieStore.set('refreshToken', refreshToken, {
-          httpOnly: true,
-          secure: process.env.NODE_ENV === 'production',
-          sameSite: 'lax',
-          path: '/'
-        });
     
-        return { success: true, error: null };
-
-  } catch (err) {
-    console.log('err',err);
-    return {
-      error: err instanceof Error ? err.message : 'Une erreur est survenue',
-      success: false
-    }
+    // Store tokens using the service
+    await TokenService.setAccessToken(accessToken);
+    await TokenService.setRefreshToken(refreshToken);
+    
+    return createSuccessResult()
+  } catch (error) {
+    return handleServerError(error, "An error occurred during login");
   }
 }
   
 
-export type SignupState = {
-  error: string | null;
-  success: boolean;
-}
-
-
+export type SignupState = ActionResult;
 
 export async function signupAction(prevState: SignupState, formData: FormData): Promise<SignupState> {
-  const email = formData.get('email')
-  const password = formData.get('password')
-  const confirmPassword = formData.get('confirmPassword')
-  const firstName = formData.get('firstName')
-  const lastName = formData.get('lastName')
-
-  if (!email || !password || !confirmPassword || !firstName || !lastName) {
-    return {
-      error: "All fields are required",
-      success: false
-    }
-  }
-
-  if (password !== confirmPassword) {
-    return {
-      error: "Passwords do not match",
-      success: false
-    }
-  }
-
-  let response;
-  try {
-    response = await fetch("http://localhost:3000/api/auth/register", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
+  // Validate required fields
+  const validationError = validateFormData(
+    formData, 
+    ['email', 'password', 'confirmPassword', 'firstName', 'lastName'],
+    [
+      {
+        field: 'password',
+        validator: (value) => {
+          if (value.length < 6) {
+            return "Password must contain at least 6 characters";
+          }
+          return null;
+        }
       },
-      body: JSON.stringify({  email, password, password_confirmation:confirmPassword, first_name: firstName, last_name: lastName }),
-      credentials: 'include',
-    })
-
-    const data = await response.json()
-    if (!response.ok) {
-      return {
-        error: data.message || "An error occurred during signup",
-        success: false
+      {
+        field: 'confirmPassword',
+        validator: (value) => {
+          const password = formData.get('password') as string;
+          if (value !== password) {
+            return "Passwords do not match";
+          }
+          return null;
+        }
       }
-    }
+    ]
+  );
 
-    return {
-      error: null,
-      success: true
-    }
+  if (validationError) {
+    return validationError;
+  }
+
+  const email = formData.get('email') as string;
+  const password = formData.get('password') as string;
+  const confirmPassword = formData.get('confirmPassword') as string;
+  const firstName = formData.get('firstName') as string;
+  const lastName = formData.get('lastName') as string;
+
+  try {
+    await axiosInstance.post("/auth/register", {
+      email, 
+      password, 
+      password_confirmation: confirmPassword, 
+      first_name: firstName, 
+      last_name: lastName
+    });
+
+    return createSuccessResult();
   } catch (error) {
-    return {
-      error: error instanceof Error ? error.message : "An error occurred during signup",
-      success: false
-    }
+    return handleServerError(error, "An error occurred during signup");
   }
 }

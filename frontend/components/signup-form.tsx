@@ -4,7 +4,7 @@ import { ArrowRight } from "lucide-react"
 import Link from "next/link"
 import { useActionState, useEffect } from "react"
 
-import { signupAction, SignupState } from "@/app/actions/auth"
+import { signupAction } from "@/app/actions/auth"
 import { Icons } from "@/components/icons"
 import { Button } from "@/components/ui/button"
 import {
@@ -25,6 +25,7 @@ import {
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { Separator } from "@/components/ui/separator"
+import { createInitialState } from "@/lib/errorHandler"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useRouter } from "next/navigation"
 import { useForm } from "react-hook-form"
@@ -43,7 +44,7 @@ const formSchema = z.object({
 
 export function SignupForm() {
   const router = useRouter()
-  const initialState: SignupState = { error: null, success: false }
+  const initialState = createInitialState()
   const [state, formAction] = useActionState(signupAction, initialState)
 
   const form = useForm<z.infer<typeof formSchema>>({

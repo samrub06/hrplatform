@@ -15,7 +15,7 @@ export default function ActivityFeed() {
       id: 1,
       type: "cv_uploaded",
       message: "New CV uploaded by Sarah Johnson",
-      time: new Date(Date.now() - 2 * 60 * 60 * 1000), // 2 hours ago
+      time: new Date('2024-01-15T14:30:00Z'), // Timestamp fixe
       icon: FileText,
       color: "text-blue-600 bg-blue-100"
     },
@@ -23,7 +23,7 @@ export default function ActivityFeed() {
       id: 2,
       type: "candidate_added",
       message: "Michael Chen registered as candidate",
-      time: new Date(Date.now() - 4 * 60 * 60 * 1000), // 4 hours ago
+      time: new Date('2024-01-15T14:30:00Z'), // Timestamp fixe
       icon: UserPlus,
       color: "text-green-600 bg-green-100"
     },
@@ -31,7 +31,7 @@ export default function ActivityFeed() {
       id: 3,
       type: "skills_extracted",
       message: "Skills extracted from Emma Wilson's CV",
-      time: new Date(Date.now() - 6 * 60 * 60 * 1000), // 6 hours ago
+      time: new Date('2024-01-15T14:30:00Z'), // Timestamp fixe
       icon: Star,
       color: "text-purple-600 bg-purple-100"
     },
@@ -39,7 +39,7 @@ export default function ActivityFeed() {
       id: 4,
       type: "profile_completed",
       message: "David Rodriguez completed profile",
-      time: new Date(Date.now() - 8 * 60 * 60 * 1000), // 8 hours ago
+        time: new Date('2024-01-15T14:30:00Z'), // Timestamp fixe
       icon: Briefcase,
       color: "text-orange-600 bg-orange-100"
     }

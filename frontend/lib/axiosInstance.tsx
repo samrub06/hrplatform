@@ -1,8 +1,9 @@
 import axios from 'axios';
+import { TokenService } from './services/tokenService';
 
-// Créez une instance Axios avec la base URL
+// Create Axios instance with base URL
 const axiosInstance = axios.create({
-  baseURL: process.env.REACT_APP_API_URL,
+  baseURL: process.env.NEXT_PUBLIC_API_URL || process.env.REACT_APP_API_URL,
   headers: {
     'Content-Type': 'application/json',
     'Accept': 'application/json'
@@ -10,45 +11,94 @@ const axiosInstance = axios.create({
   withCredentials: true
 });
 
-// Intercepteur de requête pour ajouter les cookies automatiquement
-axiosInstance.interceptors.request.use(
-   async (config) => {
-    
-    try {
-/*       const cookieStore = await cookies();
-      const accessToken = cookieStore.get('accessToken')?.value;
-      if (accessToken) {
-        config.headers['Authorization'] = `Bearer ${accessToken}`;
-      } */
-      return config;
+// List of public routes that don't require authentication
+const PUBLIC_ROUTES = [
+  '/auth/login',
+  '/auth/register',
+  '/auth/refresh-token',
+  '/auth/forgot-password',
+  '/auth/reset-password'
+];
 
-    } catch (error) {
-      console.error('Erreur lors de la récupération des cookies:', error);
+// Request interceptor to automatically add access token
+axiosInstance.interceptors.request.use(
+  async (config) => {
+    // Check if the request is for a public route
+    const isPublicRoute = PUBLIC_ROUTES.some(route => 
+      config.url?.includes(route)
+    );
+    
+    // Skip token logic for public routes
+    if (isPublicRoute) {
+      return config;
     }
     
-    return config;
+    try {
+      const accessToken = await TokenService.getAccessToken();
+      
+      if (accessToken) {
+        config.headers['Authorization'] = `Bearer ${accessToken}`;
+      }
+      
+      return config;
+    } catch (error) {
+      console.error('Error retrieving access token:', error);
+      return config;
+    }
   },
   (error) => {
     return Promise.reject(error);
   }
 );
 
-// Ajouter un intercepteur pour logger les réponses
+// Response interceptor to handle token refresh
 axiosInstance.interceptors.response.use(
   (response) => {
     return response;
   },
-  (error) => {
-    if (error.response?.status === 401) {
-      // Gérer l'expiration de la session ici si nécessaire
-      console.error('Session expirée');
+  async (error) => {
+    const originalRequest = error.config;
+
+    // If 401 error and we haven't tried to refresh yet
+    if (error.response?.status === 401 && !originalRequest._retry) {
+      originalRequest._retry = true;
+
+      try {
+        // Try to refresh the access token using the same instance
+        const refreshResponse = await axiosInstance.post('/auth/refresh-token');
+
+        const { accessToken } = refreshResponse.data;
+
+        // Update the access token using the service
+        await TokenService.setAccessToken(accessToken);
+
+        // Retry the original request with new token
+        originalRequest.headers['Authorization'] = `Bearer ${accessToken}`;
+        return axiosInstance(originalRequest);
+
+      } catch (refreshError) {
+        // If refresh fails, clear tokens and redirect to login
+        console.error('Token refresh failed:', refreshError);
+        
+        // Clear all tokens using the service
+        await TokenService.clearTokens();
+        
+        // Redirect to login page (client side only)
+        if (typeof window !== 'undefined') {
+          window.location.href = '/login';
+        }
+        
+        return Promise.reject(refreshError);
+      }
     }
-    
-    console.error('Erreur Axios:', {
+
+    // Log other errors
+    console.error('Axios error:', {
       message: error.message,
       response: error.response?.data,
       status: error.response?.status
     });
+    
     return Promise.reject(error);
   }
 );

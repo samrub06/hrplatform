@@ -24,7 +24,6 @@ import { Separator } from "@/components/ui/separator"
 import { cn } from "@/lib/utils"
 import { zodResolver } from "@hookform/resolvers/zod"
 import Link from "next/link"
-import { useRouter } from "next/navigation"
 import { useActionState, useEffect } from "react"
 import { useFormStatus } from "react-dom"
 import { useForm } from "react-hook-form"
@@ -48,10 +47,10 @@ function SubmitButton() {
       {pending ? (
         <>
           <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
-          Connexion en cours...
+          Login in progress...
         </>
       ) : (
-        "Se connecter"
+        "Login"
       )}
     </Button>
   )
@@ -61,7 +60,6 @@ export function LoginForm({
   className,
   ...props
 }: React.ComponentProps<"div">) {
-  const router = useRouter()
   const [state, formAction] = useActionState<LoginState, FormData>(loginAction, { error: null, success: false })
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -73,10 +71,10 @@ export function LoginForm({
   })
 
   useEffect(() => {
-    if (state?.success) {
-      router.push('/referals')
+    if (state.success) {
+      window.location.href = '/dashboard'
     }
-  }, [state?.success, router])
+  }, [state.success])
 
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>

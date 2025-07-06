@@ -1,43 +1,39 @@
-import type { NextRequest } from 'next/server';
-import { NextResponse } from 'next/server';
-import { AuthDAL } from './lib/dal/auth';
+import type { NextRequest } from 'next/server'
+import { NextResponse } from 'next/server'
 
-// Liste des routes protégées
-const protectedRoutes = ['/dashboard', '/referals', '/settings'];
-// Liste des routes publiques
-const publicRoutes = ['/login', '/register', '/forgot-password'];
+// List of public routes that don't require authentication
+const PUBLIC_ROUTES = [
+  '/auth/login',
+  '/auth/register',
+  '/auth/forgot-password',
+  '/auth/reset-password',
+  '/api/auth'
+]
 
-export async function middleware(request: NextRequest) {
-  const { pathname } = request.nextUrl;
-  console.log(pathname);
-
-  // Vérifier si la route est protégée
-  const isProtectedRoute = protectedRoutes.some(route => pathname.startsWith(route));
-  const isPublicRoute = publicRoutes.some(route => pathname.startsWith(route));
-  console.log(isProtectedRoute);
-  console.log(isPublicRoute);
-
-  // Si ce n'est ni une route protégée ni une route publique, laisser passer
-  if (!isProtectedRoute && !isPublicRoute) {
-    return NextResponse.next();
+export function middleware(request: NextRequest) {
+  const { pathname } = request.nextUrl
+  
+  // Check if the route is public
+  const isPublicRoute = PUBLIC_ROUTES.some(route => 
+    pathname.startsWith(route)
+  )
+  
+  // If it's a public route, allow access
+  if (isPublicRoute) {
+    return NextResponse.next()
   }
-
-  // Vérifier le token d'accès
-  const session = await AuthDAL.verifySession(); 
-
-  // Si c'est une route protégée et qu'il n'y a pas d'utilisateur
-  if (isProtectedRoute && !session?.userId) {
-    const url = new URL('/login', request.url);
-    url.searchParams.set('from', pathname);
-    return NextResponse.redirect(url);
+  
+  // Check for authentication token
+  const refreshToken = request.cookies.get('refreshToken')
+  const accessToken = request.cookies.get('accessToken')
+  
+  // If no tokens found and trying to access protected route, redirect to login
+  if (!refreshToken && !accessToken && pathname.startsWith('/dashboard')) {
+    return NextResponse.redirect(new URL('/auth/login', request.url))
   }
-
-  // Si c'est une route publique et qu'il y a un utilisateur
-  if (isPublicRoute && session?.userId) {
-    return NextResponse.redirect(new URL('/dashboard', request.url));
-  }
-
-  return NextResponse.next();
+  
+  // Continue with the request
+  return NextResponse.next()
 }
 
 export const config = {
@@ -51,4 +47,4 @@ export const config = {
      */
     '/((?!api|_next/static|_next/image|favicon.ico).*)',
   ],
-}; 
+} 
