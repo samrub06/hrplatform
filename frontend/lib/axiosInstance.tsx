@@ -64,8 +64,18 @@ axiosInstance.interceptors.response.use(
       originalRequest._retry = true;
 
       try {
-        // Try to refresh the access token using the same instance
-        const refreshResponse = await axiosInstance.post('/auth/refresh-token');
+        // Create a separate axios instance for refresh to avoid interceptors
+        const refreshAxios = axios.create({
+          baseURL: process.env.NEXT_PUBLIC_API_URL || process.env.REACT_APP_API_URL,
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+          },
+          withCredentials: true
+        });
+
+        // Try to refresh the access token using the separate instance
+        const refreshResponse = await refreshAxios.post('/auth/refresh-token');
 
         const { accessToken } = refreshResponse.data;
 

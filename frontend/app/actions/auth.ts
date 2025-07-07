@@ -123,3 +123,15 @@ export async function signupAction(prevState: SignupState, formData: FormData): 
     return handleServerError(error, "An error occurred during signup");
   }
 }
+
+export async function logoutAction(): Promise<ActionResult> {
+  try {
+    // Import AuthDAL dynamically to avoid server/client issues
+    const { AuthDAL } = await import('@/lib/dal/auth');
+    await AuthDAL.logout();
+    
+    return createSuccessResult();
+  } catch (error) {
+    return handleServerError(error, "An error occurred during logout");
+  }
+}

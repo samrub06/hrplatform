@@ -7,6 +7,7 @@ import {
   LogOut
 } from "lucide-react"
 
+import { logoutAction } from "@/app/actions/auth"
 import {
   Avatar,
   AvatarFallback,
@@ -28,6 +29,7 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar"
 import { useRouter } from "next/navigation"
+
 export function NavUser({
   user,
 }: {
@@ -39,6 +41,27 @@ export function NavUser({
 }) {
   const { isMobile } = useSidebar()
   const router = useRouter()
+
+  // Handle logout action using Server Action
+  const handleLogout = async () => {
+    try {
+      const result = await logoutAction()
+      
+      // If logout was successful, redirect to login page
+      if (result.success) {
+        router.push('/login')
+      } else {
+        console.error("Logout failed:", result.error)
+        // Still redirect to login page even if logout fails
+        router.push('/login')
+      }
+    } catch (error) {
+      console.error("Error during logout:", error)
+      // Still redirect to login page even if logout fails
+      router.push('/login')
+    }
+  }
+
   return (
     <SidebarMenu>
       <SidebarMenuItem>
@@ -91,8 +114,8 @@ export function NavUser({
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>
-              <LogOut />
+            <DropdownMenuItem onClick={handleLogout}>
+              <LogOut  />
               Log out
             </DropdownMenuItem>
           </DropdownMenuContent>
