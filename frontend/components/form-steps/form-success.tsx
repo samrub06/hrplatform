@@ -24,13 +24,13 @@ export function FormSuccess({ data }: FormSuccessProps) {
           damping: 20,
           delay: 0.3,
         }}
-        className="mb-4 rounded-full bg-primary/10 p-3"
+        className="mb-4 rounded-full bg-gradient-to-r from-blue-600 to-cyan-500 p-3 shadow-lg"
       >
-        <CheckCircle2Icon className="h-12 w-12 text-primary" />
+        <CheckCircle2Icon className="h-12 w-12 text-white" />
       </motion.div>
 
       <motion.h2
-        className="mb-2 text-2xl font-bold"
+        className="mb-2 text-2xl font-bold bg-gradient-to-r from-blue-600 to-cyan-400 bg-clip-text text-transparent"
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.5 }}
@@ -39,7 +39,7 @@ export function FormSuccess({ data }: FormSuccessProps) {
       </motion.h2>
 
       <motion.p
-        className="mb-6 max-w-md text-muted-foreground"
+        className="mb-6 max-w-md text-slate-600"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 0.7 }}
@@ -54,38 +54,38 @@ export function FormSuccess({ data }: FormSuccessProps) {
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.9 }}
       >
-        <div className="rounded-lg bg-muted p-4 text-left ">
-          <h3 className="mb-2 font-medium">Profile Summary</h3>
+        <div className="rounded-lg  border-blue-200 p-4 text-left shadow-md">
+          <h3 className="mb-2 font-medium text-blue-700">Profile Summary</h3>
           <ul className="space-y-1 text-sm">
             <li>
-              <span className="font-medium">Name:</span> {data.first_name} {data.last_name}
+              <span className="font-medium text-blue-600">Name:</span> {data.first_name} {data.last_name}
             </li>
             <li>
-              <span className="font-medium">Email:</span> {data.email}
+              <span className="font-medium text-blue-600">Email:</span> {data.email}
             </li>
             <li>
-              <span className="font-medium">Role:</span> {data.role === "candidate" ? "Candidate" : "Publisher"}
+              <span className="font-medium text-blue-600">Role:</span> {data.role === "candidate" ? "Candidate" : "Publisher"}
             </li>
             {data.role === "candidate" && (
               <li>
-                <span className="font-medium">Desired Position:</span> {data.desired_position || "Not specified"}
+                <span className="font-medium text-blue-600">Desired Position:</span> {data.desired_position || "Not specified"}
               </li>
             )}
             {data.role === "publisher" && (
               <>
                 <li>
-                  <span className="font-medium">Current Position:</span> {data.current_position || "Not specified"}
+                  <span className="font-medium text-blue-600">Current Position:</span> {data.current_position || "Not specified"}
                 </li>
                 <li>
-                  <span className="font-medium">Current Company:</span> {data.current_company || "Not specified"}
+                  <span className="font-medium text-blue-600">Current Company:</span> {data.current_company || "Not specified"}
                 </li>
               </>
             )}
             <li>
-              <span className="font-medium">Skills:</span> {data.skills?.length || 0} skills added
+              <span className="font-medium text-blue-600">Skills:</span> {data.skills?.length || 0} skills added
             </li>
             <li>
-              <span className="font-medium">Education:</span> {data.education?.length || 0} entries added
+              <span className="font-medium text-blue-600">Education:</span> {data.education?.length || 0} entries added
             </li>
           </ul>
         </div>
@@ -96,10 +96,23 @@ export function FormSuccess({ data }: FormSuccessProps) {
           animate={{ opacity: 1 }}
           transition={{ delay: 1.1 }}
         >
-          <Button variant="outline" onClick={() => window.location.reload()}>
+          <Button 
+            variant="outline" 
+            onClick={() => {
+              const searchParams = new URLSearchParams(window.location.search)
+              searchParams.set('step', '1')
+              router.push(`?${searchParams.toString()}`)
+            }}
+            className="border-blue-300 text-blue-600 hover:bg-blue-50 hover:border-blue-400"
+          >
             Start Over
           </Button>
-          <Button onClick={() => router.push('/dashboard')}>View Profile</Button>
+          <Button 
+            className="bg-gradient-to-r from-blue-600 to-cyan-500 hover:from-blue-700 hover:to-cyan-600 text-white font-medium px-6 py-2 rounded-lg transition-colors"
+            onClick={() => router.push('/dashboard')}
+          >
+            View Profile
+          </Button>
         </motion.div>
       </motion.div>
     </div>

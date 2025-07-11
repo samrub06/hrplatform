@@ -3,7 +3,8 @@
 import { zodResolver } from "@hookform/resolvers/zod"
 import { AnimatePresence, motion } from "framer-motion"
 import { ChevronLeftIcon, ChevronRightIcon, Loader2Icon } from "lucide-react"
-import { useState } from "react"
+import { useRouter, useSearchParams } from "next/navigation"
+import { useEffect, useState } from "react"
 import { FormProvider, useForm } from "react-hook-form"
 import { z } from "zod"
 
@@ -72,15 +73,15 @@ const STEPS = [
   { id: "complete", label: "Complete" },
 ]
 
-// Titres et sous-titres pour chaque étape
 const STEP_TITLES = [
   {
     title: "Personal Information",
     subtitle: "Start by entering your basic information."
   },
   {
-    title: "Documents",
-    subtitle: "Add your CV and other relevant documents."
+
+    title: "Upload your CV",
+    subtitle: "We'll use this to extract your skills and experience"
   },
   {
     title: "Skills",
@@ -100,9 +101,29 @@ const STEP_TITLES = [
 
 
 export function MultiStepForm() {
+  const searchParams = useSearchParams()
+  const router = useRouter()
   const [currentStep, setCurrentStep] = useState(0)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [direction, setDirection] = useState(0) // -1 for backward, 1 for forward
+
+  // Initialize currentStep from URL params on component mount
+  useEffect(() => {
+    const stepParam = searchParams.get('step')
+    if (stepParam) {
+      const stepNumber = parseInt(stepParam, 10)
+      if (!isNaN(stepNumber) && stepNumber >= 0 && stepNumber < STEPS.length) {
+        setCurrentStep(stepNumber)
+      }
+    }
+  }, [searchParams])
+
+  // Update URL when currentStep changes
+  const updateStepInURL = (step: number) => {
+    const params = new URLSearchParams(searchParams)
+    params.set('step', step.toString())
+    router.push(`?${params.toString()}`, { scroll: false })
+  }
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -131,7 +152,9 @@ export function MultiStepForm() {
     if (isValid) {
       if (currentStep < STEPS.length - 1) {
         setDirection(1)
-        setCurrentStep((prev) => prev + 1)
+        const nextStep = currentStep + 1
+        setCurrentStep(nextStep)
+        updateStepInURL(nextStep)
         window.scrollTo(0, 0)
       }
     }
@@ -140,7 +163,9 @@ export function MultiStepForm() {
   const goToPreviousStep = () => {
     if (currentStep > 0) {
       setDirection(-1)
-      setCurrentStep((prev) => prev - 1)
+      const prevStep = currentStep - 1
+      setCurrentStep(prevStep)
+      updateStepInURL(prevStep)
       window.scrollTo(0, 0)
     }
   }
@@ -222,84 +247,108 @@ export function MultiStepForm() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-start  py-8 px-2">
-      {/* Header dynamique */}
+    <motion.div 
+      initial={{ opacity: 0 }} 
+      animate={{ opacity: 1 }}
+      className="min-h-screen md:min-h-[80vh] flex flex-col justify-start pt-0 md:pt-12"
+    >
+      {/* Header with gradient text like RoleSelectionForm */}
       {STEP_TITLES[currentStep]?.title && (
-        <div className="w-full max-w-2xl mx-auto mb-6 text-center">
-          <h2 className="text-3xl md:text-4xl font-bold text-[#1a202c] tracking-tight mb-2">
-            {STEP_TITLES[currentStep].title}
-          </h2>
-        <p className="text-slate-500 mt-1 md:mt-2 text-base md:text-lg font-medium">
-          {STEP_TITLES[currentStep].subtitle}
-          </p>
-        </div>
+        <motion.div 
+          className="w-full max-w-2xl mx-auto md:mt-16 mb-3 md:mb-5 duration-300 p-3 md:p-10"
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.1 }}
+        >
+          <div className="text-center">
+            <h2 className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-blue-600 to-cyan-400 bg-clip-text text-transparent drop-shadow-md">
+              {STEP_TITLES[currentStep].title}
+            </h2>
+            <p className="text-slate-500 mt-1 md:mt-2 text-sm md:text-base">
+              {STEP_TITLES[currentStep].subtitle}
+            </p>
+          </div>
+        </motion.div>
       )}
+
+      {/* Progress bar with improved styling */}
       {currentStep < STEPS.length - 1 && (
         <motion.div
-          className="space-y-2 w-full max-w-2xl mx-auto"
+          className="space-y-2 w-full max-w-2xl mx-auto px-3 md:px-10"
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
         >
-          <div className="flex justify-between text-sm text-[#1a202c] font-medium">
+          <div className="flex justify-between text-sm text-slate-700 font-medium">
             <span>
               Step {currentStep + 1} of {STEPS.length - 1}
             </span>
             <span>{STEPS[currentStep].label}</span>
           </div>
-          <Progress value={progress} className="h-2 bg-[#e2e8f0]" />
+          <Progress value={progress} className="h-2 bg-slate-100" />
         </motion.div>
       )}
 
-      <Card className="border-none shadow-xl rounded-2xl overflow-hidden bg-white max-w-2xl w-full mt-6">
-        <CardContent className="pt-1 px-6 md:px-10 pb-8">
-          <form onSubmit={handleSubmit(onSubmit)}>
-            {renderStepContent()}
-            {currentStep < STEPS.length - 1 && (
-              <motion.div
-                className="mt-8 flex justify-between"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.3 }}
-              >
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={goToPreviousStep}
-                  disabled={currentStep === 0 || isSubmitting}
+      {/* Main form card with improved styling */}
+      <motion.div
+        className="w-full max-w-2xl mx-auto px-3 md:px-10"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.3 }}
+      >
+        <Card className="border-none shadow-xl rounded-2xl overflow-hidden bg-white hover:shadow-2xl transition-all duration-300">
+          <CardContent className="pt-6 px-6 md:px-10 pb-8">
+            <form onSubmit={handleSubmit(onSubmit)}>
+              {renderStepContent()}
+              {currentStep < STEPS.length - 1 && (
+                <motion.div
+                  className="mt-8 flex justify-between"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 0.4 }}
                 >
-                  <ChevronLeftIcon className="mr-2 h-4 w-4" />
-                  Previous
-                </Button>
-                {currentStep === STEPS.length - 2 ? (
                   <Button
                     type="button"
-                    onClick={async () => {
-                      const isValid = await trigger()
-                      if (isValid) {
-                        onSubmit(form.getValues())
-                      }
-                    }}
-                    disabled={isSubmitting}
+                    variant="outline"
+                    onClick={goToPreviousStep}
+                    disabled={currentStep === 0 || isSubmitting}
+                    className="hover:bg-slate-50 transition-all duration-200"
                   >
-                    {isSubmitting && <Loader2Icon className="mr-2 h-4 w-4 animate-spin" />}
-                    Submit
+                    <ChevronLeftIcon className="mr-2 h-4 w-4" />
+                    Previous
                   </Button>
-                ) : (
-                  <Button
-                    type="button"
-                    onClick={goToNextStep}
-                    disabled={isSubmitting}
-                  >
-                    Next
-                    <ChevronRightIcon className="ml-2 h-4 w-4" />
-                  </Button>
-                )}
-              </motion.div>
-            )}
-          </form>
-        </CardContent>
-      </Card>
-    </div>
+                  {currentStep === STEPS.length - 2 ? (
+                    <Button
+                      type="button"
+                      onClick={async () => {
+                        const isValid = await trigger()
+                        if (isValid) {
+                          onSubmit(form.getValues())
+                        }
+                      }}
+                      disabled={isSubmitting}
+                      className="bg-gradient-to-r from-blue-600 to-cyan-500 hover:from-blue-700 hover:to-cyan-600 text-white transition-all duration-200"
+                    >
+                      {isSubmitting && <Loader2Icon className="mr-2 h-4 w-4 animate-spin" />}
+                      Submit
+                    </Button>
+                  ) : (
+                    <Button
+                      type="button"
+                      onClick={goToNextStep}
+                      disabled={isSubmitting}
+                      className="bg-gradient-to-r from-blue-600 to-cyan-500 hover:from-blue-700 hover:to-cyan-600 text-white transition-all duration-200"
+                    >
+                      Next
+                      <ChevronRightIcon className="ml-2 h-4 w-4" />
+                    </Button>
+                  )}
+                </motion.div>
+              )}
+            </form>
+          </CardContent>
+        </Card>
+      </motion.div>
+    </motion.div>
   )
 }

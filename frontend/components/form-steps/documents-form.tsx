@@ -2,9 +2,9 @@
 
 import type React from "react"
 
-import { useState } from "react"
 import type { FormValues } from "@/components/multi-step-form"
 import { FileIcon, UploadCloudIcon, XIcon } from "lucide-react"
+import { useState } from "react"
 
 import { Button } from "@/components/ui/button"
 import { FormControl, FormField, FormItem, FormMessage } from "@/components/ui/form"
@@ -29,10 +29,6 @@ export function DocumentsForm() {
 
   return (
     <div className="space-y-6">
-      <div className="text-center">
-        <h2 className="text-2xl font-bold">Upload your CV</h2>
-        <p className="text-muted-foreground">We'll use this to extract your skills and experience</p>
-      </div>
 
       <FormField
         control={control}
@@ -89,7 +85,7 @@ export function DocumentsForm() {
 
       <div className="mt-8 text-center text-sm text-muted-foreground">
         <p>
-          We'll extract information from your CV to help you fill out the rest of the form. You can always edit the
+          We&apos;ll extract information from your CV to help you fill out the rest of the form. You can always edit the
           information later.
         </p>
       </div>
