@@ -1,7 +1,6 @@
 import type { NextConfig } from 'next';
 
 const nextConfig: NextConfig = {
-  // Configuration basique
   experimental: {
     serverActions: {
       allowedOrigins: ['localhost:3001'],

@@ -47,6 +47,7 @@ export class LinkedInLoginHandler
     const payload = {
       email: user.email,
       id: user.id,
+      roleId: user.role_id || null,
     };
 
     const access_token = this.jwtService.sign(payload);

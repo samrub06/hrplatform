@@ -28,10 +28,10 @@ export class GoogleLoginHandler
 
   async execute(command: GoogleLoginCommand): Promise<LoginResponseDto> {
     const { request } = command;
+    
     let user = await this.userRepository.findByEmail(request.email);
 
     if (!user) {
-      // Créer un nouvel utilisateur sans mot de passe
       user = await this.userRepository.create({
         email: request.email,
         first_name: request.firstName,
@@ -39,11 +39,7 @@ export class GoogleLoginHandler
         profilePicture: request.picture,
         googleId: request.googleId,
       });
-
-      // Publier l'événement de création d'utilisateur si nécessaire
-      // ... votre logique d'événement ...
     } else if (!user.googleId) {
-      // Mettre à jour l'utilisateur existant avec googleId
       await this.userRepository.update(user.id, {
         googleId: request.googleId,
       });
@@ -52,6 +48,7 @@ export class GoogleLoginHandler
     const payload = {
       email: user.email,
       id: user.id,
+      roleId: user.role_id || null,
     };
 
     const access_token = this.jwtService.sign(payload);
@@ -65,10 +62,13 @@ export class GoogleLoginHandler
       expiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
     });
 
-    return {
+    const response = {
       accessToken: access_token,
       refreshToken: refresh_token,
       userId: user.id,
     };
+
+
+    return response;
   }
 }

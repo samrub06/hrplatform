@@ -66,17 +66,30 @@ export const logout = () => {
 };
 
 export const handleGoogleCallback = async (accessToken: string): Promise<AuthUser> => {
-  
-  const decodedToken = jwtDecode(accessToken) as { id: string, email: string };
-  const permissionsResponse = await axiosInstance.get('/user/me/permissions');
-  
-  const userWithPermissions: AuthUser = {
-    id: decodedToken.id,
-    email: decodedToken.email,
-    permissions: permissionsResponse.data
-  };
+  try {
+    const decodedToken = jwtDecode(accessToken) as { id: string, email: string };
+    
+    // Get user permissions
+    let permissions = [];
+    try {
+      const permissionsResponse = await axiosInstance.get('/user/me/permissions');
+      permissions = permissionsResponse.data;
+    } catch (error) {
+      console.warn('Failed to fetch permissions:', error);
+      // Continue without permissions if the endpoint is not available
+    }
+    
+    const userWithPermissions: AuthUser = {
+      id: decodedToken.id,
+      email: decodedToken.email,
+      permissions: permissions
+    };
 
-  return userWithPermissions;
+    return userWithPermissions;
+  } catch (error) {
+    console.error('Error in handleGoogleCallback:', error);
+    throw new Error('Failed to process Google authentication callback');
+  }
 };
 
 export const loginLinkedIn = async (): Promise<void> => {

@@ -56,6 +56,18 @@ function SubmitButton() {
   )
 }
 
+// Function to handle Google authentication
+const handleGoogleLogin = () => {
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL
+  window.location.href = `${apiUrl}/auth/google`
+}
+
+// Function to handle LinkedIn authentication
+const handleLinkedInLogin = () => {
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL
+  window.location.href = `${apiUrl}/auth/linkedin`
+}
+
 export function LoginForm({
   className,
   ...props
@@ -87,11 +99,11 @@ export function LoginForm({
         </CardHeader>
         <CardContent className="grid gap-4">
           <div className="grid grid-cols-2 gap-6">
-            <Button variant="outline">
-              <Icons.gitHub className="mr-2 h-4 w-4" />
-              Github
+            <Button variant="outline" onClick={handleLinkedInLogin}>
+              <Icons.linkedin className="mr-2 h-4 w-4" />
+              LinkedIn
             </Button>
-            <Button variant="outline">
+            <Button variant="outline" onClick={handleGoogleLogin}>
               <Icons.google className="mr-2 h-4 w-4" />
               Google
             </Button>

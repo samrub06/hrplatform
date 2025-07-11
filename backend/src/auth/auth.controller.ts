@@ -161,7 +161,7 @@ export class AuthController {
   @ApiOperation({ summary: 'LinkedIn Auth Callback' })
   async linkedinAuthCallback(@Req() req: any, @Res() res: Response) {
     try {
-      const { access_token, refresh_token } = await this.commandBus.execute(
+      const { accessToken, refreshToken } = await this.commandBus.execute(
         new LinkedInLoginCommand({
           email: req.user.email,
           firstName: req.user.firstName,
@@ -171,7 +171,7 @@ export class AuthController {
         }),
       );
 
-      res.cookie('refresh_token', refresh_token, {
+      res.cookie('refresh_token', refreshToken, {
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
         sameSite: 'lax',
@@ -180,7 +180,7 @@ export class AuthController {
       });
 
       return res.redirect(
-        `${process.env.FRONTEND_URL}/auth/linkedin/callback?token=${access_token}`,
+        `${process.env.FRONTEND_URL}/auth/linkedin/callback?token=${accessToken}`,
       );
     } catch (error) {
       console.error('LinkedIn Auth Error:', error);
@@ -198,7 +198,7 @@ export class AuthController {
   async googleAuthCallback(@Req() req: any, @Res() res: any) {
     const user = req.user as any;
     try {
-      const { access_token, refresh_token } = await this.commandBus.execute(
+      const { accessToken, refreshToken } = await this.commandBus.execute(
         new GoogleLoginCommand({
           email: user.email,
           firstName: user.firstName,
@@ -208,14 +208,14 @@ export class AuthController {
         }),
       );
 
-      res.cookie('refresh_token', refresh_token, {
+      res.cookie('refresh_token', refreshToken, {
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
         sameSite: 'strict',
         maxAge: 30 * 24 * 60 * 60 * 1000,
         path: '/api/auth/refresh-token',
       });
-      const redirectUrl = `${process.env.FRONTEND_URL}/auth/google/callback?token=${access_token}`;
+      const redirectUrl = `${process.env.FRONTEND_URL}/auth/google/callback?token=${accessToken}`;
       return res.redirect(redirectUrl);
     } catch (error) {
       console.error('Google Auth Error:', error);

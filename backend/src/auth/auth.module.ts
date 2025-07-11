@@ -47,10 +47,16 @@ const Validators = [LoginValidator, RegisterValidator];
     SequelizeModule.forFeature([RefreshToken]),
     JwtModule.registerAsync({
       imports: [ConfigModule],
-      useFactory: async (configService: ConfigService) => ({
-        secret: configService.get<string>('JWT_SECRET'),
-        signOptions: { expiresIn: '3h' },
-      }),
+      useFactory: async (configService: ConfigService) => {
+        const secret = configService.get<string>('JWT_SECRET');
+        console.log('JWT Secret configured:', !!secret);
+        console.log('JWT Secret length:', secret?.length);
+        
+        return {
+          secret: secret,
+          signOptions: { expiresIn: '3h' },
+        };
+      },
       inject: [ConfigService],
     }),
   ],
