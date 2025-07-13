@@ -8,9 +8,14 @@ import { useState } from "react"
 
 import { Button } from "@/components/ui/button"
 import { FormControl, FormField, FormItem, FormMessage } from "@/components/ui/form"
+import { Progress } from "@/components/ui/progress"
 import { useFormContext } from "react-hook-form"
 
-export function DocumentsForm() {
+interface DocumentsFormProps {
+  uploadProgress?: number
+}
+
+export function DocumentsForm({ uploadProgress = 0 }: DocumentsFormProps) {
   const { control } = useFormContext<FormValues>()
   const [fileName, setFileName] = useState<string | null>(null)
 
@@ -41,7 +46,7 @@ export function DocumentsForm() {
                   <div className="flex w-full flex-col items-center justify-center rounded-lg border border-dashed border-primary/50 bg-muted/50 p-12 text-center">
                     <UploadCloudIcon className="mb-4 h-12 w-12 text-muted-foreground" />
                     <div className="mb-2 text-lg font-medium">Drop your CV here or click to upload</div>
-                    <p className="mb-4 text-sm text-muted-foreground">Support for PDF, DOCX, DOC (Max 5MB)</p>
+                    <p className="mb-4 text-sm text-muted-foreground">Support for PDF, DOCX, DOC (Max 10MB)</p>
                     <Button
                       type="button"
                       variant="outline"
@@ -52,28 +57,41 @@ export function DocumentsForm() {
                     <input
                       id="cv-upload"
                       type="file"
-                      accept=".pdf,.doc,.docx"
+                      accept=".pdf,.doc,.docx,.txt"
                       className="sr-only"
                       onChange={(e) => handleFileChange(e, onChange)}
                       {...field}
                     />
                   </div>
                 ) : (
-                  <div className="flex w-full items-center justify-between rounded-lg border bg-muted/30 p-4">
-                    <div className="flex items-center space-x-3">
-                      <div className="rounded-full bg-primary/10 p-2">
-                        <FileIcon className="h-5 w-5 text-primary" />
+                  <div className="flex w-full flex-col space-y-4">
+                    <div className="flex w-full items-center justify-between rounded-lg border bg-muted/30 p-4">
+                      <div className="flex items-center space-x-3">
+                        <div className="rounded-full bg-primary/10 p-2">
+                          <FileIcon className="h-5 w-5 text-primary" />
+                        </div>
+                        <div>
+                          <p className="text-sm font-medium">{fileName}</p>
+                          <p className="text-xs text-muted-foreground">
+                            {value instanceof File ? `${(value.size / 1024 / 1024).toFixed(2)} MB` : ""}
+                          </p>
+                        </div>
                       </div>
-                      <div>
-                        <p className="text-sm font-medium">{fileName}</p>
-                        <p className="text-xs text-muted-foreground">
-                          {value instanceof File ? `${(value.size / 1024 / 1024).toFixed(2)} MB` : ""}
-                        </p>
-                      </div>
+                      <Button type="button" variant="ghost" size="sm" onClick={() => handleRemoveFile(onChange)}>
+                        <XIcon className="h-4 w-4" />
+                      </Button>
                     </div>
-                    <Button type="button" variant="ghost" size="sm" onClick={() => handleRemoveFile(onChange)}>
-                      <XIcon className="h-4 w-4" />
-                    </Button>
+                    
+                    {/* Upload Progress */}
+                    {uploadProgress > 0 && uploadProgress < 100 && (
+                      <div className="space-y-2">
+                        <div className="flex justify-between text-sm text-muted-foreground">
+                          <span>Uploading...</span>
+                          <span>{Math.round(uploadProgress)}%</span>
+                        </div>
+                        <Progress value={uploadProgress} className="h-2" />
+                      </div>
+                    )}
                   </div>
                 )}
               </div>

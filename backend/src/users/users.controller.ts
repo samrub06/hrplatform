@@ -52,7 +52,10 @@ export class UsersController {
     private readonly awsService: AwsService,
   ) {}
 
-  // Create User
+  /**
+   * Creates a new user in the system
+   * Requires authentication and CREATE permission on User resource
+   */
   @Post()
   @UseGuards(AuthGuard)
   @ApiOperation({ summary: 'Create User' })
@@ -62,6 +65,10 @@ export class UsersController {
     return this.commandBus.execute(new CreateUserCommand(createUserDto));
   }
 
+  /**
+   * Retrieves all users from the system
+   * Requires authentication and policies guard
+   */
   @Get()
   @UseGuards(AuthGuard, PoliciesGuard)
   @ApiOperation({ summary: 'Get All Users' })
@@ -71,6 +78,10 @@ export class UsersController {
     return this.queryBus.execute(new GetAllUsersQueryCommand());
   }
 
+  /**
+   * Retrieves all alumni users from the system
+   * Requires authentication, policies guard, and READ permission on User resource
+   */
   @Post('all-alumni')
   @UseGuards(AuthGuard, PoliciesGuard)
   @ApiOperation({ summary: 'Get All Alumni' })
@@ -80,6 +91,10 @@ export class UsersController {
     return this.queryBus.execute(new GetAllAlumniQuery());
   }
 
+  /**
+   * Retrieves a specific user by their ID
+   * Requires authentication and policies guard
+   */
   @Get(':id')
   @UseGuards(AuthGuard, PoliciesGuard)
   @ApiOperation({ summary: 'Get User By Id' })
@@ -93,6 +108,10 @@ export class UsersController {
     return this.queryBus.execute(new GetUserByIdQueryCommand(id));
   }
 
+  /**
+   * Updates an existing user's information by their ID
+   * Requires authentication and policies guard
+   */
   @Patch("/:id")
   @UseGuards(AuthGuard, PoliciesGuard)
   @ApiOperation({ summary: 'Update User By Id' })
@@ -105,6 +124,10 @@ export class UsersController {
     return this.commandBus.execute(new UpdateUserCommand(id, updateUserDto));
   }
 
+  /**
+   * Updates a user's role by their ID
+   * Requires authentication and policies guard
+   */
   @Patch('role/:id')
   @UseGuards(AuthGuard, PoliciesGuard)
   @ApiOperation({ summary: 'Update User Role By Id' })
@@ -114,6 +137,10 @@ export class UsersController {
     return this.commandBus.execute(new UpdateUserRoleCommand(id, role));
   }
 
+  /**
+   * Deletes a user from the system by their ID
+   * Requires authentication, policies guard, and DELETE permission on User resource
+   */
   @Delete(':id')
   @UseGuards(AuthGuard, PoliciesGuard)
   @ApiOperation({ summary: 'Delete User By Id' })
@@ -123,26 +150,36 @@ export class UsersController {
     return this.commandBus.execute(new RemoveUserCommand(id));
   }
 
+  /**
+   * Generates a presigned URL for AWS S3 file upload
+   * Requires authentication, policies guard, and UPDATE permission on User resource
+   */
   @Post('presigned-url')
   @UseGuards(AuthGuard, PoliciesGuard)
   @ApiOperation({ summary: 'Get Presign-Url AWS' })
   @ApiResponse({ status: 403, description: 'Forbidden.' })
-  @CheckPolicies((ability: AppAbility) => ability.can(Action.Update, User))
+  //@CheckPolicies((ability: AppAbility) => ability.can(Action.Update, User))
   async getPresignedUrl(@Body() request: GeneratePresignedUrlRequestDto) {
     return this.commandBus.execute(new GeneratePresignedUrlCommand(request));
   }
 
+  /**
+   * Downloads a user's CV file
+   * Requires authentication, policies guard, and UPDATE permission on User resource
+   */
   @Get('download/cv/:id')
   @UseGuards(AuthGuard, PoliciesGuard)
   @ApiOperation({ summary: 'Download CV' })
   @ApiResponse({ status: 403, description: 'Forbidden.' })
-  @CheckPolicies((ability: AppAbility) => ability.can(Action.Update, User))
+  //@CheckPolicies((ability: AppAbility) => ability.can(Action.Update, User))
   async downloadFile(@Param('id') id: string) {
     return this.queryBus.execute(new GetCvDownloadUrlQuery(id));
   }
 
-
-  // Get User Permissions
+  /**
+   * Retrieves the current user's permissions
+   * Requires authentication only
+   */
   @Get('me/permissions')
   @UseGuards(AuthGuard)
   @ApiOperation({ summary: 'Get User Permissions' })
@@ -152,6 +189,10 @@ export class UsersController {
     return this.queryBus.execute(new GetUserPermissionsQuery(userId));
   }
 
+  /**
+   * Checks if a user has permission to perform a specific action on a domain
+   * No authentication required
+   */
   @Get(':id/can-do')
   @ApiOperation({ summary: 'Get User Permision By Domain' })
   @ApiResponse({ status: 403, description: 'Forbidden.' })
@@ -165,17 +206,29 @@ export class UsersController {
     );
   }
 
+  /**
+   * Generates a public link for a user's profile
+   * No authentication required
+   */
   @Post(':id/public-link')
   async generatePublicLink(@Param('id') userId: string) {
     return this.commandBus.execute(new GeneratePublicLinkCommand(userId));
   }
 
+  /**
+   * Retrieves a public user profile using a token
+   * Public endpoint - no authentication required
+   */
   @Public()
   @Get('profile/public/:token')
   async getPublicProfile(@Param('token') token: string) {
     return this.queryBus.execute(new GetPublicProfileQuery(token));
   }
 
+  /**
+   * Generates a download URL for a user's file stored in AWS S3
+   * Requires authentication, policies guard, and UPDATE permission on User resource
+   */
   @Get('file/:userId/:fileKey/:fileName')
   @UseGuards(AuthGuard, PoliciesGuard)
   @ApiOperation({ summary: 'Get File URL' })

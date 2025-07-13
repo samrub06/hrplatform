@@ -18,6 +18,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Progress } from "@/components/ui/progress"
 import { toast } from "@/hooks/use-toast"
+import { uploadFile, validateFile } from "@/lib/services/fileUpload"
 
 // Define the form schema
 export const formSchema = z.object({
@@ -103,6 +104,7 @@ export function MultiStepForm() {
   const [currentStep, setCurrentStep] = useState(0)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [direction, setDirection] = useState(0) // -1 for backward, 1 for forward
+  const [uploadProgress, setUploadProgress] = useState(0)
 
   
   // Initialize currentStep from URL params on component mount
@@ -138,7 +140,7 @@ export function MultiStepForm() {
     },
   })
 
-  const { handleSubmit, trigger } = form
+  const { handleSubmit, trigger, setValue } = form
 
   const progress = (currentStep / (STEPS.length - 1)) * 100
 
@@ -180,10 +182,74 @@ export function MultiStepForm() {
     }
   }
 
+  // Handle file upload for documents step
+  const handleFileUpload = async (file: File, fileKey: 'cv' | 'profilePicture') => {
+    try {
+      // Validate file
+      const validationError = validateFile(file, 10)
+      if (validationError) {
+        toast("Validation Error", {
+          description: validationError,
+        })
+        return false
+      }
+
+      setUploadProgress(0)
+      
+      // Upload file with progress tracking
+      const result = await uploadFile({
+        file,
+        fileKey,
+        onProgress: (progress) => {
+          setUploadProgress(progress)
+        }
+      })
+
+      if (result.success) {
+        // Update form value
+        setValue(fileKey, result.fileName)
+        
+        toast("Upload successful", {
+          description: `${file.name} has been uploaded successfully.`,
+        })
+        
+        return true
+      }
+      
+      return false
+    } catch (error) {
+      console.error('File upload error:', error)
+      toast("Upload failed", {
+        description: "Failed to upload file. Please try again.",
+      })
+      return false
+    } finally {
+      setUploadProgress(0)
+    }
+  }
+
   // Save step data to API
   const saveStepData = async (step: number, data: Partial<FormValues>) => {
     try {
-  
+      // Handle file upload for documents step
+      if (step === 1 && data.cv instanceof File) {
+        const uploadSuccess = await handleFileUpload(data.cv, 'cv')
+        if (!uploadSuccess) {
+          throw new Error('File upload failed')
+        }
+        // Remove file from data since it's already uploaded
+        delete data.cv
+      }
+
+      // Handle profile picture upload for personal info step
+      if (step === 0 && data.profilePicture instanceof File) {
+        const uploadSuccess = await handleFileUpload(data.profilePicture, 'profilePicture')
+        if (!uploadSuccess) {
+          throw new Error('Profile picture upload failed')
+        }
+        // Remove file from data since it's already uploaded
+        delete data.profilePicture
+      }
       
       // API call to update user data
       const response = await fetch(`/api/user`, {
@@ -274,8 +340,6 @@ export function MultiStepForm() {
     setIsSubmitting(true)
 
     try {
-    
-
       // Save final step data
       const stepData = getStepData(currentStep)
       await saveStepData(currentStep, stepData)
@@ -338,7 +402,7 @@ export function MultiStepForm() {
         >
           <FormProvider {...form}>
             {currentStep === 0 && <PersonalInfoForm />}
-            {currentStep === 1 && <DocumentsForm />}
+            {currentStep === 1 && <DocumentsForm uploadProgress={uploadProgress} />}
             {currentStep === 2 && <SkillsForm />}
             {currentStep === 3 && <LinksForm />}
             {currentStep === 4 && <EducationForm />}
