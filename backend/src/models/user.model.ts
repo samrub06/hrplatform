@@ -201,4 +201,24 @@ export class User extends Model {
     allowNull: true,
   })
   linkedinId?: string;
+
+  @Column({
+    type: DataType.INTEGER,
+    allowNull: false,
+    defaultValue: 0,
+  })
+  onboarding_step: number;
+
+  @Column({
+    type: DataType.BOOLEAN,
+    allowNull: false,
+    defaultValue: false,
+  })
+  onboarding_completed: boolean;
+
+  @Column({
+    type: DataType.DATE,
+    allowNull: true,
+  })
+  onboarding_completed_at?: Date;
 }

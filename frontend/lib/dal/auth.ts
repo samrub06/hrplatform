@@ -19,6 +19,8 @@ export interface UserJwtPayload {
   id: string;
   email: string;
   role: string;
+  firstName: string;
+  lastName: string;
   iat?: number;
   permissions: Permission[];
   exp?: number;
@@ -34,16 +36,15 @@ export interface SessionData {
   email?: string;
   role?: string;
   permissions?: Permission[];
+  firstName?: string;
+  lastName?: string;
 }
 
 export class AuthDAL {
-  private static readonly JWT_SECRET = new TextEncoder().encode(
-    process.env.JWT_SECRET 
-  );
-
+ 
   // Verify session using refresh token - cached for performance
   static verifySession = cache(async (): Promise<SessionData | null> => {
-    const token = (await cookies()).get('refreshToken')?.value;
+    const token = (await cookies()).get('accessToken')?.value;
 
     if (!token) {
       return null;
@@ -57,7 +58,9 @@ export class AuthDAL {
         isAuth: true, 
         userId: payload.id,
         email: payload.email,
-        role: payload.role
+        role: payload.role,
+        firstName: payload.firstName,
+        lastName: payload.lastName
       };
 
     } catch (error) {
@@ -97,6 +100,11 @@ export class AuthDAL {
   // Get user without permissions - for cases where we only need basic user info
   static getUserBasic = cache(async (): Promise<SessionData | null> => {
     return await AuthDAL.verifySession();
+  });
+
+  static getUserId = cache(async (): Promise<string | null> => {
+    const session = await AuthDAL.verifySession();
+    return session?.userId || null;
   });
 
   // Check if user is authenticated (without fetching permissions)

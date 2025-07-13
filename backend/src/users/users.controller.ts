@@ -52,6 +52,7 @@ export class UsersController {
     private readonly awsService: AwsService,
   ) {}
 
+  // Create User
   @Post()
   @UseGuards(AuthGuard)
   @ApiOperation({ summary: 'Create User' })
@@ -70,7 +71,7 @@ export class UsersController {
     return this.queryBus.execute(new GetAllUsersQueryCommand());
   }
 
-  @Post('all-publishers')
+  @Post('all-alumni')
   @UseGuards(AuthGuard, PoliciesGuard)
   @ApiOperation({ summary: 'Get All Alumni' })
   @ApiResponse({ status: 403, description: 'Forbidden.' })
@@ -92,14 +93,14 @@ export class UsersController {
     return this.queryBus.execute(new GetUserByIdQueryCommand(id));
   }
 
-  @Patch(':id')
+  @Patch("/:id")
   @UseGuards(AuthGuard, PoliciesGuard)
   @ApiOperation({ summary: 'Update User By Id' })
   @ApiResponse({ status: 403, description: 'Forbidden.' })
-  @CheckPolicies((ability: AppAbility) => ability.can(Action.Update, User))
+  //@CheckPolicies((ability: AppAbility) => ability.can(Action.Update, User))
   updateUser(
-    @Param('id') id: string,
     @Body() updateUserDto: UpdateUserRequestDto,
+    @Param('id') id: string,
   ) {
     return this.commandBus.execute(new UpdateUserCommand(id, updateUserDto));
   }
@@ -140,12 +141,14 @@ export class UsersController {
     return this.queryBus.execute(new GetCvDownloadUrlQuery(id));
   }
 
+
+  // Get User Permissions
   @Get('me/permissions')
   @UseGuards(AuthGuard)
   @ApiOperation({ summary: 'Get User Permissions' })
   @ApiResponse({ status: 403, description: 'Forbidden.' })
   async getUserPermissions(@Request() req) {
-    const userId = req.user.id; // L'ID de l'utilisateur est extrait du token par AuthGuard
+    const userId = req.user.id; // context AuthGard extract user.id from token
     return this.queryBus.execute(new GetUserPermissionsQuery(userId));
   }
 

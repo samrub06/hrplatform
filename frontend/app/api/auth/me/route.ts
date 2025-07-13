@@ -18,6 +18,8 @@ export async function GET() {
       id: user.userId,
       email: user.email,
       role: user.role,
+      firstName: user.firstName,
+      lastName: user.lastName,
       permissions: user.permissions || []
     });
 

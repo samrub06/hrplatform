@@ -33,7 +33,7 @@ export class RegisterAdminHandler
       request.email,
     );
     if (existingAdmin) {
-      throw new UnauthorizedException('Cet email est déjà utilisé');
+      throw new UnauthorizedException('This email is already used');
     }
 
     const hashedPassword = await bcrypt.hash(request.password, 10);

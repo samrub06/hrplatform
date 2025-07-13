@@ -1,6 +1,16 @@
+import { UUIDTypes } from "uuid";
+
 interface ValidationError {
   field: string;
   message: string;
+}
+
+interface UserLoginDTO {
+  id: string;
+  email: string;
+  roleId: UUIDTypes;
+  firstName: string;
+  lastName: string;
 }
 
 interface ValidationResult {
@@ -8,4 +18,5 @@ interface ValidationResult {
   errors: ValidationError[];
 }
 
-export { ValidationError, ValidationResult };
+export { UserLoginDTO, ValidationError, ValidationResult };
+

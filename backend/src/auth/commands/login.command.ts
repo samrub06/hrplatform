@@ -5,6 +5,7 @@ import * as bcrypt from 'bcrypt';
 import { UserRepository } from '../../users/user.repository';
 import { LoginRequestDto } from '../dto/login.request.dto';
 import { LoginResponseDto } from '../dto/login.response.dto';
+import { UserLoginDTO } from '../interface/auth.interface.validation';
 import { RefreshTokenRepository } from '../refresh-token.repository';
 import { LoginValidator } from './login.command.validator';
 
@@ -47,9 +48,13 @@ export class LoginHandler
       throw new UnauthorizedException('Password is invalid');
     }
 
-    const payload = {
+    const payload : UserLoginDTO = {
       email: user.email,
       id: user.id,
+      firstName: user.first_name,
+      lastName: user.last_name, 
+      roleId: user.role_id,
+
     };
 
     const access_token = this.jwtService.sign(payload);

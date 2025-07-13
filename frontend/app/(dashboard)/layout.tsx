@@ -25,7 +25,7 @@ export default async function RootLayout({
   children: React.ReactNode
 }) {
   const user = await AuthDAL.getUserBasic()
-  
+  console.log(user)
   const navMain = [
     { title: "Dashboard", url: "/dashboard", icon: null },
     { title: "Users", url: "/users", icon: null },
@@ -45,7 +45,7 @@ export default async function RootLayout({
     },
     teams: [
       {
-        name: "Acme Inc",
+        name: "HR platform",
         logo: null, // Will be mapped to GalleryVerticalEnd in AppSidebar
         plan: "Enterprise",
       },

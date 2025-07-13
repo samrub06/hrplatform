@@ -2,6 +2,7 @@ import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { JwtService } from '@nestjs/jwt';
 import { UserRepository } from '../../users/user.repository';
 import { LoginResponseDto } from '../dto/login.response.dto';
+import { UserLoginDTO } from '../interface/auth.interface.validation';
 import { RefreshTokenRepository } from '../refresh-token.repository';
 
 export class GoogleLoginCommand {
@@ -45,10 +46,12 @@ export class GoogleLoginHandler
       });
     }
 
-    const payload = {
+    const payload : UserLoginDTO = {
       email: user.email,
       id: user.id,
       roleId: user.role_id || null,
+      firstName: user.first_name,
+      lastName: user.last_name,
     };
 
     const access_token = this.jwtService.sign(payload);

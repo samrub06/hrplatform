@@ -108,4 +108,16 @@ export class UpdateUserRequestDto {
   @IsOptional()
   @IsString()
   linkedinId?: string;
+
+  @ApiProperty({ required: false })
+  @IsOptional()
+  onboarding_step?: number;
+
+  @ApiProperty({ required: false })
+  @IsOptional()
+  onboarding_completed?: boolean;
+
+  @ApiProperty({ required: false })
+  @IsOptional()
+  onboarding_completed_at?: Date;
 }

@@ -17,6 +17,7 @@ import { SkillsForm } from "@/components/form-steps/skills-form"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Progress } from "@/components/ui/progress"
+import { toast } from "@/hooks/use-toast"
 
 // Define the form schema
 export const formSchema = z.object({
@@ -79,7 +80,6 @@ const STEP_TITLES = [
     subtitle: "Start by entering your basic information."
   },
   {
-
     title: "Upload your CV",
     subtitle: "We'll use this to extract your skills and experience"
   },
@@ -95,10 +95,7 @@ const STEP_TITLES = [
     title: "Education",
     subtitle: "Describe your academic journey."
   },
-
 ]
-
-
 
 export function MultiStepForm() {
   const searchParams = useSearchParams()
@@ -107,6 +104,7 @@ export function MultiStepForm() {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [direction, setDirection] = useState(0) // -1 for backward, 1 for forward
 
+  
   // Initialize currentStep from URL params on component mount
   useEffect(() => {
     const stepParam = searchParams.get('step')
@@ -144,18 +142,103 @@ export function MultiStepForm() {
 
   const progress = (currentStep / (STEPS.length - 1)) * 100
 
+  // Get step data for API call
+  const getStepData = (step: number): Partial<FormValues> => {
+    const formData = form.getValues()
+    
+    switch (step) {
+      case 0: // Personal Info
+        return {
+          first_name: formData.first_name,
+          last_name: formData.last_name,
+          email: formData.email,
+          role: formData.role,
+          desired_position: formData.desired_position,
+          current_position: formData.current_position,
+          current_company: formData.current_company,
+        }
+      case 1: // Documents
+        return {
+          cv: formData.cv
+        }
+      case 2: // Skills
+        return {
+          skills: formData.skills
+        }
+      case 3: // Links
+        return {
+          phone_number: formData.phone_number,
+          github_link: formData.github_link,
+          linkedin_link: formData.linkedin_link,
+        }
+      case 4: // Education
+        return {
+          education: formData.education
+        }
+      default:
+        return {}
+    }
+  }
+
+  // Save step data to API
+  const saveStepData = async (step: number, data: Partial<FormValues>) => {
+    try {
+  
+      
+      // API call to update user data
+      const response = await fetch(`/api/user`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          ...data,
+          onboarding_step: step + 1 // Update to next step
+        }),
+      })
+
+      if (!response.ok) {
+        throw new Error('Failed to save step data')
+      }
+
+      toast("Step saved", {
+        description: "Your progress has been saved successfully.",
+      })
+
+    } catch (error) {
+      console.error('Error saving step data:', error)
+      toast("Error", {
+        description: "Failed to save your progress. Please try again.",
+      })
+      throw error
+    }
+  }
+
   const goToNextStep = async () => {
     // Validate the current step before proceeding
     const fieldsToValidate = getFieldsForStep(currentStep)
     const isValid = await trigger(fieldsToValidate as Array<keyof FormValues>)
 
     if (isValid) {
-      if (currentStep < STEPS.length - 1) {
-        setDirection(1)
-        const nextStep = currentStep + 1
-        setCurrentStep(nextStep)
-        updateStepInURL(nextStep)
-        window.scrollTo(0, 0)
+      try {
+        setIsSubmitting(true)
+        
+        // Save current step data
+        const stepData = getStepData(currentStep)
+        await saveStepData(currentStep, stepData)
+
+        if (currentStep < STEPS.length - 1) {
+          setDirection(1)
+          const nextStep = currentStep + 1
+          setCurrentStep(nextStep)
+          updateStepInURL(nextStep)
+          window.scrollTo(0, 0)
+        }
+      } catch (error) {
+        // Error already handled in saveStepData
+        console.error('Error in goToNextStep:', error)
+      } finally {
+        setIsSubmitting(false)
       }
     }
   }
@@ -187,19 +270,39 @@ export function MultiStepForm() {
     }
   }
 
-  const onSubmit = async (data: FormValues) => {
+  const onSubmit = async () => {
     setIsSubmitting(true)
 
     try {
-      // Simulate API call
-      console.log("Form submitted with data:", data)
-      await new Promise((resolve) => setTimeout(resolve, 1500))
+    
+
+      // Save final step data
+      const stepData = getStepData(currentStep)
+      await saveStepData(currentStep, stepData)
+
+      await fetch(`/api/user`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          onboarding_completed: true,
+          onboarding_completed_at: new Date().toISOString()
+        }),
+      })
 
       // Move to success step
       setDirection(1)
       setCurrentStep(STEPS.length - 1)
+      
+      toast("Profile completed!", {
+        description: "Your profile has been successfully created.",
+      })
     } catch (error) {
       console.error("Error submitting form:", error)
+      toast("Error", {
+        description: "Failed to complete your profile. Please try again.",
+      })
     } finally {
       setIsSubmitting(false)
     }
@@ -250,12 +353,12 @@ export function MultiStepForm() {
     <motion.div 
       initial={{ opacity: 0 }} 
       animate={{ opacity: 1 }}
-      className="min-h-screen md:min-h-[80vh] flex flex-col justify-start pt-0 md:pt-12"
+      className="min-h-screen md:min-h-[80vh] flex flex-col justify-start pt-0 md:pt-0"
     >
       {/* Header with gradient text like RoleSelectionForm */}
       {STEP_TITLES[currentStep]?.title && (
         <motion.div 
-          className="w-full max-w-2xl mx-auto md:mt-16 mb-3 md:mb-5 duration-300 p-3 md:p-10"
+          className="w-full max-w-2xl mx-auto md:mt-16 mb-3 md:mb-5 duration-300 p-3 md:p-0"
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
@@ -323,7 +426,7 @@ export function MultiStepForm() {
                       onClick={async () => {
                         const isValid = await trigger()
                         if (isValid) {
-                          onSubmit(form.getValues())
+                          onSubmit()
                         }
                       }}
                       disabled={isSubmitting}
@@ -339,6 +442,7 @@ export function MultiStepForm() {
                       disabled={isSubmitting}
                       className="bg-gradient-to-r from-blue-600 to-cyan-500 hover:from-blue-700 hover:to-cyan-600 text-white transition-all duration-200"
                     >
+                      {isSubmitting && <Loader2Icon className="mr-2 h-4 w-4 animate-spin" />}
                       Next
                       <ChevronRightIcon className="ml-2 h-4 w-4" />
                     </Button>

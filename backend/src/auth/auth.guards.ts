@@ -17,7 +17,7 @@ export class AuthGuard implements CanActivate {
   ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
-    // 1. Vérifier si la route est publique
+    // 1. Verify if the routes is Public
     const isPublic = this.reflector.getAllAndOverride<boolean>(IS_PUBLIC_KEY, [
       context.getHandler(),
       context.getClass(),
@@ -25,12 +25,12 @@ export class AuthGuard implements CanActivate {
 
     const request = context.switchToHttp().getRequest();
 
-    // 2. Autoriser l'accès aux routes publiques sans token
+    // 2. Allow access to public routes without token
     if (isPublic && !request.headers.authorization) {
       return true;
     }
 
-    // 3. Validation du token Bearer
+    // 3. Validate the Bearer token
     const token = this.extractTokenFromHeader(request);
     if (!token) {
       if (isPublic) return true;
@@ -38,7 +38,7 @@ export class AuthGuard implements CanActivate {
     }
 
     try {
-      // 4. Vérification du token et ajout du payload à la requête
+      // 4. Verify the token and add the payload to the request
       const payload = await this.jwtService.verifyAsync(token, {
         secret: process.env.JWT_SECRET,
       });
@@ -51,7 +51,7 @@ export class AuthGuard implements CanActivate {
   }
 
   private extractTokenFromHeader(request: Request): string | undefined {
-    // Si pas de cookie, vérifier le header Bearer
+    // If no cookie, verify the Bearer header
     const [type, token] = request.headers['authorization']?.split(' ') ?? [];
     console.log('Header Authorization:', request.headers['authorization']);
     return type === 'Bearer' ? token : undefined;
