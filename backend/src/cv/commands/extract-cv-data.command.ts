@@ -142,17 +142,15 @@ export class ExtractCVDataHandler
       this.logger.error("Erreur lors de l'extraction:", error);
     }
 
-    // Création du CV avec les informations extraites
-    const cv = await this.cvRepository.create({
-      fileName,
+    // Update CV with personal data 
+    const cv = await this.cvRepository.updateByUserId(userId, {
       name: cvData.personalInfo?.name ?? 'John Smith',
       email: cvData.personalInfo?.email ?? 'john.smith@example.com',
       phone: cvData.personalInfo?.phone ?? '1234567890',
       location: cvData.personalInfo?.location ?? 'Paris, France',
-      user_id: userId,
     });
 
-    // Création des compétences
+    // Create skills
     const skillPromises = cvData.skills?.map((skill) =>
       this.cvRepository.createSkill({
         cv_id: cv.id,
@@ -161,7 +159,7 @@ export class ExtractCVDataHandler
       }),
     );
 
-    // Création des formations
+    // Create education
     const educationPromises = cvData.education?.map((edu) =>
       this.cvRepository.createEducation({
         cv_id: cv.id,
@@ -176,7 +174,7 @@ export class ExtractCVDataHandler
 
     await Promise.all([...(skillPromises || []), ...(educationPromises || [])]);
 
-    // Publication des données extraites
+    // Publish extracted data
     await this.rabbitMQService.publishToExchange(
       RABBITMQ_EXCHANGES.CV_EVENTS,
       RABBITMQ_ROUTING_KEYS.CV_EXTRACTED,

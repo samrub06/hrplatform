@@ -11,6 +11,7 @@ import { CV } from '../models/cv.model';
 import { User } from '../models/user.model';
 import { OpenAIModule } from '../openai/openai.module';
 import { ExtractCVDataHandler } from './commands/extract-cv-data.command';
+import { SaveCVHandler } from './commands/save-cv.command';
 import { UpdateCVEducationCommandHandler } from './commands/update-cv-education.command';
 import { UpdateCVSkillsCommandHandler } from './commands/update-cv-skills.command';
 import { CVController } from './cv.controller';
@@ -43,6 +44,7 @@ import {
   providers: [
     CVRepository,
     ExtractCVDataHandler,
+    SaveCVHandler,
     UpdateCVSkillsCommandHandler,
     UpdateCVEducationCommandHandler,
     GetCVSkillsHandler,

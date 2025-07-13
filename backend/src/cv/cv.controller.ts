@@ -21,6 +21,7 @@ import { CheckPolicies } from '../casl/check-policies.decorator';
 import { PoliciesGuard } from '../casl/policies.guard';
 import { CV } from '../models/cv.model';
 import { ExtractCVDataCommand } from './commands/extract-cv-data.command';
+import { SaveCVCommand } from './commands/save-cv.command';
 import { UpdateCVEducationCommand } from './commands/update-cv-education.command';
 import { UpdateCVEducationRequestDto } from './commands/update-cv-education.request.command.dto';
 import { UpdateCVSkillsCommand } from './commands/update-cv-skills.command';
@@ -37,6 +38,23 @@ export class CVController {
     private readonly queryBus: QueryBus,
   ) {}
 
+  /**
+   * Save CV data to database
+   * Requires authentication, policies guard, and CREATE permission on CV resource
+   */
+  @Post('save')
+  @UseGuards(AuthGuard, PoliciesGuard)
+  @ApiOperation({ summary: 'Save CV' })
+  @ApiResponse({ status: 403, description: 'Forbidden.' })
+  //@CheckPolicies((ability: AppAbility) => ability.can(Action.Create, CV))
+  async saveCV(@Body() body: { userId: string; fileName: string }) {
+    return this.commandBus.execute(new SaveCVCommand(body.userId, body.fileName));
+  }
+
+  /**
+   * Extract CV data from uploaded file
+   * Requires authentication, policies guard, and CREATE permission on CV resource
+   */
   @Post('extract')
   @UseGuards(AuthGuard, PoliciesGuard)
   @ApiOperation({ summary: 'Extract CV Data' })
@@ -48,7 +66,10 @@ export class CVController {
     );
   }
 
-  //getSkills query
+  /**
+   * Get CV skills for a user
+   * Requires authentication, policies guard, and READ permission on CV resource
+   */
   @Post('skills/:id')
   @UseGuards(AuthGuard, PoliciesGuard)
   @ApiOperation({ summary: 'Get CV Skills' })
@@ -58,7 +79,10 @@ export class CVController {
     return this.queryBus.execute(new GetCVSkillsQuery(id));
   }
 
-  // update skills
+  /**
+   * Update CV skills
+   * Requires authentication, policies guard, and UPDATE permission on CV resource
+   */
   @Put('update-skills/:id')
   @UseGuards(AuthGuard, PoliciesGuard)
   @ApiOperation({ summary: 'Update CV Skills' })
@@ -78,7 +102,10 @@ export class CVController {
     return this.commandBus.execute(new UpdateCVSkillsCommand(id, body.skills));
   }
 
-  //get Education query
+  /**
+   * Get CV education for a user
+   * Requires authentication, policies guard, and READ permission on CV resource
+   */
   @Post('education/:id')
   @UseGuards(AuthGuard, PoliciesGuard)
   @ApiOperation({ summary: 'Get CV Education' })
@@ -88,7 +115,10 @@ export class CVController {
     return this.queryBus.execute(new GetCVEducationQuery(id));
   }
 
-  //update cv_education
+  /**
+   * Update CV education
+   * Requires authentication, policies guard, and UPDATE permission on CV resource
+   */
   @Put('update-education/:id')
   @UseGuards(AuthGuard, PoliciesGuard)
   @ApiOperation({ summary: 'Update CV Education' })

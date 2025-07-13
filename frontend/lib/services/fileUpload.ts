@@ -12,6 +12,27 @@ export interface UploadFileParams {
   onProgress?: (progress: number) => void;
 }
 
+export interface ExtractedCVData {
+  personalInfo: {
+    name: string;
+    email: string;
+    phone: string;
+    location: string;
+  };
+  skills: {
+    name: string;
+    yearsOfExperience: number;
+  }[];
+  education: {
+    institution: string;
+    degree: string;
+    fieldOfStudy: string;
+    startDate: string;
+    endDate?: string;
+    description?: string;
+  }[];
+}
+
 /**
  * Generate presigned URL for file upload
  */
@@ -77,13 +98,55 @@ export async function uploadFileWithPresignedUrl(
 }
 
 /**
- * Complete file upload process with progress tracking
+ * Extract CV data from uploaded file
+ */
+export async function extractCVData(fileName: string): Promise<ExtractedCVData> {
+  const response = await fetch('/api/cv/extract', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      fileName,
+    }),
+  });
+
+  if (!response.ok) {
+    throw new Error('Failed to extract CV data');
+  }
+
+  return response.json();
+}
+
+/**
+ * Save CV data to database
+ */
+export async function saveCVData(fileName: string): Promise<{ id: string; fileName: string }> {
+  const response = await fetch('/api/cv/save', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      fileName,
+    }),
+  });
+
+  if (!response.ok) {
+    throw new Error('Failed to save CV data');
+  }
+
+  return response.json();
+}
+
+/**
+ * Complete file upload process with progress tracking and CV extraction
  */
 export async function uploadFile({
   file,
   fileKey,
   onProgress
-}: UploadFileParams): Promise<{ success: boolean; fileName: string }> {
+}: UploadFileParams): Promise<{ success: boolean; fileName: string; extractedData?: ExtractedCVData }> {
   try {
     // Generate presigned URL
     const { presignedUrl } = await generatePresignedUrl(
@@ -94,24 +157,33 @@ export async function uploadFile({
     // Upload file to S3
     await uploadFileWithPresignedUrl(file, presignedUrl, onProgress);
 
-    // Update user profile with file information
-    const updateResponse = await fetch('/api/user', {
-      method: 'PATCH',
+    // save cv in db
+    const updateResponse = await fetch('/api/cv/save', {
+      method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({
-        [fileKey]: file.name
-      }),
+      body: JSON.stringify({ fileName: file.name }),
     });
 
     if (!updateResponse.ok) {
       throw new Error('Failed to update user profile');
     }
 
+    // Extract CV data if it's a CV file
+    let extractedData: ExtractedCVData | undefined;
+    if (fileKey === 'cv') {
+      try {
+        extractedData = await extractCVData(file.name);
+      } catch (error) {
+        console.warn('CV extraction failed, but upload was successful:', error);
+      }
+    }
+
     return {
       success: true,
-      fileName: file.name
+      fileName: file.name,
+      extractedData
     };
   } catch (error) {
     console.error('File upload error:', error);

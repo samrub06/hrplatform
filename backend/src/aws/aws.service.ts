@@ -53,7 +53,7 @@ export class AwsService {
    * @param userId ID de l'utilisateur.
    * @param fileKey Type de fichier.
    * @param contentType Type MIME du fichier.
-   * @returns URL présignée valide pour 1 heure (3600 secondes).
+   * @returns URL presigned valid for 1h (3600 secondes).
    */
   async generatePresignedUrl(
     fileName: string,

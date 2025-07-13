@@ -1,4 +1,4 @@
-import { Permission } from "@/app/api/login/route";
+import { Permission } from "@/app/api/auth/login/route";
 
 export const usePermissions = () => {
   const checkPermission = (

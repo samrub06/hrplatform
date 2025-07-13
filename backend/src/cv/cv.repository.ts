@@ -18,7 +18,7 @@ export class CVRepository {
     private cvEducationModel: typeof CVEducation,
   ) {}
 
-  async create(data: PersonalInfo & { fileName: string }): Promise<CV> {
+  async create(data: PersonalInfo & { fileName: string, s3Url: string }): Promise<CV> {
     return this.cvModel.create({
       ...data,
     });
@@ -48,8 +48,8 @@ export class CVRepository {
     });
   }
 
-  async update(id: string, data: Partial<CV>): Promise<CV> {
-    const cv = await this.cvModel.findByPk(id);
+  async updateByUserId(userId: string, data: Partial<CV>): Promise<CV> {
+    const cv = await this.cvModel.findOne({ where: { user_id: userId } });
     if (!cv) return null;
 
     await cv.update(data);

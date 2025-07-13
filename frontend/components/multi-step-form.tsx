@@ -18,7 +18,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Progress } from "@/components/ui/progress"
 import { toast } from "@/hooks/use-toast"
-import { uploadFile, validateFile } from "@/lib/services/fileUpload"
+import { ExtractedCVData, uploadFile, validateFile } from "@/lib/services/fileUpload"
 
 // Define the form schema
 export const formSchema = z.object({
@@ -182,6 +182,42 @@ export function MultiStepForm() {
     }
   }
 
+  // Populate form with extracted CV data
+  const populateFormWithCVData = (extractedData: ExtractedCVData) => {
+  
+    // Populate skills
+    if (extractedData.skills && extractedData.skills.length > 0) {
+      const formattedSkills = extractedData.skills.map((skill: { name: string; yearsOfExperience: number }) => ({
+        name: skill.name,
+        years_of_experience: skill.yearsOfExperience
+      }));
+      setValue('skills', formattedSkills);
+    }
+
+    // Populate education
+    if (extractedData.education && extractedData.education.length > 0) {
+      const formattedEducation = extractedData.education.map((edu: { 
+        institution: string; 
+        degree: string; 
+        fieldOfStudy: string; 
+        startDate: string; 
+        endDate?: string; 
+        description?: string 
+      }) => ({
+        institution: edu.institution,
+        degree: edu.degree,
+        fieldOfStudy: edu.fieldOfStudy || '',
+        period: edu.startDate && edu.endDate ? [new Date(edu.startDate), new Date(edu.endDate)] : undefined,
+        description: edu.description || ''
+      }));
+      setValue('education', formattedEducation);
+    }
+
+    toast("CV data extracted", {
+      description: "Your CV information has been automatically filled in.",
+    });
+  }
+
   // Handle file upload for documents step
   const handleFileUpload = async (file: File, fileKey: 'cv' | 'profilePicture') => {
     try {
@@ -196,11 +232,11 @@ export function MultiStepForm() {
 
       setUploadProgress(0)
       
-      // Upload file with progress tracking
+      // Upload file with progress tracking and CV extraction
       const result = await uploadFile({
         file,
         fileKey,
-        onProgress: (progress) => {
+        onProgress: (progress: number) => {
           setUploadProgress(progress)
         }
       })
@@ -208,6 +244,11 @@ export function MultiStepForm() {
       if (result.success) {
         // Update form value
         setValue(fileKey, result.fileName)
+        
+        // Populate form with extracted CV data if available
+        if (fileKey === 'cv' && result.extractedData) {
+          populateFormWithCVData(result.extractedData);
+        }
         
         toast("Upload successful", {
           description: `${file.name} has been uploaded successfully.`,
