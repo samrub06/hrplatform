@@ -18,7 +18,7 @@ export class RefreshToken extends Model {
   id: string;
 
   @Column({
-    type: DataType.STRING,
+    type: DataType.TEXT,
     allowNull: false,
   })
   token: string;

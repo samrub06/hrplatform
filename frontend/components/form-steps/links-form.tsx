@@ -1,10 +1,10 @@
 "use client"
 
 import type { FormValues } from "@/components/multi-step-form"
-import { GithubIcon, LinkedinIcon, MailIcon, PhoneIcon } from "lucide-react"
+import { GithubIcon, LinkedinIcon, PhoneIcon } from "lucide-react"
 
-import { Input } from "@/components/ui/input"
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
+import { Input } from "@/components/ui/input"
 import { useFormContext } from "react-hook-form"
 
 export function LinksForm() {
@@ -16,23 +16,6 @@ export function LinksForm() {
         <h2 className="text-2xl font-bold">Contact Information</h2>
         <p className="text-muted-foreground">How can potential employers reach you?</p>
       </div>
-
-      <FormField
-        control={control}
-        name="email"
-        render={({ field }) => (
-          <FormItem>
-            <FormLabel>Email</FormLabel>
-            <FormControl>
-              <div className="relative">
-                <MailIcon className="absolute left-3 top-2.5 h-5 w-5 text-muted-foreground" />
-                <Input className="pl-10" placeholder="john.doe@example.com" {...field} />
-              </div>
-            </FormControl>
-            <FormMessage />
-          </FormItem>
-        )}
-      />
 
       <FormField
         control={control}

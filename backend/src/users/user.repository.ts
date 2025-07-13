@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { ConflictException, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
 import { CV } from '../models/cv.model';
 import { Role } from '../models/role.model';
@@ -83,8 +83,17 @@ export class UserRepository {
     const user = await this.findById(id);
     if (!user) return null;
 
-    await user.update(updateUserDto);
-    return user.reload();
+    try {
+      await user.update(updateUserDto);
+      return user.reload();
+    } catch (error) {
+      if (error.name === 'SequelizeUniqueConstraintError') {
+        if (error.errors?.some(e => e.path === 'email')) {
+          throw new ConflictException('Email is already taken by another user');
+        }
+      }
+      throw error;
+    }
   }
 
   async updateRole(id: string, role: any): Promise<User | null> {

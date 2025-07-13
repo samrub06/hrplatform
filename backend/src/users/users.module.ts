@@ -5,6 +5,7 @@ import { SequelizeModule } from '@nestjs/sequelize';
 import { AwsModule } from '../aws/aws.module';
 import { CaslModule } from '../casl/casl.module';
 import { CVSkill } from '../models/cv-skill.model';
+import { Role } from '../models/role.model';
 import { User } from '../models/user.model';
 import { PermissionModule } from '../permission/permission.module';
 import { CreateUserHandler } from './commands/create-user.command';
@@ -27,7 +28,7 @@ import { UsersController } from './users.controller';
 
 @Module({
   imports: [
-    SequelizeModule.forFeature([User, CVSkill]),
+    SequelizeModule.forFeature([User, CVSkill, Role]),
     CqrsModule,
     AwsModule,
     PermissionModule,

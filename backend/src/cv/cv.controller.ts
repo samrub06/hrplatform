@@ -59,7 +59,7 @@ export class CVController {
   @UseGuards(AuthGuard, PoliciesGuard)
   @ApiOperation({ summary: 'Extract CV Data' })
   @ApiResponse({ status: 403, description: 'Forbidden.' })
-  @CheckPolicies((ability: AppAbility) => ability.can(Action.Create, CV))
+  //@CheckPolicies((ability: AppAbility) => ability.can(Action.Create, CV))
   async extractCVData(@Body() body: { userId: string; fileName: string }) {
     return this.commandBus.execute(
       new ExtractCVDataCommand(body.userId, body.fileName),
@@ -91,7 +91,7 @@ export class CVController {
     status: 400,
     description: 'Bad Request - Invalid skill data.',
   })
-  @CheckPolicies((ability: AppAbility) => ability.can(Action.Update, CV))
+  //@CheckPolicies((ability: AppAbility) => ability.can(Action.Update, CV))
   async updateCVSkills(
     @Param('id') id: string,
     @Body(new ValidationPipe({ transform: true }))
@@ -123,7 +123,7 @@ export class CVController {
   @UseGuards(AuthGuard, PoliciesGuard)
   @ApiOperation({ summary: 'Update CV Education' })
   @ApiResponse({ status: 403, description: 'Forbidden.' })
-  @CheckPolicies((ability: AppAbility) => ability.can(Action.Update, CV))
+  //@CheckPolicies((ability: AppAbility) => ability.can(Action.Update, CV))
   async updateCVEducation(
     @Param('id')
     id: string,

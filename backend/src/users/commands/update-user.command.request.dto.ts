@@ -84,6 +84,11 @@ export class UpdateUserRequestDto {
   @IsString()
   role?: string;
 
+  @ApiProperty()
+  @IsOptional()
+  @IsString()
+  role_id?: string;
+
   @ApiProperty({ required: false })
   @IsOptional()
   @IsString()
@@ -111,6 +116,7 @@ export class UpdateUserRequestDto {
 
   @ApiProperty({ required: false })
   @IsOptional()
+  @IsNumber()
   onboarding_step?: number;
 
   @ApiProperty({ required: false })

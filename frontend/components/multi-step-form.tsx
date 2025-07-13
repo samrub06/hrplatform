@@ -106,7 +106,6 @@ export function MultiStepForm() {
   const [direction, setDirection] = useState(0) // -1 for backward, 1 for forward
   const [uploadProgress, setUploadProgress] = useState(0)
 
-  
   // Initialize currentStep from URL params on component mount
   useEffect(() => {
     const stepParam = searchParams.get('step')
@@ -291,21 +290,75 @@ export function MultiStepForm() {
         // Remove file from data since it's already uploaded
         delete data.profilePicture
       }
-      
-      // API call to update user data
-      const response = await fetch(`/api/user`, {
-        method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          ...data,
-          onboarding_step: step + 1 // Update to next step
-        }),
-      })
 
-      if (!response.ok) {
-        throw new Error('Failed to save step data')
+      // Handle skills update specifically for CV skills
+      if (step === 2 && data.skills) {
+        // Update CV skills using the specific endpoint
+        const skillsResponse = await fetch(`/api/cv/update-skills`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            skills: data.skills.map(skill => ({
+              name: skill.name,
+              yearsOfExperience: skill.years_of_experience
+            }))
+          }),
+        })
+
+        if (!skillsResponse.ok) {
+          throw new Error('Failed to update CV skills')
+        }
+
+        // Remove skills from data since they're handled separately
+        delete data.skills
+      }
+
+      // Handle education update specifically for CV education
+      if (step === 4 ) {
+        // Update CV education using the specific endpoint
+        const educationResponse = await fetch(`/api/cv/update-education`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            education: data.education?.map(edu => ({
+              institution: edu.institution,
+              degree: edu.degree,
+              fieldOfStudy: edu.fieldOfStudy || '',
+              startDate: edu.period?.[0] || new Date(),
+              endDate: edu.period?.[1] || undefined,
+              description: edu.description || ''
+            }))
+          }),
+        })
+
+        if (!educationResponse.ok) {
+          throw new Error('Failed to update CV education')
+        }
+
+        // Remove education from data since it's handled separately
+        delete data.education
+      }
+      
+      // API call to update user data (only if there's remaining data)
+      if (Object.keys(data).length > 0) {
+        const response = await fetch(`/api/user`, {
+          method: 'PATCH',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            ...data,
+            onboarding_step: step + 1 // Update to next step
+          }),
+        })
+
+        if (!response.ok) {
+          throw new Error('Failed to save step data')
+        }
       }
 
       toast("Step saved", {
@@ -396,6 +449,10 @@ export function MultiStepForm() {
         }),
       })
 
+      // Mark form as completed in cache and clear it
+      // markAsCompleted() // This line is removed as per the edit hint
+      // clearCache() // This line is removed as per the edit hint
+
       // Move to success step
       setDirection(1)
       setCurrentStep(STEPS.length - 1)
@@ -442,11 +499,21 @@ export function MultiStepForm() {
           }}
         >
           <FormProvider {...form}>
-            {currentStep === 0 && <PersonalInfoForm />}
-            {currentStep === 1 && <DocumentsForm uploadProgress={uploadProgress} />}
-            {currentStep === 2 && <SkillsForm />}
-            {currentStep === 3 && <LinksForm />}
-            {currentStep === 4 && <EducationForm />}
+            {currentStep === 0 && (
+              <PersonalInfoForm />
+            )}
+            {currentStep === 1 && (
+              <DocumentsForm uploadProgress={uploadProgress} />
+            )}
+            {currentStep === 2 && (
+              <SkillsForm />
+            )}
+            {currentStep === 3 && (
+              <LinksForm />
+            )}
+            {currentStep === 4 && (
+              <EducationForm />
+            )}
             {currentStep === 5 && <FormSuccess data={form.getValues()} />}
           </FormProvider>
         </motion.div>
