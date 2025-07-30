@@ -94,23 +94,23 @@ export class ExtractCVDataHandler
           },
           {
             name: 'SQL',
-            yearsOfExperience: null,
+            yearsOfExperience: 0,
           },
           {
             name: 'PostgreSQL',
-            yearsOfExperience: null,
+            yearsOfExperience: 0,
           },
           {
             name: 'AWS',
-            yearsOfExperience: null,
+            yearsOfExperience: 0,
           },
           {
             name: 'MongoDB',
-            yearsOfExperience: null,
+            yearsOfExperience: 0,
           },
           {
             name: 'Redux',
-            yearsOfExperience: null,
+            yearsOfExperience: 0,
           },
           {
             name: 'Typescript',

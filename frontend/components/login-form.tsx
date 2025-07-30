@@ -37,6 +37,7 @@ const formSchema = z.object({
 type LoginState = {
   error: string | null;
   success: boolean;
+  redirect?: string;
 }
 
 function SubmitButton() {
@@ -84,9 +85,10 @@ export function LoginForm({
 
   useEffect(() => {
     if (state.success) {
-      window.location.href = '/dashboard'
+      const redirectUrl = state.redirect || '/dashboard';
+      window.location.href = redirectUrl;
     }
-  }, [state.success])
+  }, [state.success, state.redirect])
 
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>

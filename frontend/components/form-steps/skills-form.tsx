@@ -1,12 +1,12 @@
 "use client"
 
-import { useFieldArray, useFormContext } from "react-hook-form"
 import type { FormValues } from "@/components/multi-step-form"
 import { MinusCircleIcon, PlusCircleIcon } from "lucide-react"
+import { useFieldArray, useFormContext } from "react-hook-form"
 
 import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
 import { FormControl, FormField, FormItem, FormMessage } from "@/components/ui/form"
+import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 
 // interface SkillsFormProps {
@@ -53,7 +53,7 @@ export function SkillsForm() {
                     <FormControl>
                       <Select
                         onValueChange={(value) => field.onChange(Number.parseInt(value))}
-                        defaultValue={field.value?.toString()}
+                        value={field.value?.toString() || "0"}
                       >
                         <SelectTrigger>
                           <SelectValue placeholder="Years of experience" />
@@ -96,7 +96,7 @@ export function SkillsForm() {
       {fields.length === 0 && (
         <div className="rounded-lg border border-dashed p-8 text-center">
           <p className="text-muted-foreground">
-            You haven't added any skills yet. Click the button above to add your first skill.
+            You haven&apos;t added any skills yet. Click the button above to add your first skill.
           </p>
         </div>
       )}

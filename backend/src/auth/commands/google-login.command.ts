@@ -46,6 +46,7 @@ export class GoogleLoginHandler
       });
     }
 
+   
     const payload : UserLoginDTO = {
       email: user.email,
       id: user.id,
@@ -53,6 +54,7 @@ export class GoogleLoginHandler
       firstName: user.first_name,
       lastName: user.last_name,
     };
+
 
     const access_token = this.jwtService.sign(payload);
     const refresh_token = this.jwtService.sign(payload, {

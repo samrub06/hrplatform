@@ -42,7 +42,8 @@ export class PermissionService {
 
     return permissions.some(
       (permission) =>
-        permission.resource === resource && permission[`can_${action}`] === true,
+        permission.resource === resource &&
+        permission[`can_${action}`] === true,
     );
   }
 }

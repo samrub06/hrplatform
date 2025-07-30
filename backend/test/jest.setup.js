@@ -13,9 +13,9 @@ jest.mock('@react-email/components', () => ({
   Column: ({ children }) => children,
   Row: ({ children }) => children,
   Button: ({ children }) => children,
-  Img: ({ src, alt }) => `<img src="${src}" alt="${alt}" />`
+  Img: ({ src, alt }) => `<img src="${src}" alt="${alt}" />`,
 }));
 
 jest.mock('@react-email/render', () => ({
-  renderAsync: jest.fn().mockResolvedValue('<div>Mocked Email</div>')
-})); 
+  renderAsync: jest.fn().mockResolvedValue('<div>Mocked Email</div>'),
+}));

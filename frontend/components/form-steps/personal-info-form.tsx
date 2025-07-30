@@ -17,6 +17,7 @@ export function PersonalInfoForm() {
   const { control, watch } = useFormContext<FormValues>()
   const role = watch("role")
   const [previewUrl, setPreviewUrl] = useState<string | null>(null)
+  const [sliderValue, setSliderValue] = useState([30])
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>, onChange: (value: File) => void) => {
     const file = e.target.files?.[0]
@@ -62,7 +63,6 @@ export function PersonalInfoForm() {
                       handleFileChange(e, onChange)
                     }
                   }}
-                  value={field.value ? undefined : ""}
                   {...field}
                 />
               </div>
@@ -135,18 +135,20 @@ export function PersonalInfoForm() {
           <FormField
             control={control}
             name="salary_expectation"
-            render={({ field: { onChange, value, ...fieldProps } }) => (
+            render={({ field: { onChange } }) => (
               <FormItem>
                 <FormLabel className="text-sm">Expected Salary (k₪/month)</FormLabel>
                 <FormControl>
                   <div className="space-y-1">
                     <Slider
-                      defaultValue={[value || 30]}
+                      defaultValue={[30]}
                       min={8}
                       max={70}
                       step={2}
-                      onValueChange={(vals) => onChange(vals[0])}
-                      {...fieldProps}
+                      onValueChange={(vals) => {
+                        setSliderValue(vals)
+                        onChange(vals[0])
+                      }}
                     />
                     <div className="flex justify-between text-xs text-muted-foreground">
                       <span>8k₪</span>
@@ -157,7 +159,7 @@ export function PersonalInfoForm() {
                       <span>60k₪</span>
                       <span>70k₪</span>
                     </div>
-                    <div className="text-center text-sm font-medium">{value || 30}k₪/month</div>
+                    <div className="text-center text-sm font-medium">{sliderValue[0]}k₪/month</div>
                   </div>
                 </FormControl>
                 <FormMessage />

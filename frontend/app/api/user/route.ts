@@ -1,3 +1,4 @@
+import { handleApiError } from '@/lib/apiErrorHandler';
 import axiosInstance from '@/lib/axiosInstance';
 import { AuthDAL } from '@/lib/dal/auth';
 import { NextRequest, NextResponse } from 'next/server';
@@ -14,35 +15,13 @@ export async function PATCH(request: NextRequest) {
     }
 
     const body = await request.json();
-    
     const response = await axiosInstance.patch(`/user/${userId}`, body);
+    console.log('🔴 Response in PATCH /user:', response.data);
     
     return NextResponse.json(response.data);
-  } catch (error: unknown) {
-    console.error('Error updating user:', error);
-    
-    if (error && typeof error === 'object' && 'response' in error) {
-      const axiosError = error as { response?: { status?: number } };
-      
-      if (axiosError.response?.status === 401) {
-        return NextResponse.json(
-          { error: 'Unauthorized' }, 
-          { status: 401 }
-        );
-      }
-      
-      if (axiosError.response?.status === 403) {
-        return NextResponse.json(
-          { error: 'Forbidden' }, 
-          { status: 403 }
-        );
-      }
-    }
-    
-    return NextResponse.json(
-      { error: 'Internal server error' }, 
-      { status: 500 }
-    );
+  } catch (error) {
+    console.log('🔴 Error in PATCH /user:', error);
+    return handleApiError(error);
   }
 }
 
@@ -60,23 +39,7 @@ export async function GET() {
     const response = await axiosInstance.get('/user');
     
     return NextResponse.json(response.data);
-  } catch (error: unknown) {
-    console.error('Error fetching user:', error);
-    
-    if (error && typeof error === 'object' && 'response' in error) {
-      const axiosError = error as { response?: { status?: number } };
-      
-      if (axiosError.response?.status === 401) {
-        return NextResponse.json(
-          { error: 'Unauthorized' }, 
-          { status: 401 }
-        );
-      }
-    }
-    
-    return NextResponse.json(
-      { error: 'Internal server error' }, 
-      { status: 500 }
-    );
+  } catch (error) {
+    return handleApiError(error);
   }
 } 

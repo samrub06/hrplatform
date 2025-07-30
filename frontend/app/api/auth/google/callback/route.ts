@@ -41,7 +41,7 @@ export async function POST(request: NextRequest) {
     // Decode the JWT token to check for roleId
     const decoded = jwt.decode(token) as DecodedToken;
     const hasRoleId = decoded?.roleId !== null && decoded?.roleId !== undefined;
-    console.log('hasRoleId', hasRoleId);
+    console.log('hasRoleId', decoded);
     // Redirect based on roleId presence
     const redirectUrl = hasRoleId ? '/dashboard' : '/getstarted';
 

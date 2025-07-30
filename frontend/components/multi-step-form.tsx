@@ -34,14 +34,16 @@ export const formSchema = z.object({
   current_company: z.string().optional(),
 
   // Documents
-  cv: z.any().optional(),
+  cv: z.any().refine((val) => val !== undefined && val !== null && val !== "", {
+    message: "CV is required"
+  }),
 
   // Skills
   skills: z
     .array(
       z.object({
         name: z.string().min(1, "Skill name is required"),
-        years_of_experience: z.number().min(0),
+        years_of_experience: z.number(),
       }),
     )
     .optional(),
@@ -100,6 +102,7 @@ const STEP_TITLES = [
 
 export function MultiStepForm() {
   const searchParams = useSearchParams()
+  const role = searchParams.get('role') as "candidate" | "publisher" | undefined
   const router = useRouter()
   const [currentStep, setCurrentStep] = useState(0)
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -130,7 +133,13 @@ export function MultiStepForm() {
       first_name: "",
       last_name: "",
       email: "",
-      role: "candidate" as const,
+      role: role || "candidate",
+      desired_position: "",
+      current_position: "",
+      current_company: "",
+      salary_expectation: undefined,
+      profilePicture: undefined,
+      cv: undefined,
       skills: [],
       education: [],
       phone_number: "",
@@ -212,7 +221,7 @@ export function MultiStepForm() {
       setValue('education', formattedEducation);
     }
 
-    toast("CV data extracted", {
+    toast.success("CV data extracted", {
       description: "Your CV information has been automatically filled in.",
     });
   }
@@ -223,7 +232,7 @@ export function MultiStepForm() {
       // Validate file
       const validationError = validateFile(file, 10)
       if (validationError) {
-        toast("Validation Error", {
+        toast.error("Validation Error", {
           description: validationError,
         })
         return false
@@ -249,7 +258,7 @@ export function MultiStepForm() {
           populateFormWithCVData(result.extractedData);
         }
         
-        toast("Upload successful", {
+        toast.success("Upload successful", {
           description: `${file.name} has been uploaded successfully.`,
         })
         
@@ -259,7 +268,7 @@ export function MultiStepForm() {
       return false
     } catch (error) {
       console.error('File upload error:', error)
-      toast("Upload failed", {
+      toast.error("Upload failed", {
         description: "Failed to upload file. Please try again.",
       })
       return false
@@ -271,16 +280,6 @@ export function MultiStepForm() {
   // Save step data to API
   const saveStepData = async (step: number, data: Partial<FormValues>) => {
     try {
-      // Handle file upload for documents step
-      if (step === 1 && data.cv instanceof File) {
-        const uploadSuccess = await handleFileUpload(data.cv, 'cv')
-        if (!uploadSuccess) {
-          throw new Error('File upload failed')
-        }
-        // Remove file from data since it's already uploaded
-        delete data.cv
-      }
-
       // Handle profile picture upload for personal info step
       if (step === 0 && data.profilePicture instanceof File) {
         const uploadSuccess = await handleFileUpload(data.profilePicture, 'profilePicture')
@@ -289,6 +288,16 @@ export function MultiStepForm() {
         }
         // Remove file from data since it's already uploaded
         delete data.profilePicture
+      }
+
+      // Handle file upload for documents step
+      if (step === 1 && data.cv instanceof File) {
+        const uploadSuccess = await handleFileUpload(data.cv, 'cv')
+        if (!uploadSuccess) {
+          throw new Error('File upload failed')
+        }
+        // Remove file from data since it's already uploaded
+        delete data.cv
       }
 
       // Handle skills update specifically for CV skills
@@ -357,17 +366,23 @@ export function MultiStepForm() {
         })
 
         if (!response.ok) {
+          const errorData = await response.json()
+          console.log('🔴 Error in saveStepData:', errorData);
+          toast.error("Error", {
+            description: errorData.error,
+          })
+
           throw new Error('Failed to save step data')
         }
       }
 
-      toast("Step saved", {
+      toast.success("Step saved", {
         description: "Your progress has been saved successfully.",
       })
 
     } catch (error) {
       console.error('Error saving step data:', error)
-      toast("Error", {
+      toast.error("Error", {
         description: "Failed to save your progress. Please try again.",
       })
       throw error
@@ -457,12 +472,12 @@ export function MultiStepForm() {
       setDirection(1)
       setCurrentStep(STEPS.length - 1)
       
-      toast("Profile completed!", {
+      toast.success("Profile completed!", {
         description: "Your profile has been successfully created.",
       })
     } catch (error) {
       console.error("Error submitting form:", error)
-      toast("Error", {
+      toast.error("Error", {
         description: "Failed to complete your profile. Please try again.",
       })
     } finally {

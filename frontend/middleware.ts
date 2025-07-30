@@ -2,49 +2,57 @@ import type { NextRequest } from 'next/server'
 import { NextResponse } from 'next/server'
 
 // List of public routes that don't require authentication
+// Everything else is protected by default
 const PUBLIC_ROUTES = [
-  '/auth/login',
-  '/auth/register',
-  '/auth/forgot-password',
-  '/auth/reset-password',
-  '/api/auth'
+  'auth/login',
+  'auth/register',
+  'auth/google/callback',
+  'auth/linkedin/callback',
+  'auth/forgot-password',
+  'auth/reset-password',
+  'api/auth',
+  '',
+  'login'
 ]
 
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl
-  
+
+  console.log('🔍 Middleware running for:', pathname)
+
+  // Remove leading slash for comparison
+  const cleanPathname = pathname.startsWith('/') ? pathname.slice(1) : pathname
+
   // Check if the route is public
-  const isPublicRoute = PUBLIC_ROUTES.some(route => 
-    pathname.startsWith(route)
-  )
-  
+  const isPublicRoute = PUBLIC_ROUTES.some(route => {
+    if (route === '' || route === 'login') {
+      return cleanPathname === route
+    }
+    return cleanPathname.startsWith(route)
+  })
+    
   // If it's a public route, allow access
   if (isPublicRoute) {
+    console.log('✅ Public route - allowing access')
     return NextResponse.next()
   }
   
-  // Check for authentication token
-  const refreshToken = request.cookies.get('refreshToken')
+  // Everything else is protected - check authentication
   const accessToken = request.cookies.get('accessToken')
   
-  // If no tokens found and trying to access protected route, redirect to login
-  if (!refreshToken && !accessToken && pathname.startsWith('/dashboard')) {
-    return NextResponse.redirect(new URL('/auth/login', request.url))
+  console.log('🔒 Protected route - accessToken:', accessToken ? 'present' : 'missing', 'pathname:', pathname)
+  
+  if (!accessToken) {
+    console.log('❌ No token - redirecting to login')
+    return NextResponse.redirect(new URL('/login', request.url))
   }
   
-  // Continue with the request
+  console.log('✅ Token present - allowing access')
   return NextResponse.next()
 }
 
 export const config = {
   matcher: [
-    /*
-     * Match all request paths except for the ones starting with:
-     * - api (API routes)
-     * - _next/static (static files)
-     * - _next/image (image optimization files)
-     * - favicon.ico (favicon file)
-     */
-    '/((?!api|_next/static|_next/image|favicon.ico).*)',
+    '/((?!_next/static|_next/image|favicon.ico|robots.txt|sitemap.xml|manifest.json|apple-touch-icon|.well-known).*)'
   ],
 } 

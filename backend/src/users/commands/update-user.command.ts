@@ -21,10 +21,10 @@ export class UpdateUserHandler implements ICommandHandler<UpdateUserCommand> {
 
   async execute(command: UpdateUserCommand) {
     const { id, request } = command;
-
-    if (!this.validator.validate(request)) {
-      throw new BadRequestException('Invalid user data');
-    }
+    try {
+      if (!this.validator.validate(request)) {
+        throw new BadRequestException('Invalid user data');
+      }
 
     // Check if email is being updated and if it already exists for another user
     if (request.email) {
@@ -63,5 +63,8 @@ export class UpdateUserHandler implements ICommandHandler<UpdateUserCommand> {
     }
 
     return updatedUser;
+    } catch (error) {
+      throw new BadRequestException(error);
+    }
   }
 }

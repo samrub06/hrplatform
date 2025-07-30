@@ -4,6 +4,7 @@ import {
   ActionResult,
   createErrorResult,
   createSuccessResult,
+  createSuccessResultWithRedirect,
   handleServerError,
   validateFormData
 } from '@/lib/errorHandler';
@@ -17,6 +18,10 @@ interface LoginRequestDto {
 interface LoginResponse {
   accessToken: string;
   refreshToken: string;
+}
+
+interface DecodedToken {
+  roleId?: string | null;
 }
 
 class LoginFormData {
@@ -56,14 +61,20 @@ export async function loginAction(prevState: { error: string | null; success: bo
 
   try {
     const response = await performLogin(loginFormData.toLoginRequestDto());
+    console.log('🔴 Response in loginAction:', response);
     const { accessToken, refreshToken } = response;
-    
+
     // Store tokens using the service
     await TokenService.setAccessToken(accessToken);
     await TokenService.setRefreshToken(refreshToken);
     
-    return createSuccessResult()
+    // Decode JWT to check for roleId
+    const decoded = JSON.parse(atob(accessToken.split('.')[1])) as DecodedToken;
+    const hasRoleId = decoded?.roleId !== null && decoded?.roleId !== undefined;
+    
+    return createSuccessResultWithRedirect(hasRoleId ? '/dashboard' : '/getstarted');
   } catch (error) {
+    console.log('🔴 Error in loginAction:', error);
     return handleServerError(error, "An error occurred during login");
   }
 }

@@ -51,7 +51,7 @@ axiosInstance.interceptors.request.use(
   }
 );
 
-// Response interceptor to handle token refresh
+// Response interceptor to handle token refresh and errors
 axiosInstance.interceptors.response.use(
   (response) => {
     return response;
@@ -95,19 +95,29 @@ axiosInstance.interceptors.response.use(
         
         // Redirect to login page (client side only)
         if (typeof window !== 'undefined') {
-          window.location.href = '/login';
+          // Check if we're not already on login page to avoid infinite redirects
+          if (!window.location.pathname.includes('/auth/login')) {
+            window.location.href = '/auth/login';
+          }
         }
         
         return Promise.reject(refreshError);
       }
     }
 
-    // Log other errors
-    console.error('Axios error:', {
-      message: error.message,
-      response: error.response?.data,
-      status: error.response?.status
-    });
+    // Always reject errors for both client and server side
+    // This ensures consistent error handling
+    if (error.response?.status === 403) {
+      console.error('Access forbidden:', error.response.data);
+    } else if (error.response?.status === 404) {
+      console.error('Resource not found:', error.response.data);
+    } else {
+      console.error('Axios error:', {
+        message: error.message,
+        response: error.response?.data,
+        status: error.response?.status
+      });
+    }
     
     return Promise.reject(error);
   }
