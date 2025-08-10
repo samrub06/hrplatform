@@ -1,163 +1,384 @@
-### **Links**
+# HR Platform
 
-[Postman Link](https://www.postman.com/satellite-technologist-64110848/workspace/hr-platforn)
+A comprehensive, full-stack HR management platform built with modern technologies, featuring AI-powered CV processing, role-based access control, and real-time notifications.
 
-[LinkedIn Link](https://www.linkedin.com/in/samuelcharbit/)
+## 🚀 Overview
 
-[Github Link](https://github.com/samrub06/hrplatform)
+HR Platform is a sophisticated human resources management system designed to streamline the entire recruitment and HR workflow. The platform combines modern web technologies with AI capabilities to provide an efficient, scalable, and user-friendly solution for HR professionals.
 
-[Notion Link](https://befitting-print-b6c.notion.site/Project-HR-platform-1509653b1ac1809f922dede0873e12e3?pvs=74)
+### Key Features
+- **AI-Powered CV Processing**: Automated extraction and analysis of candidate information
+- **Role-Based Access Control**: Secure, granular permission system
+- **Real-Time Notifications**: Email and system notifications with React templates
+- **Social Authentication**: Google and LinkedIn login integration
+- **Multi-Language Support**: English and French interfaces
+- **Responsive Design**: Mobile-first approach for all devices
+- **Microservices Architecture**: Scalable and maintainable backend design
 
+## 🏗️ System Architecture
 
+### High-Level Architecture
+The platform follows a modern microservices architecture with clear separation of concerns:
 
-### Description:
+```
+┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
+│   Frontend      │    │   Backend       │    │   External      │
+│   (Next.js)     │◄──►│   (NestJS)      │◄──►│   Services      │
+│                 │    │                 │    │                 │
+│ • React 18      │    │ • REST API      │    │ • AWS S3        │
+│ • TypeScript    │    │ • Microservices │    │ • OpenAI        │
+│ • Tailwind CSS  │    │ • PostgreSQL    │    │ • Google OAuth  │
+│ • JWT Auth      │    │ • Redis         │    │ • LinkedIn OAuth│
+└─────────────────┘    │ • RabbitMQ      │    └─────────────────┘
+                       └─────────────────┘
+```
 
-This HR management platform helps simplify recruitment and talent management. It’s built with NestJS for the backend, PostgreSQL for the database, and React for the user interface. 
+### Technology Stack
 
-Users can register, manage their profiles, upload documents, and track skills. Admins can control roles and review profiles securely. It also uses AWS S3 for file storage and ensures secure access with features like JWT authentication. Future updates will include faster performance and AI tools for better candidate matching.
+#### Frontend
+- **Framework**: Next.js 14 (App Router)
+- **Language**: TypeScript
+- **Styling**: Tailwind CSS
+- **State Management**: React Context + Custom Hooks
+- **UI Components**: shadcn/ui
+- **Testing**: Cypress E2E
 
-**Use Case**
+#### Backend
+- **Framework**: NestJS
+- **Language**: TypeScript
+- **Database**: PostgreSQL with Sequelize ORM
+- **Cache**: Redis
+- **Message Queue**: RabbitMQ
+- **File Storage**: AWS S3
+- **AI Services**: OpenAI integration
 
-- User
-    
-    ### **UC-1: User Registration**
-    
-    - As a **Candidate,I want** to register using my email and password so that I can create an account and access the platform. I can register my personal information or with Google/Linkedin
-        - **Flow**:
-        1. Enter email and password.
-        2. Create a user profile, with user_role: canditate.
-        3. Redirect to the profile completion page.
-    
-    ### **UC-2: Profile Creation**
-    
-    - **As a Registered User, I want** to fill out my personal details so that my profile is complete and ready to be shared.
-        - **Flow**:
-        1. Enter personal information.
-        2. Upload CV and profile picture.
-        3. Add professional skills.
-        4. Save profile information.
-    
-    ### **UC-3: Profile Update**
-    
-    - **As an Authenticated User, I want** to update my profile information so that my details remain accurate and up-to-date and can be sharable
-        - **Flow**:
-    1. Navigate to the profile edit page.
-    2. Modify personal/professional information.
-    3. Update skills and documents.
-    4. Save changes.
-    
-    ### **UC-4: CV Upload**
-    
-    - **As a User, I want** to upload my CV securely so that it is stored safely and linked to my profile.
-        - **Preconditions**: Logged in.
-        - **Flow**:
-            1. Select the CV file.
-            2. Upload the file to secure S3 storage.
-            3. Generate a pre-signed URL for the document.
-            4. Update the profile with the document link.
-    
-    ### **UC-5: Skill Proficiency**
-    
-    - **As a User, I want** to specify my skill proficiency so that my expertise is accurately represented on my profile.
-        - **Preconditions**: Profile exists.
-        - **Flow**:
-            1. Select a skill category.
-            2. Define the proficiency level (1-5).
-            3. Add professional context.
-            4. Save the skill details.
-    
-    ### **UC-6: Skill Validation**
-    
-    - **As an Admin, I want** to validate user skills so that the platform maintains credibility.
-        - **Flow**:
-            1. Review user-submitted skills.
-            2. Validate or adjust skill levels.
-            3. Provide feedback to the user.
-            4. Approve or reject the skills.
-- Admin
-    
-    
-    ### **UC-7: Admin Dashboard**
-    
-    - **As an Admin, I want** to add a user so that he can oversee his profile and give him credentials to authenticate and review his profile
-        - **Flow**:
-        1. Access the user management dashboard.
-        2. Add a new User
-    
-    ### **UC-8: Admin Dashboard**
-    
-    - **As an Admin, I want** to view and manage users so that I can oversee platform activity efficiently.
-        - **Flow**:
-        1. Access the user management dashboard.
-        2. View a paginated list of users.
-        3. Filter and search users.
-        4. Add confidential admin notes.
-    
-    ### **UC-9: User Role Management**
-    
-    - **As a Super Admin, I want** to assign or modify user roles so that permissions align with organisational needs.
-        - **Flow**:
-            1. Select a user from the dashboard.
-            2. Modify the user’s role.
-            3. Update role changes.
-            4. Log the role modification for audit purposes.
-    
-    ### **UC-7: Admin Document Review**
-    
-    - **As an Admin, I want** to review candidate documents so that I can evaluate profiles effectively.
-        - **Preconditions**: Access to candidate profiles.
-        - **Flow**:
-            1. Browse candidate documents.
-            2. Download CVs.
-            3. Add internal comments.
-            4. Track document review history.
-- External viewer
-    
-    ### **UC-10: Public CV Page**
-    
-    - **As an External Viewer, I want** to view a candidate's public profile so that I can evaluate their qualifications for potential opportunities.
-        - **Flow**:
-            1. Access the unique public profile URL link.
-            2. View read-only professional information.
-            3. See limited personal details (e.g., name and professional summary).
+#### Infrastructure
+- **Containerization**: Docker & Docker Compose
+- **Database**: PostgreSQL
+- **Caching**: Redis
+- **Message Broker**: RabbitMQ
+- **Cloud Services**: AWS (S3, TextExtract)
 
-### **Architecture**
+## 🔐 Authentication & Security
 
-- Backend: NestJS
-- Unit Testing + Testing End to End API :  Jest
-- Database: PostgreSQL then on RDS AWS
-- Migration: sur Squeelize with transaction
-- Storage: AWS S3
-- Versioning & Documentation API : Swagger UI + Link Postman
-- Frontend: React + Ant Design
-- Authentification: bcrypt + JWT tokens + auth0 ( Google )
+### Authentication Flow
+1. **User Registration**: Email/password or social login
+2. **JWT Token Generation**: Secure token-based authentication
+3. **Session Management**: Redis-backed session storage
+4. **Permission Validation**: Role-based access control
+5. **Route Protection**: Middleware-based security
 
-### **Data Model**
+### Security Features
+- **JWT with Refresh Tokens**: Secure authentication
+- **Rate Limiting**: Protection against abuse
+- **Input Validation**: DTO-based request validation
+- **SQL Injection Protection**: ORM-level security
+- **XSS Protection**: Output sanitization
+- **CORS Configuration**: Frontend security
 
-![Capture d’écran 2024-12-16 à 15.43.34.png](https://prod-files-secure.s3.us-west-2.amazonaws.com/820e438d-e3f1-42c9-9577-2ed1e0068a82/d2215641-d718-4ad7-890b-98df9fbaee0a/Capture_decran_2024-12-16_a_15.43.34.png)
+## 🗄️ Data Architecture
 
-## Architecture Modules
+### Database Design
+- **PostgreSQL**: Primary relational database
+- **Sequelize ORM**: Object-relational mapping
+- **Migration System**: Version-controlled schema changes
+- **Seeding**: Automated initial data population
 
-![Capture d’écran 2024-12-16 à 15.49.26.png](https://prod-files-secure.s3.us-west-2.amazonaws.com/820e438d-e3f1-42c9-9577-2ed1e0068a82/e6225818-4228-4a1e-ad54-6edd896e5203/Capture_decran_2024-12-16_a_15.49.26.png)
+### Core Data Models
+- **Users**: User accounts and profiles
+- **Admins**: Administrative users
+- **Jobs**: Job postings and requirements
+- **CVs**: Candidate resumes and extracted data
+- **Sessions**: User session management
+- **Permissions**: Role and permission definitions
+- **Companies**: Company information
+- **Admin Notes**: Administrative annotations
 
-## Architecture UserModule
+### Data Relationships
+- **One-to-Many**: User → Sessions, User → CVs
+- **Many-to-Many**: Users ↔ Permissions, Users ↔ Roles
+- **Polymorphic**: Admin Notes (can reference multiple entities)
 
-![UserModule.drawio.png](https://prod-files-secure.s3.us-west-2.amazonaws.com/820e438d-e3f1-42c9-9577-2ed1e0068a82/f79c4785-dcdd-4e9f-893c-23f13f532fff/UserModule.drawio.png)
+## 🤖 AI-Powered Features
 
-## Architecture Auth Flow
+### CV Processing Pipeline
+1. **Document Upload**: PDF/DOC file upload
+2. **OCR Extraction**: Text extraction from documents
+3. **AI Analysis**: OpenAI-powered content analysis
+4. **Data Extraction**: Skills, education, experience parsing
+5. **Data Validation**: Automated verification and enrichment
+6. **Profile Creation**: Structured candidate profiles
 
-![ClientFlow.drawio.png](https://prod-files-secure.s3.us-west-2.amazonaws.com/820e438d-e3f1-42c9-9577-2ed1e0068a82/81b8d393-fe53-4c61-bfc5-5757b3fa3807/ClientFlow.drawio.png)
+### AI Capabilities
+- **Text Analysis**: Natural language processing
+- **Skill Extraction**: Automated skill identification
+- **Content Generation**: AI-assisted content creation
+- **Data Enrichment**: Enhanced candidate profiles
+- **Intelligent Matching**: Job-candidate compatibility scoring
 
-## **File Management**
+## 📧 Notification System
 
-- Secure S3 uploads in Frontend with Pre-signed URLs from the backend
-- Download File with S3 Pre-signed Urls
+### Email Infrastructure
+- **React Templates**: Component-based email design
+- **Multi-Language**: English and French support
+- **Responsive Layouts**: Mobile-optimized emails
+- **Template Engine**: Dynamic content generation
 
-## **Roadmap**
+### Notification Types
+- **Welcome Emails**: New user onboarding
+- **Job Notifications**: Candidate alerts
+- **Admin Alerts**: System event notifications
+- **Custom Notifications**: API-driven messaging
 
-- **Phase 1**: Authentication & Profile Management
-- **Phase 2**: RabbitMQ Integration
-- **Phase 3**: Redis Caching // ce que je recois en getquery si j ai deja la reponse auparavant que cette reponse soit renvoyer par le redis ( timeto live 1min )
-- **Phase 4**: Candidate Matching AI
+### Message Queuing
+- **RabbitMQ**: Reliable message delivery
+- **Asynchronous Processing**: Background task handling
+- **Email Queuing**: Reliable notification delivery
+- **Scalable Architecture**: Handle high message volumes
+
+## 🚀 Getting Started
+
+### Prerequisites
+- **Node.js**: v18 or higher
+- **Docker**: Docker and Docker Compose
+- **Database**: PostgreSQL (or use Docker)
+- **Cache**: Redis (or use Docker)
+- **Message Queue**: RabbitMQ (or use Docker)
+
+### Quick Start
+```bash
+# Clone the repository
+git clone <repository-url>
+cd hr_platform
+
+# Start backend services
+cd backend
+npm install
+npm run infra:up
+npm run start:dev
+
+# Start frontend (in new terminal)
+cd ../frontend
+npm install
+npm run dev
+```
+
+### Environment Configuration
+```bash
+# Backend environment
+cp backend/.env.example backend/.env
+# Configure database, Redis, RabbitMQ, AWS, and OpenAI settings
+
+# Frontend environment
+cp frontend/.env.example frontend/.env.local
+# Configure API endpoints and OAuth settings
+```
+
+## 🐳 Docker Development
+
+### Infrastructure Services
+```bash
+# Start all infrastructure services
+cd backend
+npm run infra:up
+
+# Services available:
+# - PostgreSQL: localhost:8083
+# - Redis: localhost:6379
+# - RabbitMQ: localhost:5672 (Management: localhost:15672)
+```
+
+### Full Docker Development
+```bash
+# Complete containerized development
+cd backend
+npm run dev:full
+
+# View logs
+npm run dev:full:logs
+```
+
+## 📚 API Documentation
+
+### Backend API
+- **Swagger UI**: http://localhost:3000/api
+- **OpenAPI JSON**: http://localhost:3000/api-json
+- **Postman Collection**: Available in `/docs` folder
+
+### Frontend API Routes
+- **Authentication**: `/api/auth/*`
+- **User Management**: `/api/user/*`
+- **CV Processing**: `/api/cv/*`
+- **File Upload**: `/api/upload/*`
+
+## 🧪 Testing
+
+### Backend Testing
+```bash
+cd backend
+npm run test              # Unit tests
+npm run test:watch        # Watch mode
+npm run test:cov          # Coverage report
+npm run test:e2e          # End-to-end tests
+```
+
+### Frontend Testing
+```bash
+cd frontend
+npm run cypress:open      # Open Cypress
+npm run cypress:run       # Run tests
+```
+
+## 🚀 Deployment
+
+### Production Build
+```bash
+# Backend
+cd backend
+npm run build
+npm run start:prod
+
+# Frontend
+cd frontend
+npm run build
+npm run start
+```
+
+### Docker Production
+```bash
+# Build and run production containers
+docker-compose -f docker-compose.prod.yml up -d
+```
+
+### Environment Variables
+```env
+# Production environment variables
+NODE_ENV=production
+DB_HOST=your-production-db
+REDIS_URL=your-production-redis
+RABBITMQ_URL=your-production-rabbitmq
+AWS_ACCESS_KEY_ID=your-aws-key
+AWS_SECRET_ACCESS_KEY=your-aws-secret
+OPENAI_API_KEY=your-openai-key
+```
+
+## 🔧 Development Workflow
+
+### Code Quality
+- **TypeScript**: Strict type checking
+- **ESLint**: Code linting and formatting
+- **Prettier**: Code formatting
+- **Husky**: Git hooks for quality checks
+
+### Git Workflow
+1. **Feature Branch**: Create feature branch from main
+2. **Development**: Implement feature with tests
+3. **Quality Checks**: Run linting and tests
+4. **Pull Request**: Submit PR for review
+5. **Merge**: Merge after approval
+
+### Testing Strategy
+- **Unit Tests**: Individual component testing
+- **Integration Tests**: API endpoint testing
+- **E2E Tests**: User journey testing
+- **Performance Tests**: Load and stress testing
+
+## 📊 Monitoring & Observability
+
+### Application Monitoring
+- **Health Checks**: Service health endpoints
+- **Performance Metrics**: Response time monitoring
+- **Error Tracking**: Centralized error logging
+- **Resource Usage**: CPU, memory, database monitoring
+
+### Logging
+- **Structured Logging**: JSON-formatted logs
+- **Log Levels**: Debug, Info, Warn, Error
+- **Centralized Logging**: Aggregated log management
+- **Log Rotation**: Automated log management
+
+## 🔒 Security Considerations
+
+### Authentication Security
+- **JWT Token Rotation**: Regular token refresh
+- **Session Management**: Secure session handling
+- **Password Security**: Bcrypt hashing
+- **Multi-Factor Auth**: Enhanced security options
+
+### Data Security
+- **Input Validation**: Request data sanitization
+- **SQL Injection Protection**: ORM-level security
+- **XSS Prevention**: Output encoding
+- **CORS Configuration**: Frontend security
+
+### Infrastructure Security
+- **Docker Security**: Container security best practices
+- **Network Isolation**: Service network separation
+- **Volume Encryption**: Sensitive data protection
+- **Regular Updates**: Dependency security updates
+
+## 🤝 Contributing
+
+### Development Setup
+1. **Fork Repository**: Create your fork
+2. **Clone**: Clone your fork locally
+3. **Install Dependencies**: Install backend and frontend dependencies
+4. **Environment Setup**: Configure environment variables
+5. **Start Development**: Run development servers
+
+### Contribution Guidelines
+- **Code Standards**: Follow TypeScript and ESLint rules
+- **Testing**: Include tests for new features
+- **Documentation**: Update relevant documentation
+- **Commit Messages**: Use conventional commit format
+- **Pull Requests**: Provide clear descriptions
+
+### Code Review Process
+- **Automated Checks**: CI/CD pipeline validation
+- **Manual Review**: Code review by maintainers
+- **Testing**: Automated and manual testing
+- **Documentation**: Update relevant docs
+
+## 📄 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## 🆘 Support & Community
+
+### Getting Help
+- **Documentation**: Check README files and code comments
+- **Issues**: Report bugs via GitHub Issues
+- **Discussions**: Use GitHub Discussions for questions
+- **Wiki**: Additional documentation in repository wiki
+
+### Community Resources
+- **Contributors**: List of project contributors
+- **Code of Conduct**: Community guidelines
+- **Changelog**: Version history and updates
+- **Roadmap**: Future development plans
+
+### Contact
+- **Maintainers**: Core development team
+- **Support**: Technical support and questions
+- **Feature Requests**: New feature suggestions
+- **Bug Reports**: Issue reporting and tracking
+
+## 🚀 Future Roadmap
+
+### Planned Features
+- **Advanced Analytics**: HR metrics and insights
+- **Mobile App**: Native mobile applications
+- **AI Chatbot**: Intelligent HR assistant
+- **Integration APIs**: Third-party system integration
+- **Advanced Reporting**: Custom report generation
+
+### Technical Improvements
+- **Performance Optimization**: Enhanced scalability
+- **Microservices**: Further service decomposition
+- **Event Sourcing**: Advanced data architecture
+- **GraphQL**: Flexible API querying
+- **Real-time Features**: WebSocket integration
 
 ---
+
+**HR Platform** - Empowering HR professionals with AI-driven insights and modern technology.
