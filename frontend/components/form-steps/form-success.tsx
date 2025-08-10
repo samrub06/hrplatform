@@ -1,6 +1,6 @@
 "use client"
-import { Confetti } from "@/components/confetti"
-import type { FormValues } from "@/components/multi-step-form"
+import { Confetti } from "@/components/common/confetti"
+import type { FormValues } from "@/components/form-steps/multi-step-form"
 import { Button } from "@/components/ui/button"
 import { motion } from "framer-motion"
 import { CheckCircle2Icon } from "lucide-react"

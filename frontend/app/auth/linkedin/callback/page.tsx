@@ -1,7 +1,7 @@
 // frontend/app/auth/linkedin/callback/page.tsx
 "use client"
 
-import { Icons } from '@/components/icons'
+import { Icons } from '@/components/common/icons'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useEffect, useState } from 'react'

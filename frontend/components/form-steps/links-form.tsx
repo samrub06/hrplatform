@@ -1,6 +1,6 @@
 "use client"
 
-import type { FormValues } from "@/components/multi-step-form"
+import type { FormValues } from "@/components/form-steps/multi-step-form"
 import { GithubIcon, LinkedinIcon, PhoneIcon } from "lucide-react"
 
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"

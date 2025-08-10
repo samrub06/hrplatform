@@ -1,4 +1,4 @@
-import type { FormValues } from '@/components/multi-step-form'
+import type { FormValues } from '@/components/form-steps/multi-step-form'
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 

@@ -1,4 +1,4 @@
-import type { FormValues } from '@/components/multi-step-form'
+import type { FormValues } from '@/components/form-steps/multi-step-form'
 import { useFormCacheStore } from '@/lib/stores/form-cache-store'
 import { useEffect } from 'react'
 import { useFormContext } from 'react-hook-form'

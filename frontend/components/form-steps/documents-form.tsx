@@ -2,7 +2,7 @@
 
 import type React from "react"
 
-import type { FormValues } from "@/components/multi-step-form"
+import type { FormValues } from "@/components/form-steps/multi-step-form"
 import { FileIcon, UploadCloudIcon, XIcon } from "lucide-react"
 import { useState } from "react"
 

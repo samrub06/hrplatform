@@ -1,292 +1,307 @@
 # HR Platform Frontend
 
-A modern Next.js 14 frontend application for HR management with TypeScript, Tailwind CSS, and comprehensive authentication system.
-
-## 🚀 Quick Start
-
-### Prerequisites
-- Node.js (v18+)
-- pnpm or npm
-- Modern web browser
-
-### Installation
-```bash
-# Install dependencies
-pnpm install
-# or
-npm install
-
-# Copy environment file (if not exists)
-cp .env.example .env.local
-```
-
-### Development
-```bash
-# Start development server
-pnpm dev
-# or
-npm run dev
-
-# Build for production
-pnpm build
-# or
-npm run build
-
-# Start production server
-pnpm start
-# or
-npm run start
-```
+A comprehensive Next.js 14 frontend application for HR management with AI-powered CV processing, role-based access control, and modern authentication system.
 
 ## 🏗️ Architecture Overview
 
+### Core Architecture
+The frontend follows a modern, scalable architecture with clear separation of concerns:
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│                    Frontend Architecture                    │
+├─────────────────────────────────────────────────────────────┤
+│  App Router (Next.js 14)                                   │
+│  ├── Public Routes (Login, Signup, Auth)                  │
+│  ├── Protected Routes (Dashboard, Account, Candidates)    │
+│  └── API Routes (Auth, CV, User)                          │
+├─────────────────────────────────────────────────────────────┤
+│  Component Layer                                           │
+│  ├── Layout Components (Sidebar, Navigation)              │
+│  ├── Feature Components (Candidates, Forms, Dashboard)    │
+│  └── UI Components (shadcn/ui + Custom)                   │
+├─────────────────────────────────────────────────────────────┤
+│  Business Logic Layer                                      │
+│  ├── Custom Hooks (useAuth, usePermissions)               │
+│  ├── Services (File Upload, API Integration)              │
+│  └── State Management (Context + Local State)             │
+├─────────────────────────────────────────────────────────────┤
+│  Data Access Layer                                         │
+│  ├── API Routes (Next.js API)                             │
+│  ├── External API Integration (Backend)                   │
+│  └── Local Storage & Caching                              │
+└─────────────────────────────────────────────────────────────┘
+```
+
 ### Technology Stack
-- **Framework**: Next.js 14 (App Router)
+- **Framework**: Next.js 14 with App Router
 - **Language**: TypeScript
 - **Styling**: Tailwind CSS
+- **UI Components**: shadcn/ui + Custom components
 - **State Management**: React Context + Custom Hooks
-- **Authentication**: JWT with social login (Google, LinkedIn)
+- **Authentication**: JWT + Social OAuth (Google, LinkedIn)
+- **Form Handling**: React Hook Form + Zod validation
+- **File Management**: AWS S3 integration
 - **Testing**: Cypress E2E
-- **Package Manager**: pnpm
 
-### Project Structure
-```
-frontend/
-├── app/                    # Next.js App Router
-│   ├── (dashboard)/       # Protected dashboard routes
-│   ├── auth/              # Authentication routes
-│   ├── api/               # API routes
-│   └── globals.css        # Global styles
-├── components/            # Reusable UI components
-│   ├── ui/               # Base UI components (shadcn/ui)
-│   ├── auth/             # Authentication components
-│   ├── dashboard/        # Dashboard-specific components
-│   └── form-steps/       # Multi-step form components
-├── lib/                   # Utility libraries
-│   ├── hooks/            # Custom React hooks
-│   ├── services/         # API services
-│   └── stores/           # State stores
-├── hooks/                 # Additional custom hooks
-├── interfaces/            # TypeScript interfaces
-└── public/                # Static assets
-```
-
-## 🔐 Authentication System
-
-### Features
-- **JWT-based authentication** with refresh tokens
-- **Social login integration** (Google, LinkedIn)
-- **Role-based access control** (RBAC)
-- **Protected routes** with middleware
-- **Session management** with cookies
+## 🔐 Authentication & Authorization System
 
 ### Authentication Flow
-1. User initiates login (email/password or social)
-2. Backend validates credentials and returns JWT tokens
-3. Frontend stores tokens in secure cookies
-4. Middleware validates tokens on protected routes
-5. Permission system checks user roles and permissions
-
-### Protected Routes
-- `/dashboard/*` - Main application dashboard
-- `/account/*` - User account management
-- `/candidates/*` - Candidate management
-- `/contacts/*` - Contact management
-
-## 🎨 UI Components
-
-### Component Library
-- **shadcn/ui**: Modern, accessible UI components
-- **Custom components**: Tailored for HR platform needs
-- **Responsive design**: Mobile-first approach
-- **Dark/Light mode**: Theme support
-
-### Key Components
-- **AppSidebar**: Main navigation sidebar
-- **CandidateCard**: Candidate display component
-- **MultiStepForm**: Multi-step form wizard
-- **PermissionGuard**: Route protection component
-- **FormCacheIndicator**: Form state persistence
-
-## 📱 Responsive Design
-
-### Breakpoints
-- **Mobile**: < 768px
-- **Tablet**: 768px - 1024px
-- **Desktop**: > 1024px
-
-### Mobile-First Features
-- Touch-friendly interfaces
-- Responsive navigation
-- Optimized forms for mobile
-- Progressive enhancement
-
-## 🔄 State Management
-
-### Context Providers
-- **AuthContext**: User authentication state
-- **PermissionContext**: User permissions and roles
-- **FormCacheContext**: Form data persistence
-
-### Custom Hooks
-- **useAuth**: Authentication state and methods
-- **usePermissions**: Permission checking
-- **useFormCache**: Form data caching
-- **useMobile**: Responsive breakpoint detection
-
-## 🧪 Testing
-
-### E2E Testing with Cypress
-```bash
-# Run Cypress tests
-pnpm cypress:open
-# or
-npm run cypress:open
-
-# Run tests in headless mode
-pnpm cypress:run
-# or
-npm run cypress:run
+```
+User Login → JWT Token Generation → Token Storage (Cookies) → Route Protection → Permission Validation
 ```
 
-### Test Structure
-- **E2E tests**: User journey testing
-- **Component tests**: Individual component testing
-- **Integration tests**: API integration testing
+### Authentication Methods
+- **Email/Password**: Traditional login system
+- **Google OAuth**: Social authentication via Google
+- **LinkedIn OAuth**: Professional network authentication
+- **JWT Tokens**: Secure token-based authentication
+- **Session Management**: Persistent user sessions
 
-## 🚀 Performance Optimization
+### Route Protection
+- **Middleware-based**: Automatic route protection
+- **Public Routes**: Login, signup, auth callbacks
+- **Protected Routes**: Dashboard, account, candidates
+- **Permission Guards**: Role-based component rendering
 
-### Features
-- **Next.js Image optimization**
-- **Code splitting** with dynamic imports
-- **Lazy loading** for components
-- **Bundle analysis** and optimization
-- **Service worker** for caching
+### Security Features
+- **Token Validation**: JWT token verification
+- **Route Guards**: Component-level permission checking
+- **Secure Cookies**: HTTP-only cookie storage
+- **CSRF Protection**: Built-in Next.js security
 
-### Build Optimization
-- **Tree shaking** for unused code removal
-- **Minification** and compression
-- **Asset optimization** and caching
-- **CDN-ready** static assets
+## 🎯 Core Features
 
-## 🔧 Configuration
+### 1. User Management System
+- **User Registration**: Multi-step onboarding process
+- **Profile Management**: Complete user profile creation
+- **Role Assignment**: Candidate, Publisher, Admin roles
+- **Account Settings**: User preferences and settings
 
-### Environment Variables
+### 2. CV Processing & Management
+- **Document Upload**: Secure file upload to AWS S3
+- **AI Extraction**: CV data extraction and parsing
+- **Skills Management**: Skill proficiency tracking
+- **Education Tracking**: Academic background management
+- **Experience Management**: Professional experience logging
+
+### 3. Candidate Management
+- **Candidate Dashboard**: Comprehensive candidate overview
+- **Profile Viewing**: Detailed candidate profiles
+- **Search & Filter**: Advanced candidate search
+- **Status Tracking**: Application progress monitoring
+- **Admin Notes**: Internal candidate annotations
+
+### 4. Multi-Step Form System
+- **Progressive Forms**: Step-by-step data collection
+- **Form Persistence**: Data caching between steps
+- **Validation**: Real-time form validation
+- **File Integration**: Document upload integration
+- **Progress Tracking**: Visual progress indicators
+
+### 5. Dashboard & Analytics
+- **Activity Feed**: Real-time platform activity
+- **Statistics Cards**: Key metrics and KPIs
+- **Recent Candidates**: Latest candidate updates
+- **Quick Actions**: Common task shortcuts
+
+## 🗂️ Application Structure
+
+### App Router Structure
+```
+app/
+├── (dashboard)/              # Protected dashboard routes
+│   ├── layout.tsx           # Dashboard layout with sidebar
+│   ├── dashboard/            # Main dashboard page
+│   ├── candidates/           # Candidate management
+│   ├── contacts/             # Contact management
+│   ├── referals/             # Referral system
+│   └── account/              # User account management
+├── auth/                     # Authentication routes
+│   ├── google/callback/      # Google OAuth callback
+│   └── linkedin/callback/    # LinkedIn OAuth callback
+├── api/                      # API routes
+│   ├── auth/                 # Authentication endpoints
+│   ├── cv/                   # CV processing endpoints
+│   └── user/                 # User management endpoints
+├── login/                    # Login page
+├── signup/                   # Registration page
+└── getstarted/               # Onboarding page
+```
+
+### Component Architecture
+```
+components/
+├── layout/                   # Layout components
+│   ├── app-sidebar.tsx      # Main navigation sidebar
+│   └── navigation/          # Navigation components
+├── auth/                     # Authentication components
+│   ├── ProtectedRoute.tsx   # Route protection
+│   └── RedirectIfAuthenticated.tsx
+├── candidates/               # Candidate management
+│   ├── CandidateCard.tsx    # Candidate display
+│   ├── CandidateDetails.tsx # Detailed candidate view
+│   └── CandidateFilter.tsx  # Search and filtering
+├── dashboard/                # Dashboard components
+│   ├── ActivityFeed.tsx     # Activity timeline
+│   ├── RecentCandidates.tsx # Recent updates
+│   └── StatsCard.tsx        # Metric displays
+├── form-steps/               # Multi-step forms
+│   ├── multi-step-form.tsx  # Main form orchestrator
+│   ├── personal-info-form.tsx
+│   ├── documents-form.tsx   # File upload forms
+│   ├── skills-form.tsx      # Skills management
+│   ├── education-form.tsx   # Education tracking
+│   └── form-success.tsx     # Completion page
+└── ui/                       # Base UI components (shadcn/ui)
+```
+
+### Core Libraries & Services
+```
+lib/
+├── hooks/                    # Custom React hooks
+│   ├── useAuth.ts           # Authentication state
+│   ├── usePermissions.ts    # Permission checking
+│   └── useFormCache.ts      # Form data persistence
+├── services/                 # Business logic services
+│   ├── fileUpload.ts        # File upload management
+│   └── tokenService.ts      # Token management
+├── dal/                      # Data access layer
+│   └── auth.ts              # Authentication API calls
+├── stores/                   # State management
+│   └── form-cache-store.ts  # Form data caching
+├── axiosInstance.tsx         # HTTP client configuration
+├── apiErrorHandler.ts        # Error handling
+├── models.ts                 # Data models
+└── types.ts                  # TypeScript type definitions
+```
+
+## 🔄 Data Flow & State Management
+
+### State Management Architecture
+```
+User Action → Component → Hook → Service → API → Backend
+    ↓
+Response → Service → Hook → Component → UI Update
+```
+
+### Key State Patterns
+- **Authentication State**: Global auth context
+- **Permission State**: User permissions and roles
+- **Form State**: Multi-step form data persistence
+- **UI State**: Component-specific state management
+- **Cache State**: Form data and API response caching
+
+### Data Persistence
+- **Form Cache**: Local storage for form data
+- **Session Storage**: User session information
+- **API Caching**: Response caching for performance
+- **File Storage**: AWS S3 for document storage
+
+## 🚀 Key Functionalities
+
+### 1. Multi-Step Registration Process
+- **Personal Information**: Basic user details
+- **Document Upload**: CV and profile picture
+- **Skills Assessment**: Professional skills tracking
+- **Contact Information**: Professional links and contact
+- **Education History**: Academic background
+- **Profile Completion**: Final profile review
+
+### 2. AI-Powered CV Processing
+- **Document Analysis**: CV content extraction
+- **Skill Recognition**: Automated skill identification
+- **Data Validation**: Content verification
+- **Profile Enrichment**: Enhanced candidate profiles
+
+### 3. Advanced Candidate Management
+- **Profile Viewing**: Comprehensive candidate information
+- **Status Tracking**: Application progress monitoring
+- **Admin Tools**: Internal management features
+- **Communication**: Candidate interaction tools
+
+### 4. Role-Based Access Control
+- **Permission System**: Granular access control
+- **Role Management**: User role assignment
+- **Feature Access**: Component-level permissions
+- **Admin Controls**: Administrative features
+
+## 🔧 Development & Deployment
+
+### Development Commands
+```bash
+# Install dependencies
+pnpm install
+
+# Start development server
+pnpm dev
+
+# Build for production
+pnpm build
+
+# Start production server
+pnpm start
+
+# Run tests
+pnpm cypress:open
+```
+
+### Environment Configuration
 ```env
 NEXT_PUBLIC_API_URL=http://localhost:3000
 NEXT_PUBLIC_GOOGLE_CLIENT_ID=your_google_client_id
 NEXT_PUBLIC_LINKEDIN_CLIENT_ID=your_linkedin_client_id
 ```
 
-### Next.js Configuration
-- **App Router**: Modern Next.js routing
-- **TypeScript**: Strict type checking
-- **ESLint**: Code quality enforcement
-- **Prettier**: Code formatting
-- **Tailwind**: Utility-first CSS framework
-
-## 📦 Available Scripts
-
-### Development
-- `pnpm dev` - Start development server
-- `pnpm build` - Build for production
-- `pnpm start` - Start production server
-- `pnpm lint` - Run ESLint
-- `pnpm type-check` - TypeScript type checking
-
-### Testing
-- `pnpm cypress:open` - Open Cypress test runner
-- `pnpm cypress:run` - Run Cypress tests
-- `pnpm test` - Run all tests
-
 ### Build & Deploy
-- `pnpm build` - Production build
-- `pnpm export` - Static export
-- `pnpm analyze` - Bundle analysis
+- **Static Export**: `pnpm export`
+- **Docker Deployment**: Multi-stage Docker builds
+- **Vercel Deployment**: Optimized for Next.js
+- **Custom Hosting**: Any Node.js hosting platform
 
-## 🚀 Deployment
+## 🧪 Testing Strategy
 
-### Production Build
-```bash
-# Build the application
-pnpm build
+### Testing Architecture
+- **E2E Testing**: Cypress for user journey testing
+- **Component Testing**: Individual component validation
+- **Integration Testing**: API integration testing
+- **Performance Testing**: Load and stress testing
 
-# Start production server
-pnpm start
-```
+### Test Coverage
+- **User Authentication**: Login, registration, OAuth
+- **Form Validation**: Multi-step form workflows
+- **API Integration**: Backend communication
+- **User Flows**: Complete user journeys
 
-### Static Export
-```bash
-# Export static files
-pnpm export
+## 📊 Performance & Optimization
 
-# Deploy to any static hosting service
-```
+### Performance Features
+- **Code Splitting**: Dynamic imports and lazy loading
+- **Image Optimization**: Next.js image optimization
+- **Bundle Optimization**: Tree shaking and minification
+- **Caching Strategy**: Multiple caching layers
 
-### Docker Deployment
-```dockerfile
-# Use multi-stage build for optimization
-FROM node:18-alpine AS builder
-WORKDIR /app
-COPY package*.json ./
-RUN npm ci --only=production
-COPY . .
-RUN npm run build
+### Optimization Techniques
+- **Lazy Loading**: Component and route lazy loading
+- **Memoization**: React optimization patterns
+- **Bundle Analysis**: Performance monitoring
+- **CDN Integration**: Static asset optimization
 
-FROM node:18-alpine AS runner
-WORKDIR /app
-COPY --from=builder /app/public ./public
-COPY --from=builder /app/.next/standalone ./
-COPY --from=builder /app/.next/static ./.next/static
-EXPOSE 3000
-CMD ["node", "server.js"]
-```
+## 🔒 Security Implementation
 
-## 🔍 Development Tools
+### Security Measures
+- **JWT Security**: Secure token handling
+- **Route Protection**: Middleware-based security
+- **Input Validation**: Form and API validation
+- **XSS Protection**: Output sanitization
+- **CSRF Protection**: Built-in security features
 
-### Code Quality
-- **ESLint**: JavaScript/TypeScript linting
-- **Prettier**: Code formatting
-- **TypeScript**: Static type checking
-- **Husky**: Git hooks for quality checks
+### Authentication Security
+- **Token Rotation**: Regular token refresh
+- **Secure Storage**: HTTP-only cookies
+- **Permission Validation**: Role-based access
+- **Session Management**: Secure session handling
 
-### Development Experience
-- **Hot reload**: Instant feedback during development
-- **TypeScript**: IntelliSense and error detection
-- **Tailwind CSS**: Rapid UI development
-- **Component library**: Consistent design system
+---
 
-## 📚 Additional Resources
-
-### Documentation
-- [Next.js Documentation](https://nextjs.org/docs)
-- [Tailwind CSS Documentation](https://tailwindcss.com/docs)
-- [shadcn/ui Components](https://ui.shadcn.com/)
-- [TypeScript Handbook](https://www.typescriptlang.org/docs/)
-
-### Best Practices
-- **Component composition**: Reusable and maintainable components
-- **Type safety**: Full TypeScript coverage
-- **Performance**: Optimized rendering and loading
-- **Accessibility**: WCAG compliance
-- **SEO**: Search engine optimization
-
-## 🤝 Contributing
-
-### Development Workflow
-1. Create feature branch
-2. Implement changes with tests
-3. Run linting and type checking
-4. Submit pull request
-5. Code review and approval
-
-### Code Standards
-- Follow TypeScript best practices
-- Use consistent naming conventions
-- Write meaningful commit messages
-- Include tests for new features
-- Update documentation as needed
-
-## 📄 License
-
-MIT License - see LICENSE file for details
+**HR Platform Frontend** - Modern, scalable, and feature-rich HR management interface built with Next.js 14 and TypeScript.

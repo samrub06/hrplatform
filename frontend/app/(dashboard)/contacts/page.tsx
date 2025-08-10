@@ -9,9 +9,9 @@ import { UserData } from "@/lib/types"
 import { ExternalLink } from "lucide-react"
 import { useRouter } from "next/navigation"
 import { useState } from "react"
-import { Pagination } from "../../../components/pagination"
-import { SearchBar } from "../../../components/search-bar"
-import { ViewToggle } from "../../../components/view-toggle"
+import { SearchBar } from "../../../components/common/search-bar"
+import { ViewToggle } from "../../../components/common/view-toggle"
+import { Pagination } from "../../../components/layout/pagination"
 
 // Generate a larger sample dataset (100 users)
 const generateSampleContacts = (count: number): UserData[] => {

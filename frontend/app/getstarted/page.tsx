@@ -1,7 +1,7 @@
 "use client"
+import { MultiStepForm } from "@/components/form-steps/multi-step-form"
+import RecruiterForm from "@/components/form-steps/recruiter-form"
 import RoleSelectionForm from "@/components/form-steps/role-selection-form"
-import { MultiStepForm } from "@/components/multi-step-form"
-import RecruiterForm from "@/components/recruiter-form"
 import { useRouter, useSearchParams } from "next/navigation"
 import { useEffect, useState } from "react"
 

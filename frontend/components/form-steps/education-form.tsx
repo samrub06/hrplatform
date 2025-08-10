@@ -1,6 +1,6 @@
 "use client"
 
-import type { FormValues } from "@/components/multi-step-form"
+import type { FormValues } from "@/components/form-steps/multi-step-form"
 import { format } from "date-fns"
 import { CalendarIcon, GraduationCapIcon, MinusCircleIcon, PlusCircleIcon } from "lucide-react"
 import { useFieldArray, useFormContext } from "react-hook-form"
