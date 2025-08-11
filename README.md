@@ -33,6 +33,8 @@ The platform follows a modern microservices architecture with clear separation o
                        └─────────────────┘
 ```
 
+[drawio diagram achitecture](https://viewer.diagrams.net/index.html?tags=%7B%7D&lightbox=1&highlight=0000ff&edit=_blank&layers=1&nav=1&dark=auto#G1HBof7Yj-n-o4OyQ2VwIHJydMYfLWswSI)
+
 ### Technology Stack
 
 #### Frontend
