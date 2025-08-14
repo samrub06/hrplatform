@@ -1,5 +1,8 @@
 import { ConflictException, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
+import { CVEducation } from '../models/cv-education.model';
+import { CVExperience } from '../models/cv-experience.model';
+import { CVSkill } from '../models/cv-skill.model';
 import { CV } from '../models/cv.model';
 import { Role } from '../models/role.model';
 import { User } from '../models/user.model';
@@ -60,6 +63,35 @@ export class UserRepository {
           model: CV,
           required: false,
           attributes: ['id', 'fileName', 'name'],
+        },
+      ],
+    });
+  }
+
+  async findByIdWithCVAndSkills(id: string): Promise<User | null> {
+    return this.userModel.findByPk(id, {
+      include: [
+        {
+          model: CV,
+          required: false,
+          attributes: ['id', 'fileName', 'name'],
+          include: [
+            {
+              model: CVSkill,
+              as: 'skills',
+              attributes: ['id', 'name'],
+            },
+            {
+              model: CVEducation,
+              as: 'education',
+              attributes: ['id', 'institution', 'degree', 'fieldOfStudy', 'startDate', 'endDate', 'description'],
+            },
+            {
+              model: CVExperience,
+              as: 'experiences',
+              attributes: ['id', 'title', 'company', 'startDate', 'endDate', 'isCurrent', 'description', 'location'],
+            },
+          ],
         },
       ],
     });

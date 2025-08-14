@@ -4,6 +4,8 @@ import { CqrsModule } from '@nestjs/cqrs';
 import { SequelizeModule } from '@nestjs/sequelize';
 import { AwsModule } from '../aws/aws.module';
 import { CaslModule } from '../casl/casl.module';
+import { CVEducation } from '../models/cv-education.model';
+import { CVExperience } from '../models/cv-experience.model';
 import { CVSkill } from '../models/cv-skill.model';
 import { Role } from '../models/role.model';
 import { User } from '../models/user.model';
@@ -23,12 +25,13 @@ import { GetAllUsersQueryHandler } from './queries/get-all-user.query';
 import { GetPublicProfileHandler } from './queries/get-public-profile.query';
 import { GetUserByIdQueryHandler } from './queries/get-user-by-id.query';
 import { GetUserPermissionsHandler } from './queries/get-user-permissions.query';
+import { GetUserWithCVCompleteQueryHandler } from './queries/get-user-with-cv-and-skills.query';
 import { UserRepository } from './user.repository';
 import { UsersController } from './users.controller';
 
 @Module({
   imports: [
-    SequelizeModule.forFeature([User, CVSkill, Role]),
+    SequelizeModule.forFeature([User, CVSkill, CVEducation, CVExperience, Role]),
     CqrsModule,
     AwsModule,
     PermissionModule,
@@ -41,6 +44,7 @@ import { UsersController } from './users.controller';
     RemoveUserHandler,
     GetAllUsersQueryHandler,
     GetUserByIdQueryHandler,
+    GetUserWithCVCompleteQueryHandler,
     GetAllAlumniQueryHandler,
     UpdateUserHandler,
     UpdateUserRoleHandler,

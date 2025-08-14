@@ -13,7 +13,7 @@ import SkillsManager from "./skills-manager"
 import { UserData, UserDataFromServer } from "./types"
 
 interface AccountSettingsClientProps {
-  initialUserData: UserDataFromServer
+  userData: UserDataFromServer
 }
 
 // Helper function to convert string dates to Date objects
@@ -31,7 +31,7 @@ function convertStringDatesToDates(userData: UserDataFromServer): UserData {
   }
 }
 
-export default function AccountSettingsClient({ initialUserData }: AccountSettingsClientProps) {
+export default function AccountSettingsClient({ userData :initialUserData }: AccountSettingsClientProps) {
   const [userData, setUserData] = useState<UserData | null>(null)
 
   useEffect(() => {

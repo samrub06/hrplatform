@@ -1,5 +1,4 @@
 import { decodeJwt } from 'jose';
-import { unstable_cache } from 'next/cache';
 import { cookies } from 'next/headers';
 import { cache } from 'react';
 import 'server-only';
@@ -69,32 +68,25 @@ export class AuthDAL {
   });
 
   // Get user with permissions - cached with better control
-  static getUser = unstable_cache(
-    async (): Promise<SessionData | null> => {
-      const session = await AuthDAL.verifySession(); 
-      if (!session?.userId) {
-        return null;
-      }
-
-      try {
-        // Fetch permissions from API
-        const permissionsResponse = await axiosInstance.get('/user/me/permissions');
-        return {
-          ...session,
-          permissions: permissionsResponse.data
-        };
-      } catch (error) {
-        console.error('Error fetching user permissions:', error);
-        // Return session without permissions if API fails
-        return session;
-      }
-    },
-    ['user-permissions'], // Cache key
-    {
-      revalidate: 300, // Cache for 5 minutes
-      tags: ['user', 'permissions']
+  static getUser = cache(async (): Promise<SessionData | null> => {
+    const session = await AuthDAL.verifySession(); 
+    if (!session?.userId) {
+      return null;
     }
-  );
+
+    try {
+      // Fetch permissions from API
+      const permissionsResponse = await axiosInstance.get('/user/me/permissions');
+      return {
+        ...session,
+        permissions: permissionsResponse.data
+      };
+    } catch (error) {
+      console.error('Error fetching user permissions:', error);
+      // Return session without permissions if API fails
+      return session;
+    }
+  });
 
   // Get user without permissions - for cases where we only need basic user info
   static getUserBasic = cache(async (): Promise<SessionData | null> => {

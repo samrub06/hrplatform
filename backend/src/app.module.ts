@@ -14,6 +14,7 @@ import { AdminNote } from './models/admin-note.model';
 import { Admin } from './models/admin.model';
 import { Company } from './models/company-model';
 import { CVEducation } from './models/cv-education.model';
+import { CVExperience } from './models/cv-experience.model';
 import { CVSkill } from './models/cv-skill.model';
 import { CV } from './models/cv.model';
 import { EmailLogs } from './models/email_logs.model';
@@ -67,6 +68,7 @@ import { UsersModule } from './users/users.module';
         RolePermission,
         Job,
         CVEducation,
+        CVExperience,
         CVSkill,
         RefreshToken,
         EmailLogs,

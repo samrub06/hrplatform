@@ -248,7 +248,7 @@ pnpm cypress:open
 
 ### Environment Configuration
 ```env
-NEXT_PUBLIC_API_URL=http://localhost:3000
+NEXT_PUBLIC_API_URL=http://localhost:3001
 NEXT_PUBLIC_GOOGLE_CLIENT_ID=your_google_client_id
 NEXT_PUBLIC_LINKEDIN_CLIENT_ID=your_linkedin_client_id
 ```

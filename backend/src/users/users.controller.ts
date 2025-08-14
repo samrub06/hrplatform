@@ -41,6 +41,7 @@ import { GetAllUsersQueryCommand } from './queries/get-all-user.query';
 import { GetPublicProfileQuery } from './queries/get-public-profile.query';
 import { GetUserByIdQueryCommand } from './queries/get-user-by-id.query';
 import { GetUserPermissionsQuery } from './queries/get-user-permissions.query';
+import { GetUserWithCVCompleteQuery } from './queries/get-user-with-cv-and-skills.query';
 
 @ApiTags('User')
 @ApiBearerAuth()
@@ -89,6 +90,36 @@ export class UsersController {
   @CheckPolicies((ability: AppAbility) => ability.can(Action.Read, User))
   findAllAlumni() {
     return this.queryBus.execute(new GetAllAlumniQuery());
+  }
+
+  /**
+   * Retrieves the current user's permissions
+   * Requires authentication only
+   */
+  @Get('me/permissions')
+  @UseGuards(AuthGuard)
+  @ApiOperation({ summary: 'Get User Permissions' })
+  @ApiResponse({ status: 403, description: 'Forbidden.' })
+  async getUserPermissions(@Request() req) {
+    const userId = req.user.id; // context AuthGard extract user.id from token
+    return this.queryBus.execute(new GetUserPermissionsQuery(userId));
+  }
+
+  /**
+   * Retrieves the current user's profile
+   * Requires authentication only
+   */
+  @Get('me')
+  @UseGuards(AuthGuard)
+  @ApiOperation({ summary: 'Get Current User Profile' })
+  @ApiResponse({
+    status: 200,
+    description: 'The current user profile',
+    type: User,
+  })
+  async getCurrentUser(@Request() req) {
+    const userId = req.user.id; // context AuthGuard extract user.id from token
+    return this.queryBus.execute(new GetUserWithCVCompleteQuery(userId));
   }
 
   /**
@@ -174,19 +205,6 @@ export class UsersController {
   //@CheckPolicies((ability: AppAbility) => ability.can(Action.Update, User))
   async downloadFile(@Param('id') id: string) {
     return this.queryBus.execute(new GetCvDownloadUrlQuery(id));
-  }
-
-  /**
-   * Retrieves the current user's permissions
-   * Requires authentication only
-   */
-  @Get('me/permissions')
-  @UseGuards(AuthGuard)
-  @ApiOperation({ summary: 'Get User Permissions' })
-  @ApiResponse({ status: 403, description: 'Forbidden.' })
-  async getUserPermissions(@Request() req) {
-    const userId = req.user.id; // context AuthGard extract user.id from token
-    return this.queryBus.execute(new GetUserPermissionsQuery(userId));
   }
 
   /**

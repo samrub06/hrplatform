@@ -2,12 +2,12 @@ import axios from 'axios';
 
 // Create Axios instance with base URL
 const axiosInstance = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_API_URL || process.env.REACT_APP_API_URL,
+  baseURL: (process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000') + '/api',
   headers: {
     'Content-Type': 'application/json',
     'Accept': 'application/json'
   },
-  withCredentials: true // Important: permet l'envoi automatique des cookies
+  withCredentials: true // allow cookies
 });
 
 // Simple response interceptor for error logging

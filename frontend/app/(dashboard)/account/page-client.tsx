@@ -94,9 +94,13 @@ interface UserData {
   }[]
 }
 
-export default function AccountSettingsPage() {
-  const [userData, setUserData] = useState<UserData | null>(null)
-  const [loading, setLoading] = useState(true)
+interface AccountSettingsPageProps {
+  initialUserData?: any // Will be properly typed from UserService
+}
+
+export default function AccountSettingsPage({ initialUserData }: AccountSettingsPageProps) {
+  const [userData, setUserData] = useState<UserData | null>(initialUserData || null)
+  const [loading, setLoading] = useState(!initialUserData) // Only load if no initial data
   const [error, setError] = useState<string | null>(null)
 
   // Function to fetch user data by ID
@@ -128,10 +132,12 @@ export default function AccountSettingsPage() {
     }
   }
 
-  // Load user data on component mount
+  // Load user data on component mount only if no initial data
   useEffect(() => {
-    getUserById()
-  }, [])
+    if (!initialUserData) {
+      getUserById()
+    }
+  }, [initialUserData])
 
   const updateUserData = (newData: Partial<UserData>) => {
     if (userData) {
@@ -219,19 +225,19 @@ export default function AccountSettingsPage() {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <h3 className="text-sm font-medium text-muted-foreground">Current Position</h3>
-                <p>{currentUserData.current_position || "Not specified"}</p>
+                <p>{currentUserData?.current_position || "Not specified"}</p>
               </div>
               <div>
                 <h3 className="text-sm font-medium text-muted-foreground">Company</h3>
-                <p>{currentUserData.current_company || "Not specified"}</p>
+                <p>{currentUserData?.current_company || "Not specified"}</p>
               </div>
               <div>
                 <h3 className="text-sm font-medium text-muted-foreground">Experience</h3>
-                <p>{currentUserData.years_of_experience ? `${currentUserData.years_of_experience} years` : "Not specified"}</p>
+                <p>{currentUserData?.years_of_experience ? `${currentUserData.years_of_experience} years` : "Not specified"}</p>
               </div>
               <div>
                 <h3 className="text-sm font-medium text-muted-foreground">Skills</h3>
-                <p>{currentUserData.skills.map((s) => s.name).join(", ") || "None added"}</p>
+                <p>{currentUserData?.skills?.map((s: Skill) => s.name).join(", ") || "None added"}</p>
               </div>
             </div>
           </CardContent>

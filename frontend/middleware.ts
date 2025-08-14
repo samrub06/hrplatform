@@ -40,7 +40,9 @@ export function middleware(request: NextRequest) {
   // Everything else is protected - check authentication
   const accessToken = request.cookies.get('accessToken')
   
-  console.log('🔒 Protected route - accessToken:', accessToken ? 'present' : 'missing', 'pathname:', pathname)
+  console.log('🔒 Protected route - pathname:', pathname)
+  console.log('🔒 All cookies:', request.cookies.getAll().map(c => c.name))
+  console.log('🔒 accessToken found:', accessToken ? 'YES' : 'NO')
   
   if (!accessToken) {
     console.log('❌ No token - redirecting to login')

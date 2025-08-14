@@ -8,6 +8,7 @@ import {
   Table,
 } from 'sequelize-typescript';
 import { CVEducation } from './cv-education.model';
+import { CVExperience } from './cv-experience.model';
 import { CVSkill } from './cv-skill.model';
 import { User } from './user.model';
 
@@ -108,6 +109,12 @@ export class CV extends Model {
     as: 'education',
   })
   education: CVEducation[];
+
+  @HasMany(() => CVExperience, {
+    foreignKey: 'cv_id',
+    as: 'experiences',
+  })
+  experiences: CVExperience[];
 
   @Column({
     type: DataType.DATE,

@@ -16,27 +16,40 @@ export async function PATCH(request: NextRequest) {
 
     const body = await request.json();
     const response = await axiosInstance.patch(`/user/${userId}`, body);
-    console.log('🔴 Response in PATCH /user:', response.data);
     
     return NextResponse.json(response.data);
   } catch (error) {
-    console.log('🔴 Error in PATCH /user:', error);
     return handleApiError(error);
   }
 }
 
 export async function GET() {
   try {
-    const user = await AuthDAL.getUser();
+    // Get cookies directly without cache
+    const { cookies } = await import('next/headers')
+    const cookieStore = await cookies()
+    const token = cookieStore.get('accessToken')?.value
     
-    if (!user?.userId) {
+    if (!token) {
       return NextResponse.json(
-        { error: 'Unauthorized' }, 
+        { error: 'Unauthorized - No token' }, 
         { status: 401 }
       );
     }
-
-    const response = await axiosInstance.get('/user');
+    
+    // Decode JWT to get user ID
+    const { jwtDecode } = await import('jwt-decode')
+    const decoded = jwtDecode(token) as { id: string }
+    const userId = decoded?.id
+    
+    if (!userId) {
+      return NextResponse.json(
+        { error: 'Invalid token' }, 
+        { status: 401 }
+      );
+    }
+    
+    const response = await axiosInstance.get('/api/user/' + userId);
     
     return NextResponse.json(response.data);
   } catch (error) {

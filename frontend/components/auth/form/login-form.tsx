@@ -59,13 +59,13 @@ function SubmitButton() {
 
 // Function to handle Google authentication
 const handleGoogleLogin = () => {
-  const apiUrl = process.env.NEXT_PUBLIC_API_URL
+  const apiUrl = process.env.NEXT_PUBLIC_BACKEND_API_URL
   window.location.href = `${apiUrl}/auth/google`
 }
 
 // Function to handle LinkedIn authentication
 const handleLinkedInLogin = () => {
-  const apiUrl = process.env.NEXT_PUBLIC_API_URL
+  const apiUrl = process.env.NEXT_PUBLIC_BACKEND_API_URL
   window.location.href = `${apiUrl}/auth/linkedin`
 }
 
