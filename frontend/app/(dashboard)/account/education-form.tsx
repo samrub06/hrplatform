@@ -1,13 +1,13 @@
 "use client"
 
-import { Button } from "@/components/ui/button"
-import { Calendar } from "@/components/ui/calendar"
-import { Card, CardContent } from "@/components/ui/card"
-import { Checkbox } from "@/components/ui/checkbox"
-import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
-import { Input } from "@/components/ui/input"
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
-import { Textarea } from "@/components/ui/textarea"
+import { Button } from "@/components/common/button"
+import { Calendar } from "@/components/common/calendar"
+import { Card, CardContent } from "@/components/common/card"
+import { Checkbox } from "@/components/common/checkbox"
+import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/common/form"
+import { Input } from "@/components/common/input"
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/common/popover"
+import { Textarea } from "@/components/common/textarea"
 import { toast } from "@/hooks/use-toast"
 import { cn } from "@/lib/utils"
 import { zodResolver } from "@hookform/resolvers/zod"
@@ -17,16 +17,18 @@ import { useState } from "react"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
 
+interface EducationItem {
+  institution: string
+  degree: string
+  fieldOfStudy: string
+  startDate: Date
+  endDate?: Date | null
+  description?: string
+}
+
 interface EducationFormProps {
-  education: {
-    institution: string
-    degree: string
-    fieldOfStudy: string
-    startDate: Date
-    endDate?: Date
-    description?: string
-  }[]
-  onUpdate: (education: any[]) => void
+  education: EducationItem[]
+  onUpdate: (education: EducationItem[]) => void
 }
 
 const educationItemSchema = z.object({
@@ -46,16 +48,9 @@ const educationItemSchema = z.object({
 })
 
 export default function EducationForm({ education, onUpdate }: EducationFormProps) {
-  const [isSubmitting, setIsSubmitting] = useState(false)
-  const [educationList, setEducationList] = useState(
-    education.map((item) => ({
-      ...item,
-      currentlyStudying: !item.endDate,
-      startDate: new Date(item.startDate),
-      endDate: item.endDate ? new Date(item.endDate) : undefined,
-    })),
-  )
+  const [educationList, setEducationList] = useState<EducationItem[]>(education)
   const [editingIndex, setEditingIndex] = useState<number | null>(null)
+  const [isSubmitting, setIsSubmitting] = useState(false)
 
   const form = useForm<z.infer<typeof educationItemSchema>>({
     resolver: zodResolver(educationItemSchema),
@@ -72,15 +67,16 @@ export default function EducationForm({ education, onUpdate }: EducationFormProp
   function onSubmit(values: z.infer<typeof educationItemSchema>) {
     setIsSubmitting(true)
 
-    const educationItem = {
-      ...values,
-      endDate: values.currentlyStudying ? undefined : values.endDate,
+    const educationItem: EducationItem = {
+      institution: values.institution,
+      degree: values.degree,
+      fieldOfStudy: values.fieldOfStudy,
+      startDate: values.startDate,
+      endDate: values.currentlyStudying ? null : values.endDate || null,
+      description: values.description,
     }
 
-    // Remove the currentlyStudying field as it's not part of the original data structure
-    delete educationItem.currentlyStudying
-
-    let updatedList
+    let updatedList: EducationItem[]
 
     if (editingIndex !== null) {
       updatedList = [...educationList]
@@ -102,10 +98,7 @@ export default function EducationForm({ education, onUpdate }: EducationFormProp
         currentlyStudying: false,
         description: "",
       })
-      toast({
-        title: "Education updated",
-        description: "Your education information has been updated successfully.",
-      })
+      toast.success("Education updated")
     }, 1000)
   }
 
@@ -128,10 +121,7 @@ export default function EducationForm({ education, onUpdate }: EducationFormProp
     updatedList.splice(index, 1)
     setEducationList(updatedList)
     onUpdate(updatedList)
-    toast({
-      title: "Education removed",
-      description: "The education entry has been removed successfully.",
-    })
+    toast.success("Education removed")
   }
 
   return (

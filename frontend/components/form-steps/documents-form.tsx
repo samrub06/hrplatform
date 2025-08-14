@@ -6,9 +6,9 @@ import type { FormValues } from "@/components/form-steps/multi-step-form"
 import { FileIcon, UploadCloudIcon, XIcon } from "lucide-react"
 import { useState } from "react"
 
-import { Button } from "@/components/ui/button"
-import { FormControl, FormField, FormItem, FormMessage } from "@/components/ui/form"
-import { Progress } from "@/components/ui/progress"
+import { Button } from "@/components/common/button"
+import { FormControl, FormField, FormItem, FormMessage } from "@/components/common/form"
+import { Progress } from "@/components/common/progress"
 import { useFormContext } from "react-hook-form"
 
 interface DocumentsFormProps {

@@ -1,17 +1,17 @@
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/common/button";
+import { Avatar, AvatarFallback } from "@/components/common/avatar";
+import { Badge } from "@/components/common/badge";
+import { Card, CardContent } from "@/components/common/card";
 import { Candidate } from "@/lib/types";
 import { format } from "date-fns";
 import {
-  Briefcase,
-  Calendar,
-  Clock,
-  ExternalLink,
-  Mail,
-  MapPin,
-  Phone
+    Briefcase,
+    Calendar,
+    Clock,
+    ExternalLink,
+    Mail,
+    MapPin,
+    Phone
 } from "lucide-react";
 
 interface CandidateCardProps {

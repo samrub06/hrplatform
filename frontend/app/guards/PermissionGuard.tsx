@@ -33,11 +33,13 @@ export default async function PermissionGuard({
     id: user.userId,
     email: user.email || '',
     role: user.role || '',
+    firstName: user.firstName || '',
+    lastName: user.lastName || '',
     permissions: user.permissions
   };
 
   // Check role if required
-  if (requiredRole && !AuthDAL.hasRole(userWithPermissions, requiredRole)) {
+  if (requiredRole && user.role !== requiredRole) {
     return fallback;
   }
 

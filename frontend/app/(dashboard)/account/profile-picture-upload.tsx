@@ -2,11 +2,11 @@
 
 import type React from "react"
 
-import { useState } from "react"
-import { Camera, X } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/common/avatar"
+import { Button } from "@/components/common/button"
 import { toast } from "@/hooks/use-toast"
+import { Camera, X } from "lucide-react"
+import { useState } from "react"
 
 interface ProfilePictureUploadProps {
   currentPicture?: string
@@ -23,21 +23,13 @@ export default function ProfilePictureUpload({ currentPicture, onUpdate }: Profi
 
     // Check file type
     if (!file.type.startsWith("image/")) {
-      toast({
-        title: "Invalid file type",
-        description: "Please upload an image file (JPEG, PNG, etc.)",
-        variant: "destructive",
-      })
+      toast.error("Invalid file type. Please upload an image file (JPEG, PNG, etc.)")
       return
     }
 
     // Check file size (max 5MB)
     if (file.size > 5 * 1024 * 1024) {
-      toast({
-        title: "File too large",
-        description: "Please upload an image smaller than 5MB",
-        variant: "destructive",
-      })
+      toast.error("File too large. Please upload an image smaller than 5MB")
       return
     }
 
@@ -57,20 +49,14 @@ export default function ProfilePictureUpload({ currentPicture, onUpdate }: Profi
       const fakeUploadedUrl = URL.createObjectURL(file)
       onUpdate(fakeUploadedUrl)
       setIsUploading(false)
-      toast({
-        title: "Profile picture updated",
-        description: "Your profile picture has been updated successfully.",
-      })
+      toast.success("Profile picture updated successfully")
     }, 1500)
   }
 
   const removeProfilePicture = () => {
     setPreviewUrl(undefined)
     onUpdate("")
-    toast({
-      title: "Profile picture removed",
-      description: "Your profile picture has been removed.",
-    })
+    toast.success("Profile picture removed successfully")
   }
 
   const getInitials = () => {

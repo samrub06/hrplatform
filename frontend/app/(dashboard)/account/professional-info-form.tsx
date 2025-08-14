@@ -1,18 +1,19 @@
 "use client"
 
-import { useState } from "react"
+import { Button } from "@/components/common/button"
+import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/common/form"
+import { Input } from "@/components/common/input"
+import { Slider } from "@/components/common/slider"
+import { toast } from "@/hooks/use-toast"
 import { zodResolver } from "@hookform/resolvers/zod"
+import { useState } from "react"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
-import { Button } from "@/components/ui/button"
-import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
-import { Input } from "@/components/ui/input"
-import { Slider } from "@/components/ui/slider"
-import { toast } from "@/hooks/use-toast"
+import { UserData } from "./types"
 
 interface ProfessionalInfoFormProps {
-  userData: any
-  onUpdate: (data: any) => void
+  userData: Pick<UserData, 'role' | 'current_position' | 'current_company' | 'desired_position' | 'salary_expectation' | 'years_of_experience'>
+  onUpdate: (data: Pick<UserData, 'role' | 'current_position' | 'current_company' | 'desired_position' | 'salary_expectation' | 'years_of_experience'>) => void
 }
 
 const formSchema = z.object({
@@ -46,10 +47,7 @@ export default function ProfessionalInfoForm({ userData, onUpdate }: Professiona
     setTimeout(() => {
       onUpdate(values)
       setIsSubmitting(false)
-      toast({
-        title: "Professional info updated",
-        description: "Your professional information has been updated successfully.",
-      })
+      toast.success("Professional info updated")
     }, 1000)
   }
 
@@ -133,7 +131,7 @@ export default function ProfessionalInfoForm({ userData, onUpdate }: Professiona
                 <FormControl>
                   <Input placeholder="e.g. Lead Developer" {...field} />
                 </FormControl>
-                <FormDescription>The role you're aiming for in your career.</FormDescription>
+                <FormDescription>The role you&apos;re aiming for in your career.</FormDescription>
                 <FormMessage />
               </FormItem>
             )}

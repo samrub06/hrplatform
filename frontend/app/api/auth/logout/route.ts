@@ -1,20 +1,16 @@
-import { cookies } from 'next/headers'
-import { NextResponse } from 'next/server'
+import { cookies } from 'next/headers';
+import { NextResponse } from 'next/server';
 
 export async function POST() {
   try {
-    const cookieStore = await cookies()
-    
-    // Clear authentication cookies
-    cookieStore.delete('accessToken')
-    cookieStore.delete('refreshToken')
-    
-    return NextResponse.json({ success: true })
+    // Clear cookies
+    const cookieStore = await cookies();
+    cookieStore.delete('accessToken');
+    cookieStore.delete('refreshToken');
+
+    return NextResponse.json({ message: 'Logged out successfully' });
   } catch (error) {
-    console.error('Error during logout:', error)
-    return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
-    )
+    console.error('Logout error:', error);
+    return NextResponse.json({ error: 'Logout failed' }, { status: 500 });
   }
 } 

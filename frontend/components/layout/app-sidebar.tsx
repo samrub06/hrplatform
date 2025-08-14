@@ -12,16 +12,16 @@ import {
 } from "lucide-react"
 import * as React from "react"
 
-import { TeamSwitcher } from "@/components/common/team-switcher"
-import { NavMain } from "@/components/navigation/nav-main"
-import { NavUser } from "@/components/navigation/nav-user"
 import {
   Sidebar,
   SidebarContent,
   SidebarFooter,
   SidebarHeader,
   SidebarRail,
-} from "@/components/ui/sidebar"
+} from "@/components/common/sidebar"
+import { TeamSwitcher } from "@/components/common/team-switcher"
+import { NavMain } from "@/components/navigation/nav-main"
+import { NavUser } from "@/components/navigation/nav-user"
 
 interface AppSidebarProps extends React.ComponentProps<typeof Sidebar> {
   userData: {

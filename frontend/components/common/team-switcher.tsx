@@ -1,6 +1,6 @@
 "use client"
 
-import { SidebarMenu, SidebarMenuButton, SidebarMenuItem } from "@/components/ui/sidebar"
+import { SidebarMenu, SidebarMenuButton, SidebarMenuItem } from "@/components/common/sidebar"
 import * as React from "react"
 
 export function TeamSwitcher({

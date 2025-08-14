@@ -26,16 +26,17 @@ export function Confetti({ duration = 5000, particleCount = 150 }: ConfettiProps
 
     // Particle class
     class Particle {
-      x: number
-      y: number
-      size: number
-      color: string
-      velocity: { x: number; y: number }
-      rotation: number
-      rotationSpeed: number
-      shape: "circle" | "square" | "triangle"
+      x: number = 0
+      y: number = 0
+      size: number = 0
+      color: string = ''
+      velocity: { x: number; y: number } = { x: 0, y: 0 }
+      rotation: number = 0
+      rotationSpeed: number = 0
+      shape: "circle" | "square" | "triangle" = "circle"
 
       constructor() {
+        if (!canvas) return
         this.x = Math.random() * canvas.width
         this.y = -20 - Math.random() * 100
         this.size = Math.random() * 10 + 5
@@ -106,6 +107,8 @@ export function Confetti({ duration = 5000, particleCount = 150 }: ConfettiProps
     const startTime = Date.now()
 
     function animate() {
+      if (!ctx || !canvas) return
+      
       // Clear canvas
       ctx.clearRect(0, 0, canvas.width, canvas.height)
 

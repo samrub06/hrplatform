@@ -1,7 +1,7 @@
 "use client"
+import { Button } from "@/components/common/button"
 import { Confetti } from "@/components/common/confetti"
 import type { FormValues } from "@/components/form-steps/multi-step-form"
-import { Button } from "@/components/ui/button"
 import { motion } from "framer-motion"
 import { CheckCircle2Icon } from "lucide-react"
 import { useRouter } from "next/navigation"

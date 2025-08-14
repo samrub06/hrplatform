@@ -1,8 +1,8 @@
 'use client'
 
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { Button } from "@/components/common/button"
+import { Input } from "@/components/common/input"
+import { Tabs, TabsList, TabsTrigger } from "@/components/common/tabs"
 import { Briefcase, Code, Search, User } from "lucide-react"
 
 interface SearchBarProps {

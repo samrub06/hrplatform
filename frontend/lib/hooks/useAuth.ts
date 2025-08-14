@@ -1,12 +1,13 @@
 'use client'
 
 import { useEffect, useState } from 'react';
-import { TokenService } from '../services/tokenService';
 
 export interface User {
   id: string;
   email: string;
   role?: string;
+  firstName?: string;
+  lastName?: string;
 }
 
 export interface AuthState {
@@ -23,68 +24,67 @@ export function useAuth() {
   });
 
   useEffect(() => {
-    const checkAuth = async () => {
-      try {
-        const isAuth = await TokenService.isAuthenticated();
+    checkAuth();
+  }, []);
+
+  const checkAuth = async () => {
+    try {
+      // Call API route to check authentication status
+      const response = await fetch('/api/auth/me', {
+        credentials: 'include' // Important: envoie les cookies
+      });
+      
+      if (response.ok) {
+        const user = await response.json();
         setAuthState({
-          isAuthenticated: isAuth,
+          isAuthenticated: true,
           isLoading: false,
-          user: isAuth ? await getUserInfo() : null
+          user
         });
-      } catch (error) {
-        console.error('Error checking authentication:', error);
+      } else {
         setAuthState({
           isAuthenticated: false,
           isLoading: false,
           user: null
         });
       }
-    };
-
-    checkAuth();
-  }, []);
-
-  const login = async (accessToken: string, refreshToken: string) => {
-    await TokenService.setAccessToken(accessToken);
-    await TokenService.setRefreshToken(refreshToken);
-    
-    setAuthState({
-      isAuthenticated: true,
-      isLoading: false,
-      user: await getUserInfo()
-    });
+    } catch (error) {
+      console.error('Error checking authentication:', error);
+      setAuthState({
+        isAuthenticated: false,
+        isLoading: false,
+        user: null
+      });
+    }
   };
 
   const logout = async () => {
-    await TokenService.clearTokens();
-    setAuthState({
-      isAuthenticated: false,
-      isLoading: false,
-      user: null
-    });
+    try {
+      await fetch('/api/auth/logout', {
+        method: 'POST',
+        credentials: 'include'
+      });
+      
+      setAuthState({
+        isAuthenticated: false,
+        isLoading: false,
+        user: null
+      });
+      
+      // Redirect to login
+      window.location.href = '/login';
+    } catch (error) {
+      console.error('Error during logout:', error);
+    }
   };
 
-  const getUserInfo = async (): Promise<User | null> => {
-    try {
-      const accessToken = await TokenService.getAccessToken();
-      if (!accessToken) return null;
-
-      // Decode JWT token to get user info
-      const payload = JSON.parse(atob(accessToken.split('.')[1]));
-      return {
-        id: payload.id,
-        email: payload.email,
-        role: payload.role
-      };
-    } catch (error) {
-      console.error('Error getting user info:', error);
-      return null;
-    }
+  const refreshAuth = () => {
+    checkAuth();
   };
 
   return {
     ...authState,
-    login,
-    logout
+    logout,
+    refreshAuth
   };
 } 

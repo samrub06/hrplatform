@@ -1,8 +1,8 @@
 "use client"
 
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { useState } from "react"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/common/card"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/common/tabs"
+import { useEffect, useState } from "react"
 import ContactInfoForm from "./contact-info-form"
 import CVUpload from "./cv-upload"
 import EducationForm from "./education-form"
@@ -10,83 +10,7 @@ import PersonalInfoForm from "./personal-info-form"
 import ProfessionalInfoForm from "./professional-info-form"
 import ProfilePictureUpload from "./profile-picture-upload"
 import SkillsManager from "./skills-manager"
-
-interface Skill {
-  id: string
-  name: string
-}
-
-interface UserData {
-  id: string
-  first_name: string
-  last_name: string
-  email: string
-  phone_number?: string
-  github_link?: string
-  linkedin_link?: string
-  public_profile_url?: string
-  cv?: {
-    fileName: string
-    id: string
-    name: string
-  } | null
-  role?: string
-  adminNotes?: string
-  profilePicture?: string
-  years_of_experience?: number
-  skills: Skill[]
-  desired_position?: string
-  salary_expectation?: string
-  current_position?: string
-  current_company?: string
-  createdAt: Date
-  updatedAt: Date
-  birthday?: Date
-  education?: {
-    institution: string
-    degree: string
-    fieldOfStudy: string
-    startDate: Date
-    endDate?: Date
-    description?: string
-  }[]
-}
-
-interface UserDataFromServer {
-  id: string
-  first_name: string
-  last_name: string
-  email: string
-  phone_number?: string
-  github_link?: string
-  linkedin_link?: string
-  public_profile_url?: string
-  cv?: {
-    fileName: string
-    id: string
-    name: string
-  } | null
-  role?: string
-  adminNotes?: string
-  profilePicture?: string
-  years_of_experience?: number
-  skills: Skill[]
-  desired_position?: string
-  salary_expectation?: string
-  current_position?: string
-  current_company?: string
-  createdAt: string
-  updatedAt: string
-  birthday?: string
-  education?: {
-    institution: string
-    degree: string
-    fieldOfStudy: string
-    startDate: string
-    endDate?: string
-    description?: string
-  }[]
-}
+import { UserData, UserDataFromServer } from "./types"
 
 interface AccountSettingsClientProps {
   initialUserData: UserDataFromServer
@@ -98,20 +22,28 @@ function convertStringDatesToDates(userData: UserDataFromServer): UserData {
     ...userData,
     createdAt: new Date(userData.createdAt),
     updatedAt: new Date(userData.updatedAt),
-    birthday: userData.birthday ? new Date(userData.birthday) : undefined,
+    birthday: userData.birthday ? new Date(userData.birthday) : null,
     education: userData.education?.map(edu => ({
       ...edu,
       startDate: new Date(edu.startDate),
-      endDate: edu.endDate ? new Date(edu.endDate) : undefined,
+      endDate: edu.endDate ? new Date(edu.endDate) : null,
     })) || [],
   }
 }
 
 export default function AccountSettingsClient({ initialUserData }: AccountSettingsClientProps) {
-  const [userData, setUserData] = useState<UserData>(() => convertStringDatesToDates(initialUserData))
+  const [userData, setUserData] = useState<UserData | null>(null)
+
+  useEffect(() => {
+    setUserData(convertStringDatesToDates(initialUserData))
+  }, [initialUserData])
+
+  if (!userData) {
+    return <div>Loading...</div>
+  }
 
   const updateUserData = (newData: Partial<UserData>) => {
-    setUserData((prev) => ({ ...prev, ...newData, updatedAt: new Date() }))
+    setUserData((prev) => prev ? { ...prev, ...newData, updatedAt: new Date() } : null)
   }
 
   return (

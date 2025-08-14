@@ -2,10 +2,10 @@
 
 import type React from "react"
 
-import { useState } from "react"
-import { FileText, Upload, X, Download } from "lucide-react"
-import { Button } from "@/components/ui/button"
+import { Button } from "@/components/common/button"
 import { toast } from "@/hooks/use-toast"
+import { Download, FileText, Upload, X } from "lucide-react"
+import { useState } from "react"
 
 interface CVUploadProps {
   currentCV?: {
@@ -13,7 +13,7 @@ interface CVUploadProps {
     id: string
     name: string
   } | null
-  onUpdate: (cv: any) => void
+  onUpdate: (cv: { fileName: string; id: string; name: string } | null) => void
 }
 
 export default function CVUpload({ currentCV, onUpdate }: CVUploadProps) {
@@ -30,21 +30,13 @@ export default function CVUpload({ currentCV, onUpdate }: CVUploadProps) {
       "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
     ]
     if (!allowedTypes.includes(file.type)) {
-      toast({
-        title: "Invalid file type",
-        description: "Please upload a PDF or Word document",
-        variant: "destructive",
-      })
+      toast.error("Invalid file type. Please upload a PDF or Word document")
       return
     }
 
     // Check file size (max 10MB)
     if (file.size > 10 * 1024 * 1024) {
-      toast({
-        title: "File too large",
-        description: "Please upload a file smaller than 10MB",
-        variant: "destructive",
-      })
+      toast.error("File too large. Please upload a file smaller than 10MB")
       return
     }
 
@@ -62,27 +54,18 @@ export default function CVUpload({ currentCV, onUpdate }: CVUploadProps) {
 
       onUpdate(fakeUploadedCV)
       setIsUploading(false)
-      toast({
-        title: "CV uploaded",
-        description: "Your CV has been uploaded successfully.",
-      })
+      toast.success("CV uploaded successfully")
     }, 1500)
   }
 
   const removeCV = () => {
     onUpdate(null)
-    toast({
-      title: "CV removed",
-      description: "Your CV has been removed.",
-    })
+    toast.success("CV removed successfully")
   }
 
   const downloadCV = () => {
     // In a real app, this would download the actual file
-    toast({
-      title: "Download started",
-      description: "Your CV is being downloaded.",
-    })
+    toast.success("Download started")
   }
 
   return (

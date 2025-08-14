@@ -1,9 +1,9 @@
 "use client"
 
-import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
+import { Button } from '@/components/common/button'
+import { Badge } from '@/components/common/badge'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/common/card'
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/common/dialog'
 import { useFormCacheStore } from '@/lib/stores/form-cache-store'
 import { CheckCircleIcon, ClockIcon } from 'lucide-react'
 import { useState } from 'react'

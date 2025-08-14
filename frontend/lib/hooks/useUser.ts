@@ -1,4 +1,6 @@
-import { useQuery } from '@tanstack/react-query'
+'use client'
+
+import { useEffect, useState } from 'react';
 
 interface Skill {
   id: string
@@ -47,6 +49,7 @@ const fetchUserData = async (): Promise<UserData> => {
     headers: {
       'Content-Type': 'application/json',
     },
+    credentials: 'include', // Important: envoie les cookies
   })
 
   if (!response.ok) {
@@ -57,10 +60,42 @@ const fetchUserData = async (): Promise<UserData> => {
 }
 
 export const useUser = () => {
-  return useQuery({
-    queryKey: ['user'],
-    queryFn: fetchUserData,
-    staleTime: 5 * 60 * 1000, // 5 minutes
-    retry: 1,
-  })
+  const [data, setData] = useState<UserData | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<Error | null>(null);
+
+  useEffect(() => {
+    const loadUserData = async () => {
+      try {
+        setIsLoading(true);
+        setError(null);
+        const userData = await fetchUserData();
+        setData(userData);
+      } catch (err) {
+        setError(err instanceof Error ? err : new Error('Unknown error'));
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    loadUserData();
+  }, []);
+
+  const refetch = () => {
+    setIsLoading(true);
+    setError(null);
+    fetchUserData()
+      .then(setData)
+      .catch(err => setError(err instanceof Error ? err : new Error('Unknown error')))
+      .finally(() => setIsLoading(false));
+  };
+
+  return {
+    data,
+    isLoading,
+    error,
+    refetch,
+    isSuccess: !!data && !error,
+    isError: !!error
+  };
 } 

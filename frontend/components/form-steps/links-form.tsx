@@ -3,8 +3,8 @@
 import type { FormValues } from "@/components/form-steps/multi-step-form"
 import { GithubIcon, LinkedinIcon, PhoneIcon } from "lucide-react"
 
-import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
-import { Input } from "@/components/ui/input"
+import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/common/form"
+import { Input } from "@/components/common/input"
 import { useFormContext } from "react-hook-form"
 
 export function LinksForm() {

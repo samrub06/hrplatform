@@ -5,13 +5,13 @@ import { format } from "date-fns"
 import { CalendarIcon, GraduationCapIcon, MinusCircleIcon, PlusCircleIcon } from "lucide-react"
 import { useFieldArray, useFormContext } from "react-hook-form"
 
-import { Button } from "@/components/ui/button"
-import { Calendar } from "@/components/ui/calendar"
-import { Card, CardContent } from "@/components/ui/card"
-import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
-import { Input } from "@/components/ui/input"
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
-import { Textarea } from "@/components/ui/textarea"
+import { Button } from "@/components/common/button"
+import { Calendar } from "@/components/common/calendar"
+import { Card, CardContent } from "@/components/common/card"
+import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/common/form"
+import { Input } from "@/components/common/input"
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/common/popover"
+import { Textarea } from "@/components/common/textarea"
 
 export function EducationForm() {
   const { control, trigger } = useFormContext<FormValues>()

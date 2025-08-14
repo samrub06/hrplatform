@@ -3,30 +3,26 @@ import { NextResponse } from 'next/server';
 
 export async function GET() {
   try {
-    // Get user session with permissions
-    const user = await AuthDAL.getUser();
-
-    if (!user) {
+    const user = await AuthDAL.getUserBasic();
+    
+    if (!user?.userId) {
       return NextResponse.json(
-        { error: 'Unauthorized' },
+        { error: 'Unauthorized' }, 
         { status: 401 }
       );
     }
 
-    // Return user data with permissions
     return NextResponse.json({
       id: user.userId,
       email: user.email,
       role: user.role,
       firstName: user.firstName,
-      lastName: user.lastName,
-      permissions: user.permissions || []
+      lastName: user.lastName
     });
-
   } catch (error) {
-    console.error('Error in /api/auth/me:', error);
+    console.error('Error in GET /api/auth/me:', error);
     return NextResponse.json(
-      { error: 'Internal server error' },
+      { error: 'Internal server error' }, 
       { status: 500 }
     );
   }

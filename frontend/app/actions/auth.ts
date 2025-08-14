@@ -8,7 +8,7 @@ import {
   handleServerError,
   validateFormData
 } from '@/lib/errorHandler';
-import { TokenService } from '@/lib/services/tokenService';
+import { cookies } from 'next/headers';
 
 interface LoginRequestDto {
   email: string;
@@ -25,24 +25,24 @@ interface DecodedToken {
 }
 
 class LoginFormData {
-private email: string 
-private password: string
+  private email: string 
+  private password: string
 
-constructor(formData: FormData){
-  this.email= formData.get('email') as string
-  this.password= formData.get('password') as string
-}
-
-validate() : {isValid: boolean, error?: string}{
-  if(!this.email || !this.password){
-    return {isValid: false, error: 'Email and password are required'}
+  constructor(formData: FormData){
+    this.email = formData.get('email') as string
+    this.password = formData.get('password') as string
   }
-  return {isValid: true}
-}
 
-toLoginRequestDto(): LoginRequestDto{
-  return {email: this.email, password: this.password}
-}
+  validate() : {isValid: boolean, error?: string}{
+    if(!this.email || !this.password){
+      return {isValid: false, error: 'Email and password are required'}
+    }
+    return {isValid: true}
+  }
+
+  toLoginRequestDto(): LoginRequestDto{
+    return {email: this.email, password: this.password}
+  }
 }
 
 // Direct login function to avoid circular imports
@@ -64,9 +64,24 @@ export async function loginAction(prevState: { error: string | null; success: bo
     console.log('🔴 Response in loginAction:', response);
     const { accessToken, refreshToken } = response;
 
-    // Store tokens using the service
-    await TokenService.setAccessToken(accessToken);
-    await TokenService.setRefreshToken(refreshToken);
+    // Store tokens in HTTP-only cookies
+    const cookieStore = await cookies();
+    
+    cookieStore.set('accessToken', accessToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      path: '/',
+      maxAge: 60 * 60 * 24 * 7 // 7 days
+    });
+    
+    cookieStore.set('refreshToken', refreshToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      path: '/',
+      maxAge: 60 * 60 * 24 * 30 // 30 days
+    });
     
     // Decode JWT to check for roleId
     const decoded = JSON.parse(atob(accessToken.split('.')[1])) as DecodedToken;
@@ -78,7 +93,6 @@ export async function loginAction(prevState: { error: string | null; success: bo
     return handleServerError(error, "An error occurred during login");
   }
 }
-  
 
 export type SignupState = ActionResult;
 
@@ -137,9 +151,10 @@ export async function signupAction(prevState: SignupState, formData: FormData): 
 
 export async function logoutAction(): Promise<ActionResult> {
   try {
-    // Import AuthDAL dynamically to avoid server/client issues
-    const { AuthDAL } = await import('@/lib/dal/auth');
-    await AuthDAL.logout();
+    // Clear cookies
+    const cookieStore = await cookies();
+    cookieStore.delete('accessToken');
+    cookieStore.delete('refreshToken');
     
     return createSuccessResult();
   } catch (error) {

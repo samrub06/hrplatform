@@ -1,10 +1,10 @@
 "use client"
 
-import { Button } from "@/components/ui/button"
-import { Calendar } from "@/components/ui/calendar"
-import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
-import { Input } from "@/components/ui/input"
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
+import { Button } from "@/components/common/button"
+import { Calendar } from "@/components/common/calendar"
+import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/common/form"
+import { Input } from "@/components/common/input"
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/common/popover"
 import { toast } from "@/hooks/use-toast"
 import { cn } from "@/lib/utils"
 import { zodResolver } from "@hookform/resolvers/zod"
@@ -13,10 +13,11 @@ import { CalendarIcon } from "lucide-react"
 import { useState } from "react"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
+import { UserData } from "./types"
 
 interface PersonalInfoFormProps {
-  userData: any
-  onUpdate: (data: any) => void
+  userData: Pick<UserData, 'first_name' | 'last_name' | 'birthday'>
+  onUpdate: (data: Pick<UserData, 'first_name' | 'last_name' | 'birthday'>) => void
 }
 
 const formSchema = z.object({
@@ -46,12 +47,13 @@ export default function PersonalInfoForm({ userData, onUpdate }: PersonalInfoFor
 
     // Simulate API call
     setTimeout(() => {
-      onUpdate(values)
-      setIsSubmitting(false)
-      toast({
-        title: "Profile updated",
-        description: "Your personal information has been updated successfully.",
+      onUpdate({
+        first_name: values.first_name,
+        last_name: values.last_name,
+        birthday: values.birthday || null,
       })
+      setIsSubmitting(false)
+      toast.success("Profile updated")
     }, 1000)
   }
 

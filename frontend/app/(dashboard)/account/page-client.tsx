@@ -1,7 +1,7 @@
 "use client"
 
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/common/card"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/common/tabs"
 import { useEffect, useState } from "react"
 import ContactInfoForm from "./contact-info-form"
 import CVUpload from "./cv-upload"
@@ -83,13 +83,13 @@ interface UserData {
   current_company?: string
   createdAt: Date
   updatedAt: Date
-  birthday?: Date
+  birthday?: Date | null
   education?: {
     institution: string
     degree: string
     fieldOfStudy: string
     startDate: Date
-    endDate?: Date
+    endDate?: Date | null
     description?: string
   }[]
 }
@@ -137,6 +137,19 @@ export default function AccountSettingsPage() {
     if (userData) {
       setUserData((prev) => prev ? ({ ...prev, ...newData, updatedAt: new Date() }) : null)
     }
+  }
+
+  // Wrapper functions for form components to handle type compatibility
+  const updatePersonalInfo = (data: { first_name: string; last_name: string; birthday?: Date | null }) => {
+    updateUserData(data)
+  }
+
+  const updateContactInfo = (data: { email: string; phone_number?: string; github_link?: string; linkedin_link?: string; public_profile_url?: string }) => {
+    updateUserData(data)
+  }
+
+  const updateProfessionalInfo = (data: { role?: string; current_position?: string; current_company?: string; desired_position?: string; salary_expectation?: string; years_of_experience?: number }) => {
+    updateUserData(data)
   }
 
   if (loading) {
@@ -242,7 +255,7 @@ export default function AccountSettingsPage() {
               <CardDescription>Update your personal details</CardDescription>
             </CardHeader>
             <CardContent>
-              <PersonalInfoForm userData={currentUserData} onUpdate={updateUserData} />
+              <PersonalInfoForm userData={currentUserData} onUpdate={updatePersonalInfo} />
             </CardContent>
           </Card>
         </TabsContent>
@@ -254,7 +267,7 @@ export default function AccountSettingsPage() {
               <CardDescription>Manage your contact details</CardDescription>
             </CardHeader>
             <CardContent>
-              <ContactInfoForm userData={currentUserData} onUpdate={updateUserData} />
+              <ContactInfoForm userData={currentUserData} onUpdate={updateContactInfo} />
             </CardContent>
           </Card>
         </TabsContent>
@@ -266,7 +279,7 @@ export default function AccountSettingsPage() {
               <CardDescription>Update your career details</CardDescription>
             </CardHeader>
             <CardContent>
-              <ProfessionalInfoForm userData={currentUserData} onUpdate={updateUserData} />
+              <ProfessionalInfoForm userData={currentUserData} onUpdate={updateProfessionalInfo} />
             </CardContent>
           </Card>
         </TabsContent>

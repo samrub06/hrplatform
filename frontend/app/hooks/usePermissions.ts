@@ -1,4 +1,4 @@
-import { Permission } from "@/app/api/auth/login/route";
+import { Permission } from "@/lib/dal/auth";
 
 export const usePermissions = () => {
   const checkPermission = (

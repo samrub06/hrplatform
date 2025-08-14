@@ -1,5 +1,5 @@
-import { Card, CardContent } from "@/components/ui/card";
-import { Skeleton } from "@/components/ui/skeleton";
+import { Card, CardContent } from "@/components/common/card";
+import { Skeleton } from "@/components/common/skeleton";
 import { format } from "date-fns";
 import { motion } from "framer-motion";
 import {

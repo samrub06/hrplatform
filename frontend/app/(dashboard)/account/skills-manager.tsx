@@ -1,13 +1,13 @@
 "use client"
 
-import { useState } from "react"
-import { X, Plus, Search } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Badge } from "@/components/ui/badge"
+import { Badge } from "@/components/common/badge"
+import { Button } from "@/components/common/button"
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/common/command"
+import { Input } from "@/components/common/input"
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/common/popover"
 import { toast } from "@/hooks/use-toast"
-import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command"
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
+import { Plus, Search, X } from "lucide-react"
+import { useState } from "react"
 
 interface Skill {
   id: string
@@ -45,35 +45,20 @@ export default function SkillsManager({ userSkills, onUpdate }: SkillsManagerPro
 
   const addSkill = (skill: Skill) => {
     if (skills.some((s) => s.id === skill.id)) {
-      toast({
-        title: "Skill already added",
-        description: `${skill.name} is already in your skills list.`,
-        variant: "destructive",
-      })
+      toast.error(`${skill.name} is already in your skills list.`)
       return
     }
 
-    const updatedSkills = [...skills, skill]
-    setSkills(updatedSkills)
-    onUpdate(updatedSkills)
-    setNewSkill("")
-    setOpen(false)
-
-    toast({
-      title: "Skill added",
-      description: `${skill.name} has been added to your skills.`,
-    })
+    const newSkills = [...skills, skill]
+    onUpdate(newSkills)
+    toast.success(`${skill.name} added to your skills`)
   }
 
   const addCustomSkill = () => {
     if (!newSkill.trim()) return
 
     if (skills.some((s) => s.name.toLowerCase() === newSkill.toLowerCase())) {
-      toast({
-        title: "Skill already added",
-        description: `${newSkill} is already in your skills list.`,
-        variant: "destructive",
-      })
+      toast.error(`${newSkill} is already in your skills list.`)
       return
     }
 
@@ -87,21 +72,13 @@ export default function SkillsManager({ userSkills, onUpdate }: SkillsManagerPro
     onUpdate(updatedSkills)
     setNewSkill("")
 
-    toast({
-      title: "Skill added",
-      description: `${customSkill.name} has been added to your skills.`,
-    })
+    toast.success(`${customSkill.name} has been added to your skills.`)
   }
 
   const removeSkill = (skillId: string) => {
-    const updatedSkills = skills.filter((skill) => skill.id !== skillId)
-    setSkills(updatedSkills)
-    onUpdate(updatedSkills)
-
-    toast({
-      title: "Skill removed",
-      description: "The skill has been removed from your profile.",
-    })
+    const newSkills = skills.filter((s) => s.id !== skillId)
+    onUpdate(newSkills)
+    toast.success("Skill removed from your list")
   }
 
   // Filter out skills that the user already has

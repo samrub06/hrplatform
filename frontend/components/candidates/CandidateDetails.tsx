@@ -1,25 +1,25 @@
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Separator } from "@/components/ui/separator";
+import { Button } from "@/components/common/button";
+import { Avatar, AvatarFallback } from "@/components/common/avatar";
+import { Badge } from "@/components/common/badge";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/common/card";
+import { Separator } from "@/components/common/separator";
 
 import { CV, Experience, Skill } from "@/lib/models";
 import type { Candidate, CandidateData } from "@/lib/types";
 import { format } from "date-fns";
 import {
-  Briefcase,
-  Clock,
-  Download,
-  ExternalLink,
-  Github,
-  Globe,
-  GraduationCap,
-  Linkedin,
-  Mail,
-  MapPin,
-  Phone,
-  Star
+    Briefcase,
+    Clock,
+    Download,
+    ExternalLink,
+    Github,
+    Globe,
+    GraduationCap,
+    Linkedin,
+    Mail,
+    MapPin,
+    Phone,
+    Star
 } from "lucide-react";
 import { useEffect, useState } from "react";
 

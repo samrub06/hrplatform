@@ -2,7 +2,7 @@
 import ActivityFeed from "@/components/dashboard/ActivityFeed";
 import RecentCandidates from "@/components/dashboard/RecentCandidates";
 import { StatsCard } from "@/components/dashboard/StatsCard";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/common/card";
 import { format } from "date-fns";
 import { motion } from "framer-motion";
 import {

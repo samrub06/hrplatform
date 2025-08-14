@@ -52,7 +52,6 @@ export class AuthDAL {
 
     try {
       const decodedJWT = decodeJwt(token);
-      console.log('decodedJWT', decodedJWT)
       const payload = decodedJWT as unknown as UserJwtPayload;
       return {
         isAuth: true, 

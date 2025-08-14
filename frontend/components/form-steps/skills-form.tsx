@@ -4,10 +4,10 @@ import type { FormValues } from "@/components/form-steps/multi-step-form"
 import { MinusCircleIcon, PlusCircleIcon } from "lucide-react"
 import { useFieldArray, useFormContext } from "react-hook-form"
 
-import { Button } from "@/components/ui/button"
-import { FormControl, FormField, FormItem, FormMessage } from "@/components/ui/form"
-import { Input } from "@/components/ui/input"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Button } from "@/components/common/button"
+import { FormControl, FormField, FormItem, FormMessage } from "@/components/common/form"
+import { Input } from "@/components/common/input"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/common/select"
 
 // interface SkillsFormProps {
 //   form: UseFormReturn<FormValues>

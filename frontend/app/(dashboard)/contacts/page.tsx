@@ -1,10 +1,10 @@
 "use client"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/common/avatar"
+import { Badge } from "@/components/common/badge"
+import { Button } from "@/components/common/button"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/common/card"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/common/select"
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/common/table"
 import { UserData } from "@/lib/types"
 import { ExternalLink } from "lucide-react"
 import { useRouter } from "next/navigation"
@@ -16,21 +16,21 @@ import { Pagination } from "../../../components/layout/pagination"
 // Generate a larger sample dataset (100 users)
 const generateSampleContacts = (count: number): UserData[] => {
   const skills = [
-    { id: "1", name: "React" },
-    { id: "2", name: "TypeScript" },
-    { id: "3", name: "CSS" },
-    { id: "4", name: "Node.js" },
-    { id: "5", name: "Python" },
-    { id: "6", name: "MongoDB" },
-    { id: "7", name: "PostgreSQL" },
-    { id: "8", name: "AWS" },
-    { id: "9", name: "Docker" },
-    { id: "10", name: "Kubernetes" },
-    { id: "11", name: "UI/UX" },
-    { id: "12", name: "Figma" },
-    { id: "13", name: "Java" },
-    { id: "14", name: "C#" },
-    { id: "15", name: "PHP" },
+    { name: "React", years_of_experience: 3 },
+    { name: "TypeScript", years_of_experience: 2 },
+    { name: "CSS", years_of_experience: 4 },
+    { name: "Node.js", years_of_experience: 3 },
+    { name: "Python", years_of_experience: 5 },
+    { name: "MongoDB", years_of_experience: 2 },
+    { name: "PostgreSQL", years_of_experience: 3 },
+    { name: "AWS", years_of_experience: 2 },
+    { name: "Docker", years_of_experience: 1 },
+    { name: "Kubernetes", years_of_experience: 1 },
+    { name: "UI/UX", years_of_experience: 4 },
+    { name: "Figma", years_of_experience: 3 },
+    { name: "Java", years_of_experience: 6 },
+    { name: "C#", years_of_experience: 4 },
+    { name: "PHP", years_of_experience: 3 },
   ]
 
   const companies = [
@@ -173,11 +173,11 @@ export default function ContactsPage() {
 
     const filtered = sampleContacts.filter((contact) => {
       if (searchType === "name") {
-        return contact.first_name.toLowerCase().includes(query) || contact.last_name.toLowerCase().includes(query)
+        return (contact.first_name?.toLowerCase() || '').includes(query) || (contact.last_name?.toLowerCase() || '').includes(query)
       } else if (searchType === "specialty") {
-        return contact.skills.some((skill) => skill.name.toLowerCase().includes(query))
+        return contact.skills?.some((skill) => skill.name.toLowerCase().includes(query)) || false
       } else if (searchType === "company") {
-        return contact.current_company?.toLowerCase().includes(query)
+        return contact.current_company?.toLowerCase().includes(query) || false
       }
       return false
     })
@@ -271,16 +271,16 @@ function ContactCard({ contact, onViewProfile }: { contact: UserData; onViewProf
             <Avatar className="h-12 w-12">
               <AvatarImage
                 src={contact.profilePicture || "/placeholder.svg"}
-                alt={`${contact.first_name} ${contact.last_name}`}
+                alt={`${contact.first_name || 'Unknown'} ${contact.last_name || 'User'}`}
               />
               <AvatarFallback>
-                {contact.first_name[0]}
-                {contact.last_name[0]}
+                {contact.first_name?.[0] || 'U'}
+                {contact.last_name?.[0] || 'U'}
               </AvatarFallback>
             </Avatar>
             <div>
               <CardTitle className="text-xl">
-                {contact.first_name} {contact.last_name}
+                {contact.first_name || 'Unknown'} {contact.last_name || 'User'}
               </CardTitle>
               <p className="text-sm text-muted-foreground">{contact.role || "No role specified"}</p>
             </div>
@@ -307,12 +307,12 @@ function ContactCard({ contact, onViewProfile }: { contact: UserData; onViewProf
             </div>
           )}
 
-          {contact.skills.length > 0 && (
+          {contact.skills && contact.skills.length > 0 && (
             <div>
               <p className="text-sm font-medium">Skills</p>
               <div className="flex flex-wrap gap-1 mt-1">
                 {contact.skills.map((skill) => (
-                  <Badge key={skill.id} variant="secondary">
+                  <Badge key={skill.name} variant="secondary">
                     {skill.name}
                   </Badge>
                 ))}
@@ -321,7 +321,7 @@ function ContactCard({ contact, onViewProfile }: { contact: UserData; onViewProf
           )}
 
           <div className="flex justify-end pt-2">
-            <Button variant="outline" size="sm" onClick={() => onViewProfile(contact.id)}>
+            <Button variant="outline" size="sm" onClick={() => onViewProfile(contact.id || '')}>
               View Profile
             </Button>
           </div>
@@ -361,15 +361,15 @@ function ContactTable({ contacts, onViewProfile }: { contacts: UserData[]; onVie
                 <Avatar className="h-8 w-8">
                   <AvatarImage
                     src={contact.profilePicture || "/placeholder.svg"}
-                    alt={`${contact.first_name} ${contact.last_name}`}
+                    alt={`${contact.first_name || 'Unknown'} ${contact.last_name || 'User'}`}
                   />
                   <AvatarFallback>
-                    {contact.first_name[0]}
-                    {contact.last_name[0]}
+                    {contact.first_name?.[0] || 'U'}
+                    {contact.last_name?.[0] || 'U'}
                   </AvatarFallback>
                 </Avatar>
                 <span>
-                  {contact.first_name} {contact.last_name}
+                  {contact.first_name || 'Unknown'} {contact.last_name || 'User'}
                 </span>
               </div>
             </TableCell>
@@ -377,15 +377,19 @@ function ContactTable({ contacts, onViewProfile }: { contacts: UserData[]; onVie
             <TableCell>{contact.current_company || "—"}</TableCell>
             <TableCell>
               <div className="flex flex-wrap gap-1">
-                {contact.skills.slice(0, 2).map((skill) => (
-                  <Badge key={skill.id} variant="secondary" className="mr-1">
+                {contact.skills?.slice(0, 3).map((skill) => (
+                  <Badge key={skill.name} variant="secondary" className="mr-1">
                     {skill.name}
                   </Badge>
                 ))}
-                {contact.skills.length > 2 && <Badge variant="outline">+{contact.skills.length - 2}</Badge>}
+                {contact.skills && contact.skills.length > 3 && (
+                  <Badge variant="secondary" className="mr-1">
+                    +{contact.skills.length - 3} more
+                  </Badge>
+                )}
               </div>
             </TableCell>
-            <TableCell>{contact.years_of_experience} years</TableCell>
+            <TableCell>—</TableCell>
             <TableCell>
               <div className="text-sm">
                 <p>{contact.email}</p>
@@ -393,7 +397,7 @@ function ContactTable({ contacts, onViewProfile }: { contacts: UserData[]; onVie
               </div>
             </TableCell>
             <TableCell className="text-right">
-              <Button variant="ghost" size="sm" className="h-8 w-8 p-0" onClick={() => onViewProfile(contact.id)}>
+              <Button variant="ghost" size="sm" className="h-8 w-8 p-0" onClick={() => onViewProfile(contact.id || '')}>
                 <ExternalLink className="h-4 w-4" />
                 <span className="sr-only">View profile</span>
               </Button>

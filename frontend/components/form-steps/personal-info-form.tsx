@@ -6,11 +6,11 @@ import type { FormValues } from "@/components/form-steps/multi-step-form"
 import { BriefcaseIcon, DollarSignIcon, UserIcon } from "lucide-react"
 import { useState } from "react"
 
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Slider } from "@/components/ui/slider"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/common/avatar"
+import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/common/form"
+import { Input } from "@/components/common/input"
+import { Label } from "@/components/common/label"
+import { Slider } from "@/components/common/slider"
 import { useFormContext } from "react-hook-form"
 
 export function PersonalInfoForm() {

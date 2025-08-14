@@ -1,16 +1,16 @@
-import { AppSidebar } from "@/components/layout/app-sidebar"
 import {
   Breadcrumb,
   BreadcrumbItem,
   BreadcrumbLink,
   BreadcrumbList
-} from "@/components/ui/breadcrumb"
-import { Separator } from "@/components/ui/separator"
+} from "@/components/common/breadcrumb"
+import { Separator } from "@/components/common/separator"
 import {
   SidebarInset,
   SidebarProvider,
   SidebarTrigger,
-} from "@/components/ui/sidebar"
+} from "@/components/common/sidebar"
+import { AppSidebar } from "@/components/layout/app-sidebar"
 import { AuthDAL } from "@/lib/dal/auth"
 import type { Metadata } from 'next'
 

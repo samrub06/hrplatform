@@ -1,17 +1,18 @@
 "use client"
 
-import { useState } from "react"
+import { Button } from "@/components/common/button"
+import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/common/form"
+import { Input } from "@/components/common/input"
+import { toast } from "@/hooks/use-toast"
 import { zodResolver } from "@hookform/resolvers/zod"
+import { useState } from "react"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
-import { Button } from "@/components/ui/button"
-import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
-import { Input } from "@/components/ui/input"
-import { toast } from "@/hooks/use-toast"
+import { UserData } from "./types"
 
 interface ContactInfoFormProps {
-  userData: any
-  onUpdate: (data: any) => void
+  userData: Pick<UserData, 'email' | 'phone_number' | 'github_link' | 'linkedin_link' | 'public_profile_url'>
+  onUpdate: (data: Pick<UserData, 'email' | 'phone_number' | 'github_link' | 'linkedin_link' | 'public_profile_url'>) => void
 }
 
 const formSchema = z.object({
@@ -45,10 +46,7 @@ export default function ContactInfoForm({ userData, onUpdate }: ContactInfoFormP
     setTimeout(() => {
       onUpdate(values)
       setIsSubmitting(false)
-      toast({
-        title: "Contact info updated",
-        description: "Your contact information has been updated successfully.",
-      })
+      toast.success("Contact info updated")
     }, 1000)
   }
 

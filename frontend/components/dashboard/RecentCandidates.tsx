@@ -1,17 +1,17 @@
 "use client";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Skeleton } from "@/components/ui/skeleton";
+import { Button } from "@/components/common/button";
+import { Avatar, AvatarFallback } from "@/components/common/avatar";
+import { Badge } from "@/components/common/badge";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/common/card";
+import { Skeleton } from "@/components/common/skeleton";
 import { format } from "date-fns";
 import { motion } from "framer-motion";
 import {
-  Briefcase,
-  Calendar,
-  ExternalLink,
-  Link,
-  MapPin
+    Briefcase,
+    Calendar,
+    ExternalLink,
+    Link,
+    MapPin
 } from "lucide-react";
 
 interface Candidate {

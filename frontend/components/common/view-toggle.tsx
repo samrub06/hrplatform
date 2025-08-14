@@ -1,6 +1,6 @@
 'use client'
 
-import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group"
+import { ToggleGroup, ToggleGroupItem } from "@/components/common/toggle-group"
 import { Grid, List } from "lucide-react"
 
 interface ViewToggleProps {

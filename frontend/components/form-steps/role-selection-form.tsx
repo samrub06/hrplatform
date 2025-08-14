@@ -1,5 +1,5 @@
-import { Button } from '@/components/ui/button';
-import { Card } from '@/components/ui/card';
+import { Button } from '@/components/common/button';
+import { Card } from '@/components/common/card';
 import { motion } from 'framer-motion';
 import { ArrowRight, Briefcase, Loader2, User, Users } from 'lucide-react';
 import { useState } from 'react';

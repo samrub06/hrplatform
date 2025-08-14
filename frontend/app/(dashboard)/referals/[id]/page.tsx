@@ -1,23 +1,23 @@
 "use client"
 
-import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
-import { Separator } from "@/components/ui/separator"
+import { Badge } from "@/components/common/badge"
+import { Button } from "@/components/common/button"
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/common/card"
+import { Separator } from "@/components/common/separator"
 import {
-  ArrowLeft,
-  Bookmark,
-  Briefcase,
-  Building,
-  Clock,
-  DollarSign,
-  ExternalLink,
-  Globe,
-  Mail,
-  MapPin,
-  Phone,
-  Share2,
-  User,
+    ArrowLeft,
+    Bookmark,
+    Briefcase,
+    Building,
+    Clock,
+    DollarSign,
+    ExternalLink,
+    Globe,
+    Mail,
+    MapPin,
+    Phone,
+    Share2,
+    User,
 } from "lucide-react"
 import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
@@ -192,18 +192,18 @@ const generateSampleJobs = (count: number): Job[] => {
 
 const sampleJobs = generateSampleJobs(100)
 
-export default function JobDetailPage({ params }: { params: { id: string } }) {
+function ReferralDetails({ id }: { id: string }) {
   const router = useRouter()
   const [job, setJob] = useState<Job | null>(null)
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     // In a real app, this would be an API call
-    const jobId = Number.parseInt(params.id)
+    const jobId = Number.parseInt(id)
     const foundJob = sampleJobs.find((j) => j.id === jobId)
     setJob(foundJob || null)
     setLoading(false)
-  }, [params.id])
+  }, [id])
 
   if (loading) {
     return (
@@ -462,4 +462,9 @@ export default function JobDetailPage({ params }: { params: { id: string } }) {
       </div>
     </div>
   )
+}
+
+export default async function Page({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params
+  return <ReferralDetails id={id} />
 }
