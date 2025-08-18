@@ -24,7 +24,7 @@ export class SessionUser extends Model {
     allowNull: false,
     field: 'user_id',
   })
-  userId: string;
+  user_id: string;
 
   @BelongsTo(() => User, {
     foreignKey: 'user_id',
@@ -52,7 +52,7 @@ export class SessionUser extends Model {
   lastAccess: Date;
 
   @Column({
-    type: DataType.STRING,
+    type: DataType.TEXT,
     allowNull: false,
   })
   token: string;

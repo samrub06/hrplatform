@@ -2,7 +2,7 @@ import { decodeJwt } from 'jose';
 import { cookies } from 'next/headers';
 import { cache } from 'react';
 import 'server-only';
-import axiosInstance from '../axiosInstance';
+import { backendFetch } from '../backendFetch';
 
 export interface Permission {
   id: string;
@@ -40,6 +40,16 @@ export interface SessionData {
 }
 
 export class AuthDAL {
+  // Login with credentials against backend
+  static async login(credentials: { email: string; password: string }): Promise<{ accessToken: string; refreshToken: string }> {
+    const res = await backendFetch('/auth/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(credentials)
+    })
+    if (!res.ok) throw new Error('Login failed')
+    return res.json()
+  }
  
   // Verify session using refresh token - cached for performance
   static verifySession = cache(async (): Promise<SessionData | null> => {
@@ -75,11 +85,10 @@ export class AuthDAL {
     }
 
     try {
-      // Fetch permissions from API
-      const permissionsResponse = await axiosInstance.get('/user/me/permissions');
+      const permissionsResponse = await backendFetch('/user/me/permissions')
       return {
         ...session,
-        permissions: permissionsResponse.data
+        permissions: await permissionsResponse.json()
       };
     } catch (error) {
       console.error('Error fetching user permissions:', error);
@@ -126,36 +135,34 @@ export class AuthDAL {
   // Refresh access token if needed
   static async refreshAccessToken(): Promise<string | null> {
     try {
-      const response = await axiosInstance.post('/auth/refresh-token');
-      const { accessToken } = response.data;
-      
-      // Update cookie
-      const cookieStore = await cookies();
+      const response = await backendFetch('/auth/refresh-token', { method: 'POST' })
+      if (!response.ok) return null
+      const { accessToken } = await response.json()
+      const cookieStore = await cookies()
       cookieStore.set('accessToken', accessToken, {
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
         sameSite: 'lax',
         path: '/'
-      });
-      
-      return accessToken;
+      })
+      return accessToken
     } catch (error) {
-      console.error('Error refreshing access token:', error);
-      return null;
+      console.error('Error refreshing access token:', error)
+      return null
     }
   }
 
   // Logout user
   static async logout(): Promise<void> {
     try {
-      await axiosInstance.post('/auth/logout');
+      // Optionally: call backend revoke endpoint here if available
     } catch (error) {
-      console.error('Error during logout:', error);
+      console.error('Error during logout:', error)
     } finally {
-      // Clear cookies
-      const cookieStore = await cookies();
-      cookieStore.delete('accessToken');
-      cookieStore.delete('refreshToken');
+      const cookieStore = await cookies()
+      cookieStore.delete('accessToken')
+      cookieStore.delete('refreshToken')
+      cookieStore.delete('refresh_token')
     }
   }
 } 

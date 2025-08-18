@@ -1,179 +1,30 @@
-"use client"
 
-import { loginAction } from "@/app/actions/auth"
-import { Button } from "@/components/common/button"
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/common/card"
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/common/form"
-import { Icons } from "@/components/common/icons"
-import { Input } from "@/components/common/input"
-import { Separator } from "@/components/common/separator"
+import LoginFormClient from "@/components/auth/form/LoginFormClient"
 import { cn } from "@/lib/utils"
-import { zodResolver } from "@hookform/resolvers/zod"
 import Link from "next/link"
-import { useActionState, useEffect } from "react"
-import { useFormStatus } from "react-dom"
-import { useForm } from "react-hook-form"
-import * as z from "zod"
 
-const formSchema = z.object({
-  email: z.string().email("Invalid email"),
-  password: z.string().min(6, "Password must be at least 6 characters"),
-})
 
-type LoginState = {
-  error: string | null;
-  success: boolean;
-  redirect?: string;
-}
-
-function SubmitButton() {
-  const { pending } = useFormStatus()
-  
-  return (
-    <Button type="submit" className="w-full" disabled={pending}>
-      {pending ? (
-        <>
-          <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
-          Login in progress...
-        </>
-      ) : (
-        "Login"
-      )}
-    </Button>
-  )
-}
-
-// Function to handle Google authentication
-const handleGoogleLogin = () => {
-  const apiUrl = process.env.NEXT_PUBLIC_BACKEND_API_URL
-  window.location.href = `${apiUrl}/auth/google`
-}
-
-// Function to handle LinkedIn authentication
-const handleLinkedInLogin = () => {
-  const apiUrl = process.env.NEXT_PUBLIC_BACKEND_API_URL
-  window.location.href = `${apiUrl}/auth/linkedin`
-}
 
 export function LoginForm({
   className,
+  error,
   ...props
-}: React.ComponentProps<"div">) {
-  const [state, formAction] = useActionState<LoginState, FormData>(loginAction, { error: null, success: false })
-
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
-    defaultValues: {
-      email: "",
-      password: "",
-    },
-  })
-
-  useEffect(() => {
-    if (state.success) {
-      const redirectUrl = state.redirect || '/dashboard';
-      window.location.href = redirectUrl;
-    }
-  }, [state.success, state.redirect])
-
+}: React.ComponentProps<"div"> & { error?: string }) {
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
-      <Card>
-        <CardHeader className="space-y-1">
-          <CardTitle className="text-2xl text-center">Welcome back</CardTitle>
-          <CardDescription className="text-center">
-            Sign in to your account
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="grid gap-4">
-          <div className="grid grid-cols-2 gap-6">
-            <Button variant="outline" onClick={handleLinkedInLogin}>
-              <Icons.linkedin className="mr-2 h-4 w-4" />
-              LinkedIn
-            </Button>
-            <Button variant="outline" onClick={handleGoogleLogin}>
-              <Icons.google className="mr-2 h-4 w-4" />
-              Google
-            </Button>
-          </div>
-          <div className="relative">
-            <div className="absolute inset-0 flex items-center">
-              <Separator />
-            </div>
-            <div className="relative flex justify-center text-xs uppercase">
-              <span className="bg-background px-2 text-muted-foreground">
-                Or continue with
-              </span>
-            </div>
-          </div>
-          <Form {...form}>
-            <form action={formAction} className="space-y-4">
-              <FormField
-                control={form.control}
-                name="email"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Email</FormLabel>
-                    <FormControl>
-                      <Input placeholder="m@example.com" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="password"
-                render={({ field }) => (
-                  <FormItem>
-                    <div className="flex items-center justify-between">
-                      <FormLabel>Password</FormLabel>
-                      <Link
-                        href="/forgot-password"
-                        className="text-sm text-muted-foreground hover:text-primary"
-                      >
-                        Forgot your password?
-                      </Link>
-                    </div>
-                    <FormControl>
-                      <Input type="password" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              {state?.error && (
-                <div className="text-sm text-red-500 text-center">
-                  {state.error}
-                </div>
-              )}
-              <SubmitButton />
-            </form>
-          </Form>
-        </CardContent>
-        <CardFooter>
-          <div className="text-sm text-muted-foreground text-center w-full">
-            Don&apos;t have an account?{" "}
-            <Link href="/signup" className="text-primary hover:underline">
-              Sign up
-            </Link>
-          </div>
-        </CardFooter>
-      </Card>
+      {error && (
+        <div className="text-sm text-red-500 text-center">
+          Invalid email or password. Please try again.
+        </div>
+      )}
+      <LoginFormClient />
+      <div className="text-sm text-muted-foreground text-center w-full">
+        Don&apos;t have an account?{" "}
+        <Link href="/signup" className="text-primary hover:underline">
+          Sign up
+        </Link>
+      </div>
+
       <div className="text-xs text-muted-foreground text-center">
         By continuing, you agree to our{" "}
         <Link href="/terms" className="text-primary hover:underline">

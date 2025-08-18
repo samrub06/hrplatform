@@ -1,66 +1,50 @@
 'use server'
-import axiosInstance from '@/lib/axiosInstance';
-import {
-  ActionResult,
-  createErrorResult,
-  createSuccessResult,
-  createSuccessResultWithRedirect,
-  handleServerError,
-  validateFormData
-} from '@/lib/errorHandler';
-import { cookies } from 'next/headers';
+import { backendFetch } from '@/lib/backendFetch'
+import { AuthDAL } from '@/lib/dal/auth'
+import { decodeJwt } from 'jose'
+import { cookies } from 'next/headers'
+import { redirect } from 'next/navigation'
+import { z } from 'zod'
 
-interface LoginRequestDto {
-  email: string;
-  password: string;
-}
+type ActionResult = { success: boolean; error: string | null; redirect?: string }
 
-interface LoginResponse {
-  accessToken: string;
-  refreshToken: string;
-}
+interface LoginRequestDto { email: string; password: string }
+const LoginSchema = z.object({
+  email: z.string().email('Invalid email'),
+  password: z.string().min(6, 'Password must be at least 6 characters')
+})
 
 interface DecodedToken {
   roleId?: string | null;
 }
 
-class LoginFormData {
-  private email: string 
-  private password: string
-
-  constructor(formData: FormData){
-    this.email = formData.get('email') as string
-    this.password = formData.get('password') as string
+export async function loginActionDirect(formData: FormData): Promise<void> {
+  const result = await loginAction({ error: null, success: false }, formData)
+  if (result.success) {
+    redirect(result.redirect || '/dashboard')
   }
-
-  validate() : {isValid: boolean, error?: string}{
-    if(!this.email || !this.password){
-      return {isValid: false, error: 'Email and password are required'}
-    }
-    return {isValid: true}
-  }
-
-  toLoginRequestDto(): LoginRequestDto{
-    return {email: this.email, password: this.password}
-  }
+  redirect('/login?error=1')
 }
 
-// Direct login function to avoid circular imports
-async function performLogin(credentials: LoginRequestDto): Promise<LoginResponse> {
-  const response = await axiosInstance.post('/auth/login', credentials);
-  return response.data;
+
+// Delegate login to DAL
+async function performLogin(credentials: LoginRequestDto) {
+  return AuthDAL.login(credentials)
 }
 
 export async function loginAction(prevState: { error: string | null; success: boolean }, formData: FormData): Promise<ActionResult> {
-  const loginFormData = new LoginFormData(formData)
-  const validation = loginFormData.validate()
-
-  if (!validation.isValid) {
-    return createErrorResult(validation.error || "Invalid form data");
+  const raw = {
+    email: (formData.get('email') as string) || '',
+    password: (formData.get('password') as string) || ''
+  }
+  const parsed = LoginSchema.safeParse(raw)
+  if (!parsed.success) {
+    const message = parsed.error.issues[0]?.message || 'Invalid form data'
+    return { success: false, error: message }
   }
 
   try {
-    const response = await performLogin(loginFormData.toLoginRequestDto());
+    const response = await performLogin(parsed.data);
     console.log('🔴 Response in loginAction:', response);
     const { accessToken, refreshToken } = response;
 
@@ -75,7 +59,8 @@ export async function loginAction(prevState: { error: string | null; success: bo
       maxAge: 60 * 60 * 24 * 7 // 7 days
     });
     
-    cookieStore.set('refreshToken', refreshToken, {
+    // Use backend-compatible cookie name for refresh token
+    cookieStore.set('refresh_token', refreshToken, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'lax',
@@ -83,69 +68,79 @@ export async function loginAction(prevState: { error: string | null; success: bo
       maxAge: 60 * 60 * 24 * 30 // 30 days
     });
     
-    // Decode JWT to check for roleId
-    const decoded = JSON.parse(atob(accessToken.split('.')[1])) as DecodedToken;
+    // Decode JWT to check for roleId (server-safe)
+    const decoded = decodeJwt(accessToken) as DecodedToken
     const hasRoleId = decoded?.roleId !== null && decoded?.roleId !== undefined;
     
-    return createSuccessResultWithRedirect(hasRoleId ? '/dashboard' : '/getstarted');
-  } catch (error) {
+    return {
+      success: true,
+      error: null,
+      redirect: hasRoleId ? '/dashboard' : '/getstarted'
+    };
+  } catch (error: unknown) {
     console.log('🔴 Error in loginAction:', error);
-    return handleServerError(error, "An error occurred during login");
+    const message = error instanceof Error ? error.message : 'An error occurred during login'
+    return {
+      error: message,
+      success: false
+    };
   }
 }
 
 export type SignupState = ActionResult;
 
 export async function signupAction(prevState: SignupState, formData: FormData): Promise<SignupState> {
-  // Validate required fields
-  const validationError = validateFormData(
-    formData, 
-    ['email', 'password', 'confirmPassword', 'firstName', 'lastName'],
-    [
-      {
-        field: 'password',
-        validator: (value) => {
-          if (value.length < 6) {
-            return "Password must contain at least 6 characters";
-          }
-          return null;
-        }
-      },
-      {
-        field: 'confirmPassword',
-        validator: (value) => {
-          const password = formData.get('password') as string;
-          if (value !== password) {
-            return "Passwords do not match";
-          }
-          return null;
-        }
-      }
-    ]
-  );
+  const SignupSchema = z.object({
+    email: z.string().email('Invalid email'),
+    password: z.string().min(6, 'Password must contain at least 6 characters'),
+    confirmPassword: z.string().min(6, 'Password must contain at least 6 characters'),
+    firstName: z.string().min(1, 'First name is required'),
+    lastName: z.string().min(1, 'Last name is required')
+  }).refine((data) => data.password === data.confirmPassword, {
+    message: 'Passwords do not match',
+    path: ['confirmPassword']
+  })
 
-  if (validationError) {
-    return validationError;
+  const raw = {
+    email: (formData.get('email') as string) || '',
+    password: (formData.get('password') as string) || '',
+    confirmPassword: (formData.get('confirmPassword') as string) || '',
+    firstName: (formData.get('firstName') as string) || '',
+    lastName: (formData.get('lastName') as string) || ''
   }
-
-  const email = formData.get('email') as string;
-  const password = formData.get('password') as string;
-  const confirmPassword = formData.get('confirmPassword') as string;
-  const firstName = formData.get('firstName') as string;
-  const lastName = formData.get('lastName') as string;
+  const parsed = SignupSchema.safeParse(raw)
+  if (!parsed.success) {
+    const message = parsed.error.issues[0]?.message || 'Invalid form data'
+    return { success: false, error: message }
+  }
+  const { email, password, confirmPassword, firstName, lastName } = parsed.data
 
   try {
-    await axiosInstance.post("/auth/register", {
-      email, 
-      password, 
-      password_confirmation: confirmPassword, 
-      first_name: firstName, 
-      last_name: lastName
-    });
+    const res = await backendFetch('/auth/register', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        email,
+        password,
+        password_confirmation: confirmPassword,
+        first_name: firstName,
+        last_name: lastName
+      })
+    })
+    if (!res.ok) throw new Error('Signup failed')
 
-    return createSuccessResult();
+    
+    return {
+      success: true,
+      error: null,
+      redirect: '/getstarted'
+    };
   } catch (error) {
-    return handleServerError(error, "An error occurred during signup");
+    console.log('🔴 Error in signupAction:', error);
+    return {
+      error: "An error occurred during signup",
+      success: false
+    };
   }
 }
 
@@ -155,9 +150,20 @@ export async function logoutAction(): Promise<ActionResult> {
     const cookieStore = await cookies();
     cookieStore.delete('accessToken');
     cookieStore.delete('refreshToken');
+    cookieStore.delete('refresh_token');
     
-    return createSuccessResult();
+    return {
+      success: true,
+      error: null,
+      redirect: '/login'
+    };
   } catch (error) {
-    return handleServerError(error, "An error occurred during logout");
+    console.log('🔴 Error in logoutAction:', error);
+    return {
+      error: "An error occurred during logout",
+      success: false
+    };
   }
 }
+
+// Removed legacy validateFormData helper; Zod schemas are used instead

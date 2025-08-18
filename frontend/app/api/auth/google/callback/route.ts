@@ -10,24 +10,18 @@ interface DecodedToken {
 }
 
 export async function POST(request: NextRequest) {
-  console.log('API route called!');
   
   try {
     const body = await request.json();
-    console.log('Body received:', body);
     
     const { token } = body;
-    console.log('Token received:', token);
-    
-    if (!token) {
+      if (!token) {
       return NextResponse.json({ error: 'Token required' }, { status: 400 });
     }
 
-    console.log('Setting token in cookie:', token);
 
     const cookieStore = await cookies();
     
-    // ✅ Stocker le token dans un cookie HttpOnly (sécurisé)
     cookieStore.set('accessToken', token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
@@ -36,12 +30,10 @@ export async function POST(request: NextRequest) {
       path: '/'
     });
 
-    console.log('Token stored successfully');
 
     // Decode the JWT token to check for roleId
     const decoded = jwt.decode(token) as DecodedToken;
     const hasRoleId = decoded?.roleId !== null && decoded?.roleId !== undefined;
-    console.log('hasRoleId', decoded);
     // Redirect based on roleId presence
     const redirectUrl = hasRoleId ? '/dashboard' : '/getstarted';
 
@@ -52,6 +44,6 @@ export async function POST(request: NextRequest) {
     });
   } catch (error) {
     console.error('Error setting token:', error);
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+      return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }

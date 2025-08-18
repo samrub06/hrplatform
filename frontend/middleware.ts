@@ -12,7 +12,9 @@ const PUBLIC_ROUTES = [
   'auth/reset-password',
   'api/auth',
   '',
-  'login'
+  'login',
+  'signup',
+  'getstarted'
 ]
 
 export function middleware(request: NextRequest) {

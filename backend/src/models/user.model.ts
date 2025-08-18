@@ -51,7 +51,7 @@ export class User extends Model {
   adminNotes: AdminNote;
 
   @HasMany(() => SessionUser, {
-    foreignKey: 'userId',
+    foreignKey: 'user_id',
     as: 'sessionUsers',
   })
   sessionUsers: SessionUser[];

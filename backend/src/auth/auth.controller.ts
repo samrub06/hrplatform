@@ -205,6 +205,7 @@ export class AuthController {
           lastName: user.lastName,
           picture: user.picture,
           googleId: user?.id,
+        
         }),
       );
 

@@ -3,29 +3,30 @@
 import { ArrowRight } from "lucide-react"
 import Link from "next/link"
 import { useActionState, useEffect } from "react"
+import { useFormStatus } from "react-dom"
 
 import { signupAction } from "@/app/actions/auth"
+import OAuthButtonsClient from "@/components/auth/form/OAuthButtonsClient"
 import { Button } from "@/components/common/button"
-import { Icons } from "@/components/common/icons"
 import {
-    Card,
-    CardContent,
-    CardDescription,
-    CardFooter,
-    CardHeader,
-    CardTitle,
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
 } from "@/components/common/card"
 import {
-    Form,
-    FormControl,
-    FormField,
-    FormItem,
-    FormLabel,
-    FormMessage,
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
 } from "@/components/common/form"
+import { Icons } from "@/components/common/icons"
 import { Input } from "@/components/common/input"
 import { Separator } from "@/components/common/separator"
-import { createInitialState } from "@/lib/errorHandler"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useRouter } from "next/navigation"
 import { useForm } from "react-hook-form"
@@ -42,10 +43,29 @@ const formSchema = z.object({
   path: ["confirmPassword"],
 })
 
+function SubmitButton() {
+  const { pending } = useFormStatus()
+  return (
+    <Button type="submit" className="w-full" disabled={pending}>
+      {pending ? (
+        <>
+          <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
+          Creating account...
+        </>
+      ) : (
+        <>
+          Create account
+          <ArrowRight className="ml-2 h-4 w-4" />
+        </>
+      )}
+    </Button>
+  )
+}
+
 export function SignupForm() {
   const router = useRouter()
-  const initialState = createInitialState()
-  const [state, formAction] = useActionState(signupAction, initialState)
+  type SignupState = { success: boolean; error: string | null; redirect?: string }
+  const [state, formAction] = useActionState<SignupState, FormData>(signupAction, { success: false, error: null })
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -60,9 +80,9 @@ export function SignupForm() {
 
   useEffect(() => {
     if (state?.success) {
-      router.push('/getstarted')
+      router.push(state.redirect || '/getstarted')
     }
-  }, [state?.success, router])
+  }, [state?.success, state?.redirect, router])
 
   return (
     <div className="flex flex-col gap-6 w-full">
@@ -74,16 +94,7 @@ export function SignupForm() {
           </CardDescription>
         </CardHeader>
         <CardContent className="grid gap-4">
-          <div className="grid grid-cols-2 gap-6">
-            <Button variant="outline" type="button">
-              <Icons.google className="mr-2 h-4 w-4" />
-              Google
-            </Button>
-            <Button variant="outline" type="button">
-              <Icons.gitHub className="mr-2 h-4 w-4" />
-              Github
-            </Button>
-          </div>
+          <OAuthButtonsClient />
           <div className="relative">
             <div className="absolute inset-0 flex items-center">
               <Separator />
@@ -168,19 +179,7 @@ export function SignupForm() {
                   {state.error}
                 </div>
               )}
-              <Button type="submit" className="w-full" disabled={state.success}>
-                {state.success ? (
-                  <>
-                    <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
-                    Creating account...
-                  </>
-                ) : (
-                  <>
-                    Create account
-                    <ArrowRight className="ml-2 h-4 w-4" />
-                  </>
-                )}
-              </Button>
+              <SubmitButton />
             </form>
           </Form>
         </CardContent>

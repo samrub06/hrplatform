@@ -3,25 +3,29 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    // Add new columns
-    await queryInterface.addColumn('permission', 'resource', {
-      type: Sequelize.STRING,
-      allowNull: false,
-      defaultValue: 'default',
-    });
-
-    await queryInterface.addColumn('permission', 'action', {
-      type: Sequelize.STRING,
-      allowNull: false,
-      defaultValue: 'read',
-    });
+    // Add new columns if they don't exist (idempotent)
+    const desc = await queryInterface.describeTable('permission');
+    if (!desc.resource) {
+      await queryInterface.addColumn('permission', 'resource', {
+        type: Sequelize.STRING,
+        allowNull: false,
+        defaultValue: 'default',
+      });
+    }
+    if (!desc.action) {
+      await queryInterface.addColumn('permission', 'action', {
+        type: Sequelize.STRING,
+        allowNull: false,
+        defaultValue: 'read',
+      });
+    }
 
     // Remove old columns
-    await queryInterface.removeColumn('permission', 'domain');
-    await queryInterface.removeColumn('permission', 'can_read');
-    await queryInterface.removeColumn('permission', 'can_create');
-    await queryInterface.removeColumn('permission', 'can_edit');
-    await queryInterface.removeColumn('permission', 'can_delete');
+    if (desc.domain) await queryInterface.removeColumn('permission', 'domain');
+    if (desc.can_read) await queryInterface.removeColumn('permission', 'can_read');
+    if (desc.can_create) await queryInterface.removeColumn('permission', 'can_create');
+    if (desc.can_edit) await queryInterface.removeColumn('permission', 'can_edit');
+    if (desc.can_delete) await queryInterface.removeColumn('permission', 'can_delete');
   },
 
   async down(queryInterface, Sequelize) {
