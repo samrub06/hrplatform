@@ -17,11 +17,16 @@ export async function backendFetch(path: string, init: RequestInit = {}) {
   const ua = hdrs.get('user-agent')
   if (ua && !mergedHeaders['User-Agent']) mergedHeaders['User-Agent'] = ua
 
-  return fetch(`${API_BASE}${path}`, {
+  const res = await fetch(`${API_BASE}${path}`, {
     credentials: 'include',
     ...init,
     headers: mergedHeaders,
     cache: 'no-store'
   })
+
+  return res.json()
+
+
+
 }
 

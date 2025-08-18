@@ -116,7 +116,7 @@ export async function signupAction(prevState: SignupState, formData: FormData): 
   const { email, password, confirmPassword, firstName, lastName } = parsed.data
 
   try {
-    const res = await backendFetch('/auth/register', {
+    await backendFetch('/auth/register', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -127,7 +127,7 @@ export async function signupAction(prevState: SignupState, formData: FormData): 
         last_name: lastName
       })
     })
-    if (!res.ok) throw new Error('Signup failed')
+    // If not 200, backendFetch already threw. res is parsed JSON here.
 
     
     return {
@@ -137,8 +137,13 @@ export async function signupAction(prevState: SignupState, formData: FormData): 
     };
   } catch (error) {
     console.log('🔴 Error in signupAction:', error);
+    let message = 'An error occurred during signup'
+    if (typeof error === 'object' && error !== null && 'message' in error) {
+      const errObj = error as Record<string, unknown>
+      if (typeof errObj.message === 'string') message = errObj.message
+    }
     return {
-      error: "An error occurred during signup",
+      error: message,
       success: false
     };
   }

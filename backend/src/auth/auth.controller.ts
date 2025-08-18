@@ -86,6 +86,7 @@ export class AuthController {
     @Body() loginRequestDto: LoginRequestDto,
     @Req() request: Request,
   ) {
+    try {
     // Login
     const credentials = await this.commandBus.execute(
       new LoginCommand(loginRequestDto),
@@ -109,7 +110,11 @@ export class AuthController {
       accessToken: credentials.accessToken,
       refreshToken: credentials.refreshToken,
     };
+  } catch (error) {
+    console.error('Login Error:', error);
+    throw new UnauthorizedException(error.message);
   }
+}
 
   @Public()
   @Post('admin/login')

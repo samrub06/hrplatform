@@ -48,13 +48,17 @@ export class AuthDAL {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(credentials)
     })
-    return res.json()
+    console.log('🔴 Login response:', res)
+    if(res.statusCode === 401) {
+      throw new Error(res.message)
+    }
+    return res
+    
   } catch (error) {
     console.log('🔴 Error during login:', error)
     throw error
   }
   }
- 
   // Verify session using refresh token - cached for performance
   static verifySession = cache(async (): Promise<SessionData | null> => {
     const token = (await cookies()).get('accessToken')?.value;
@@ -89,10 +93,10 @@ export class AuthDAL {
     }
 
     try {
-      const permissionsResponse = await backendFetch('/user/me/permissions')
+      const permissions = await backendFetch('/user/me/permissions')
       return {
         ...session,
-        permissions: await permissionsResponse.json()
+        permissions
       };
     } catch (error) {
       console.error('Error fetching user permissions:', error);
@@ -139,9 +143,8 @@ export class AuthDAL {
   // Refresh access token if needed
   static async refreshAccessToken(): Promise<string | null> {
     try {
-      const response = await backendFetch('/auth/refresh-token', { method: 'POST' })
-      if (!response.ok) return null
-      const { accessToken } = await response.json()
+      const data = await backendFetch('/auth/refresh-token', { method: 'POST' })
+      const { accessToken } = data
       const cookieStore = await cookies()
       cookieStore.set('accessToken', accessToken, {
         httpOnly: true,

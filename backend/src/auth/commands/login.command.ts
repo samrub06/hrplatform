@@ -40,10 +40,15 @@ export class LoginHandler
       throw new UnauthorizedException('This account is revoked');
     }
 
+    if(user.googleId || user.linkedinId) {
+      throw new UnauthorizedException('This account is linked to a social media account');
+    }
+
     const isPasswordValid = await bcrypt.compare(
       request.password,
-      user.password,
+      user?.password,
     );
+    
     if (!isPasswordValid) {
       throw new UnauthorizedException('Password is invalid');
     }
