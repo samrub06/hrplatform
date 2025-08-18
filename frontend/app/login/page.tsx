@@ -1,4 +1,4 @@
-import { LoginForm } from "@/components/auth/form/login-form"
+import LoginFormClient from "@/components/auth/form/login-form-client"
 import OAuthButtonsClient from "@/components/auth/form/OAuthButtonsClient"
 import {
   Card,
@@ -11,8 +11,7 @@ import { Separator } from "@/components/common/separator"
 import { GalleryVerticalEnd } from "lucide-react"
 import Link from "next/link"
 
-export default function Page({ searchParams }: { searchParams?: { error?: string } }) {
-  const hasError = searchParams?.error
+export default function Page() {
   return (
     <div className="bg-muted flex min-h-svh flex-col items-center justify-center gap-6 p-6 md:p-10">
       <div className="flex w-full max-w-sm flex-col gap-6">
@@ -41,11 +40,28 @@ export default function Page({ searchParams }: { searchParams?: { error?: string
                 </span>
               </div>
             </div>
-        
-            <LoginForm error={hasError} />
-           
+            <LoginFormClient />
+
+            <div className="text-sm text-muted-foreground text-center w-full">
+              Don&apos;t have an account?{" "}
+              <Link href="/signup" className="text-primary hover:underline">
+                Sign up
+              </Link>
+            </div>
+
+            <div className="text-xs text-muted-foreground text-center">
+              By continuing, you agree to our{" "}
+              <Link href="/terms" className="text-primary hover:underline">
+                Terms of Service
+              </Link>{" "}
+              and{" "}
+              <Link href="/privacy" className="text-primary hover:underline">
+                Privacy Policy
+              </Link>
+              .
+            </div>
           </CardContent>
-      
+
         </Card>
       </div>
     </div>

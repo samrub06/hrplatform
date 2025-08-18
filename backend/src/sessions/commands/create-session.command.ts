@@ -16,10 +16,10 @@ export class CreateSessionHandler
   async execute(command: CreateSessionCommand): Promise<SessionUser> {
     const { userId, token, ipAddress, userAgent } = command.request;
     const expiresAt = new Date();
-    expiresAt.setHours(expiresAt.getHours() + 24); // Session expire après 24h
+    expiresAt.setHours(expiresAt.getHours() + 24); // Session expire after 24h
 
     return this.sessionsRepository.create({
-      userId: userId,
+      user_id: userId,
       token: token,
       ipAddress: ipAddress,
       userAgent: userAgent,

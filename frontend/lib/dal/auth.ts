@@ -42,13 +42,17 @@ export interface SessionData {
 export class AuthDAL {
   // Login with credentials against backend
   static async login(credentials: { email: string; password: string }): Promise<{ accessToken: string; refreshToken: string }> {
+    try {
     const res = await backendFetch('/auth/login', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(credentials)
     })
-    if (!res.ok) throw new Error('Login failed')
     return res.json()
+  } catch (error) {
+    console.log('🔴 Error during login:', error)
+    throw error
+  }
   }
  
   // Verify session using refresh token - cached for performance
