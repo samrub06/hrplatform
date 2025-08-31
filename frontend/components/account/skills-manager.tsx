@@ -16,29 +16,12 @@ interface Skill {
 
 interface SkillsManagerProps {
   userSkills: Skill[]
-  onUpdate: (skills: Skill[]) => void
+    onUpdate: (skills: Skill[]) => void
 }
 
-// Sample available skills for demonstration
-const availableSkills: Skill[] = [
-  { id: "1", name: "React" },
-  { id: "2", name: "TypeScript" },
-  { id: "3", name: "CSS" },
-  { id: "4", name: "Node.js" },
-  { id: "5", name: "Python" },
-  { id: "6", name: "MongoDB" },
-  { id: "7", name: "PostgreSQL" },
-  { id: "8", name: "AWS" },
-  { id: "9", name: "Docker" },
-  { id: "10", name: "Kubernetes" },
-  { id: "11", name: "UI/UX" },
-  { id: "12", name: "Figma" },
-  { id: "13", name: "Java" },
-  { id: "14", name: "C#" },
-  { id: "15", name: "PHP" },
-]
 
-export default function SkillsManager({ userSkills, onUpdate }: SkillsManagerProps) {
+
+export default function SkillsManager({ userSkills }: SkillsManagerProps) {
   const [skills, setSkills] = useState<Skill[]>(userSkills)
   const [newSkill, setNewSkill] = useState("")
   const [open, setOpen] = useState(false)

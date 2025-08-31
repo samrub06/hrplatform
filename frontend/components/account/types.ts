@@ -16,6 +16,20 @@ export interface UserData {
     fileName: string
     id: string
     name: string
+    education?: {
+      id: string
+      institution: string
+      degree: string
+      field: string
+      startDate: string
+      endDate?: string | null
+      description?: string
+    }[]
+    skills?: {
+      id: string
+      name: string
+      level: number
+    }[]
   } | null
   role?: string
   adminNotes?: string
@@ -28,14 +42,15 @@ export interface UserData {
   current_company?: string
   createdAt: Date
   updatedAt: Date
-  birthday?: Date | null
+  birthday: Date 
   education?: {
+    id: string
     institution: string
     degree: string
-    fieldOfStudy: string
-    startDate: Date
-    endDate?: Date | null
-    description?: string
+    field: string
+    startDate: string
+    endDate?: string
+    current: boolean
   }[]
 }
 

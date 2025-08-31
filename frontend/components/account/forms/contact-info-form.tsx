@@ -1,58 +1,32 @@
 "use client"
 
 import { Button } from "@/components/common/button"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/common/card"
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/common/form"
 import { Input } from "@/components/common/input"
-import { toast } from "@/hooks/use-toast"
-import { zodResolver } from "@hookform/resolvers/zod"
-import { useState } from "react"
-import { useForm } from "react-hook-form"
-import { z } from "zod"
-import { UserData } from "./types"
+import { useContactForm } from "@/lib/hooks/useContactForm"
+import { UserData } from "@/lib/types"
 
 interface ContactInfoFormProps {
-  userData: Pick<UserData, 'email' | 'phone_number' | 'github_link' | 'linkedin_link' | 'public_profile_url'>
-  onUpdate: (data: Pick<UserData, 'email' | 'phone_number' | 'github_link' | 'linkedin_link' | 'public_profile_url'>) => void
+  userData: Pick<UserData, 'email' | 'phone_number' | 'github_link' | 'linkedin_link' >
 }
 
-const formSchema = z.object({
-  email: z.string().email({
-    message: "Please enter a valid email address.",
-  }),
-  phone_number: z.string().optional(),
-  github_link: z.string().url({ message: "Please enter a valid URL" }).optional().or(z.literal("")),
-  linkedin_link: z.string().url({ message: "Please enter a valid URL" }).optional().or(z.literal("")),
-  public_profile_url: z.string().url({ message: "Please enter a valid URL" }).optional().or(z.literal("")),
-})
-
-export default function ContactInfoForm({ userData, onUpdate }: ContactInfoFormProps) {
-  const [isSubmitting, setIsSubmitting] = useState(false)
-
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
-    defaultValues: {
-      email: userData.email,
-      phone_number: userData.phone_number || "",
-      github_link: userData.github_link || "",
-      linkedin_link: userData.linkedin_link || "",
-      public_profile_url: userData.public_profile_url || "",
-    },
-  })
-
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    setIsSubmitting(true)
-
-    // Simulate API call
-    setTimeout(() => {
-      onUpdate(values)
-      setIsSubmitting(false)
-      toast.success("Contact info updated")
-    }, 1000)
-  }
+export default function ContactInfoForm({ userData }: ContactInfoFormProps) {
+  const {
+    form,
+    isSubmitting,
+    handleSubmit
+  } = useContactForm(userData)
 
   return (
-    <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+    <Card>
+      <CardHeader>
+        <CardTitle>Contact Information</CardTitle>
+        <CardDescription>Manage your contact details</CardDescription>
+      </CardHeader>
+      <CardContent>
+        <Form {...form}>
+          <form onSubmit={handleSubmit} className="space-y-6">
         <FormField
           control={form.control}
           name="email"
@@ -113,25 +87,15 @@ export default function ContactInfoForm({ userData, onUpdate }: ContactInfoFormP
           />
         </div>
 
-        <FormField
-          control={form.control}
-          name="public_profile_url"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Personal Website</FormLabel>
-              <FormControl>
-                <Input placeholder="https://yourwebsite.com" {...field} />
-              </FormControl>
-              <FormDescription>Your personal website or portfolio.</FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+
+
 
         <Button type="submit" disabled={isSubmitting}>
           {isSubmitting ? "Saving..." : "Save Changes"}
         </Button>
-      </form>
-    </Form>
+          </form>
+        </Form>
+      </CardContent>
+    </Card>
   )
 }

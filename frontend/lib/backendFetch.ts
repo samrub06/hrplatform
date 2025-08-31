@@ -15,7 +15,10 @@ export async function backendFetch(path: string, init: RequestInit = {}) {
   if (cookieHeader) mergedHeaders.Cookie = cookieHeader
   // Optional: propagate useful request headers
   const ua = hdrs.get('user-agent')
+  const token = cookieStore.get('accessToken')?.value
+  if (token) mergedHeaders['Authorization'] = `Bearer ${token}`
   if (ua && !mergedHeaders['User-Agent']) mergedHeaders['User-Agent'] = ua
+
 
   const res = await fetch(`${API_BASE}${path}`, {
     credentials: 'include',

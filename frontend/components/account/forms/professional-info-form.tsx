@@ -1,59 +1,33 @@
 "use client"
 
 import { Button } from "@/components/common/button"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/common/card"
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/common/form"
 import { Input } from "@/components/common/input"
 import { Slider } from "@/components/common/slider"
-import { toast } from "@/hooks/use-toast"
-import { zodResolver } from "@hookform/resolvers/zod"
-import { useState } from "react"
-import { useForm } from "react-hook-form"
-import { z } from "zod"
-import { UserData } from "./types"
+import { useProfessionalForm } from "@/lib/hooks/useProfessionalForm"
+import { UserData } from "@/lib/types"
 
 interface ProfessionalInfoFormProps {
   userData: Pick<UserData, 'role' | 'current_position' | 'current_company' | 'desired_position' | 'salary_expectation' | 'years_of_experience'>
-  onUpdate: (data: Pick<UserData, 'role' | 'current_position' | 'current_company' | 'desired_position' | 'salary_expectation' | 'years_of_experience'>) => void
 }
 
-const formSchema = z.object({
-  role: z.string().optional(),
-  current_position: z.string().optional(),
-  current_company: z.string().optional(),
-  desired_position: z.string().optional(),
-  salary_expectation: z.string().optional(),
-  years_of_experience: z.number().min(0).max(50).optional(),
-})
-
-export default function ProfessionalInfoForm({ userData, onUpdate }: ProfessionalInfoFormProps) {
-  const [isSubmitting, setIsSubmitting] = useState(false)
-
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
-    defaultValues: {
-      role: userData.role || "",
-      current_position: userData.current_position || "",
-      current_company: userData.current_company || "",
-      desired_position: userData.desired_position || "",
-      salary_expectation: userData.salary_expectation || "",
-      years_of_experience: userData.years_of_experience || 0,
-    },
-  })
-
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    setIsSubmitting(true)
-
-    // Simulate API call
-    setTimeout(() => {
-      onUpdate(values)
-      setIsSubmitting(false)
-      toast.success("Professional info updated")
-    }, 1000)
-  }
+export default function ProfessionalInfoForm({ userData }: ProfessionalInfoFormProps) {
+  const {
+    form,
+    isSubmitting,
+    handleSubmit
+  } = useProfessionalForm(userData)
 
   return (
-    <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+    <Card>
+      <CardHeader>
+        <CardTitle>Professional Information</CardTitle>
+        <CardDescription>Update your career details</CardDescription>
+      </CardHeader>
+      <CardContent>
+        <Form {...form}>
+          <form onSubmit={handleSubmit} className="space-y-6">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <FormField
             control={form.control}
@@ -153,10 +127,14 @@ export default function ProfessionalInfoForm({ userData, onUpdate }: Professiona
           />
         </div>
 
+
+
         <Button type="submit" disabled={isSubmitting}>
           {isSubmitting ? "Saving..." : "Save Changes"}
         </Button>
-      </form>
-    </Form>
+          </form>
+        </Form>
+      </CardContent>
+    </Card>
   )
 }

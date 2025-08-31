@@ -122,6 +122,8 @@ export class UsersController {
     return this.queryBus.execute(new GetUserWithCVCompleteQuery(userId));
   }
 
+
+
   /**
    * Retrieves a specific user by their ID
    * Requires authentication and policies guard
@@ -143,16 +145,17 @@ export class UsersController {
    * Updates an existing user's information by their ID
    * Requires authentication and policies guard
    */
-  @Patch("/:id")
+  @Patch("me")
   @UseGuards(AuthGuard, PoliciesGuard)
   @ApiOperation({ summary: 'Update User By Id' })
   @ApiResponse({ status: 403, description: 'Forbidden.' })
   //@CheckPolicies((ability: AppAbility) => ability.can(Action.Update, User))
   updateUser(
     @Body() updateUserDto: UpdateUserRequestDto,
-    @Param('id') id: string,
+    @Request() req
   ) {
-    return this.commandBus.execute(new UpdateUserCommand(id, updateUserDto));
+    const userId = req.user.id; 
+    return this.commandBus.execute(new UpdateUserCommand(userId, updateUserDto));
   }
 
   /**
