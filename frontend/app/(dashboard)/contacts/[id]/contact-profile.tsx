@@ -33,7 +33,7 @@ interface UserData {
   role?: string
   adminNotes?: string
   profilePicture?: string
-  years_of_experience?: number
+  years_experience?: number
   skills: Skill[]
   desired_position?: string
   salary_expectation?: string
@@ -248,7 +248,7 @@ const generateSampleContacts = (count: number): UserData[] => {
       github_link: `https://github.com/${firstName.toLowerCase()}${lastName.toLowerCase()}`,
       linkedin_link: `https://linkedin.com/in/${firstName.toLowerCase()}${lastName.toLowerCase()}`,
       role: position,
-      years_of_experience: yearsOfExperience,
+      years_experience: yearsOfExperience,
       skills: userSkills,
       desired_position: `Senior ${position}`,
       salary_expectation: salaryExpectation,
@@ -421,8 +421,8 @@ export default function ContactProfile({ id }: { id: string }) {
                           {contact.current_company && (
                             <p className="text-muted-foreground">{contact.current_company}</p>
                           )}
-                          {contact.years_of_experience && (
-                            <p className="text-sm mt-1">{contact.years_of_experience} years of experience</p>
+                          {contact.years_experience && (
+                            <p className="text-sm mt-1">{contact.years_experience} years of experience</p>
                           )}
                         </div>
                       </div>

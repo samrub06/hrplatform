@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
 import { CVEducation } from '../models/cv-education.model';
 import { CVSkill } from '../models/cv-skill.model';
@@ -72,15 +72,20 @@ export class CVRepository {
     cvId: string,
     education: UpdateCVEducationRequestDto[],
   ): Promise<void> {
-    await this.cvEducationModel.destroy({ where: { cv_id: cvId } });
-    await Promise.all(
-      education.map((edu) =>
-        this.cvEducationModel.create({
-          ...edu,
-          cv_id: cvId,
-        }),
-      ),
-    );
+    try {
+      await this.cvEducationModel.destroy({ where: { cv_id: cvId } });
+      await Promise.all(
+        education.map((edu) =>
+          this.cvEducationModel.create({
+            ...edu,
+            cv_id: cvId,
+          }),
+        ),
+      );
+    } catch (error) {
+      throw new BadRequestException(error);
+    }
+
   }
 
   async delete(id: string): Promise<boolean> {

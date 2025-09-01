@@ -8,7 +8,7 @@ export interface UserData {
   current_company?: string
   desired_position?: string
   salary_expectation?: string
-  years_of_experience?: number
+  years_experience?: number
   phone_number?: string
   github_link?: string
   linkedin_link?: string
@@ -44,7 +44,7 @@ export interface UserDataFromServer {
   current_company?: string
   desired_position?: string
   salary_expectation?: string
-  years_of_experience?: number
+  years_experience?: number
   phone_number?: string
   github_link?: string
   linkedin_link?: string

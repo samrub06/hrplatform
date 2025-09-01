@@ -15,7 +15,7 @@ import { useEffect, useState } from "react";
 import CandidateCard from "@/components/candidates/CandidateCard";
 import CandidateDetails from "@/components/candidates/CandidateDetails";
 import CandidateFilters from "@/components/candidates/CandidateFilter";
-import { User } from "@/lib/models";
+import { getCandidatesAction } from "@/lib/actions/user/queries";
 import { Candidate, CandidateFiltersType } from "@/lib/types";
 
 // Fonction utilitaire pour créer les URLs
@@ -44,7 +44,7 @@ export default function Candidates() {
   const loadCandidates = async () => {
     setIsLoading(true);
     try {
-      const data = await User.list("-created_date", 100);
+      const data = await getCandidatesAction();
       setCandidates(data);
     } catch (error) {
       console.error("Error loading candidates:", error);

@@ -1,18 +1,18 @@
 'use client'
 
 // Small client-only form that uses useActionState to get loading and error states
-import { loginAction } from '@/app/actions/auth'
 import { Button } from '@/components/common/button'
 import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
+    Form,
+    FormControl,
+    FormField,
+    FormItem,
+    FormLabel,
+    FormMessage,
 } from '@/components/common/form'
 import { Icons } from '@/components/common/icons'
 import { Input } from '@/components/common/input'
+import { loginAction } from '@/lib/actions'
 import { zodResolver } from '@hookform/resolvers/zod'
 import Link from 'next/link'
 import { useActionState, useEffect } from 'react'

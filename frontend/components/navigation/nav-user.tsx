@@ -7,7 +7,6 @@ import {
   LogOut
 } from "lucide-react"
 
-import { logoutAction } from "@/app/actions/auth"
 import {
   Avatar,
   AvatarFallback,
@@ -28,6 +27,7 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@/components/common/sidebar"
+import { logoutAction } from "@/lib/actions/auth/index"
 import { useRouter } from "next/navigation"
 
 export function NavUser({

@@ -133,7 +133,7 @@ const generateSampleContacts = (count: number): UserData[] => {
       github_link: `https://github.com/${firstName.toLowerCase()}${lastName.toLowerCase()}`,
       linkedin_link: `https://linkedin.com/in/${firstName.toLowerCase()}${lastName.toLowerCase()}`,
       role: position,
-      years_of_experience: yearsOfExperience,
+      years_experience: yearsOfExperience,
       skills: userSkills,
       current_position: `Senior ${position}`,
       current_company: company,

@@ -1,5 +1,5 @@
-import { updateProfessionalInfoAction } from "@/app/actions/user"
 import { toast } from "@/hooks/use-toast"
+import { updateProfessionalInfoAction } from "@/lib/actions/user/professional-info"
 import { UserData } from "@/lib/types"
 import { ProfessionalFormData } from "@/lib/validations/professional"
 
@@ -8,7 +8,7 @@ export const transformProfessionalForSubmit = (professional: ProfessionalFormDat
   return {
     ...professional,
     // Ensure proper data types
-    years_of_experience: professional.years_of_experience || 0,
+    years_experience: professional.years_experience || 0,
     // Handle empty strings
     role: professional.role || null,
     current_position: professional.current_position || null,
@@ -18,14 +18,14 @@ export const transformProfessionalForSubmit = (professional: ProfessionalFormDat
   }
 }
 
-export const transformProfessionalFromApi = (userData: Pick<UserData, 'role' | 'current_position' | 'current_company' | 'desired_position' | 'salary_expectation' | 'years_of_experience'>) => {
+export const transformProfessionalFromApi = (userData: Pick<UserData, 'role' | 'current_position' | 'current_company' | 'desired_position' | 'salary_expectation' | 'years_experience'>) => {
   return {
     role: userData.role || "",
     current_position: userData.current_position || "",
     current_company: userData.current_company || "",
     desired_position: userData.desired_position || "",
     salary_expectation: userData.salary_expectation || "",
-    years_of_experience: userData.years_of_experience || 0
+    years_experience: userData.years_experience || 0
   }
 }
 
@@ -61,6 +61,6 @@ export const submitProfessionalData = async (values: ProfessionalFormData) => {
 }
 
 // Form utility functions
-export const useProfessionalFormData = (userData: Pick<UserData, 'role' | 'current_position' | 'current_company' | 'desired_position' | 'salary_expectation' | 'years_of_experience'>) => {
+export const useProfessionalFormData = (userData: Pick<UserData, 'role' | 'current_position' | 'current_company' | 'desired_position' | 'salary_expectation' | 'years_experience'>) => {
   return transformProfessionalFromApi(userData)
 }

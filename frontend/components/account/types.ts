@@ -34,7 +34,7 @@ export interface UserData {
   role?: string
   adminNotes?: string
   profilePicture?: string
-  years_of_experience?: number
+  years_experience?: number
   skills: Skill[]
   desired_position?: string
   salary_expectation?: string
@@ -71,7 +71,7 @@ export interface UserDataFromServer {
   role?: string
   adminNotes?: string
   profilePicture?: string
-  years_of_experience?: number
+  years_experience?: number
   skills: Skill[]
   desired_position?: string
   salary_expectation?: string

@@ -1,7 +1,7 @@
-import { updateContactInfoAction } from "@/app/actions/user"
 import { toast } from "@/hooks/use-toast"
 import { UserData } from "@/lib/types"
 import { ContactFormData } from "@/lib/validations/contact"
+import { updateContactInfoAction } from "../actions/account"
 
 // Data transformation utilities
 export const transformContactForSubmit = (contact: ContactFormData) => {

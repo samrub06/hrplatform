@@ -1,7 +1,7 @@
-import { updatePersonalInfoAction } from "@/app/actions/user"
 import { toast } from "@/hooks/use-toast"
 import { UserData } from "@/lib/types"
 import { PersonalFormData } from "@/lib/validations/personal"
+import { updatePersonalInfoAction } from "../actions/account"
 
 // Data transformation utilities
 export const transformPersonalForSubmit = (personal: PersonalFormData) => {

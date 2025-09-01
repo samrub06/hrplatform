@@ -10,7 +10,7 @@ import { UpdateCVSkillsRequestDto } from './update-cv-skills.command.requet.dto'
 @Injectable()
 export class UpdateCVSkillsCommand {
   constructor(
-    public readonly id: string,
+    public readonly userId: string,
     public readonly skills: UpdateCVSkillsRequestDto[],
   ) {}
 }
@@ -22,9 +22,9 @@ export class UpdateCVSkillsCommandHandler
   constructor(private readonly cvRepository: CVRepository) {}
 
   async execute(command: UpdateCVSkillsCommand) {
-    const { id, skills } = command;
+    const { userId, skills } = command;
 
-    if (!id) {
+    if (!userId) {
       throw new BadRequestException('UserId is required');
     }
 
@@ -46,9 +46,9 @@ export class UpdateCVSkillsCommandHandler
       }
     }
  */
-    const cv = await this.cvRepository.findSkillsByUserId(id);
+    const cv = await this.cvRepository.findSkillsByUserId(userId);
     if (!cv) {
-      throw new NotFoundException(`CV for user ${id} not found`);
+      throw new NotFoundException(`CV for user ${userId} not found`);
     }
     await this.cvRepository.updateSkills(cv.id, skills);
   }

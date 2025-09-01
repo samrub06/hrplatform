@@ -4,6 +4,7 @@ import {
   Param,
   Post,
   Put,
+  Req,
   UseGuards,
   ValidationPipe,
 } from '@nestjs/common';
@@ -83,7 +84,7 @@ export class CVController {
    * Update CV skills
    * Requires authentication, policies guard, and UPDATE permission on CV resource
    */
-  @Put('update-skills/:id')
+  @Put('skills/me')
   @UseGuards(AuthGuard, PoliciesGuard)
   @ApiOperation({ summary: 'Update CV Skills' })
   @ApiResponse({ status: 403, description: 'Forbidden.' })
@@ -93,13 +94,14 @@ export class CVController {
   })
   //@CheckPolicies((ability: AppAbility) => ability.can(Action.Update, CV))
   async updateCVSkills(
-    @Param('id') id: string,
+    @Req() req: Request & { user: { id: string } },
     @Body(new ValidationPipe({ transform: true }))
     body: {
       skills: UpdateCVSkillsRequestDto[];
     },
   ) {
-    return this.commandBus.execute(new UpdateCVSkillsCommand(id, body.skills));
+    const userId = req.user.id;
+    return this.commandBus.execute(new UpdateCVSkillsCommand(userId, body.skills));
   }
 
   /**
@@ -119,21 +121,21 @@ export class CVController {
    * Update CV education
    * Requires authentication, policies guard, and UPDATE permission on CV resource
    */
-  @Put('update-education/:id')
+  @Put('education/me')
   @UseGuards(AuthGuard, PoliciesGuard)
   @ApiOperation({ summary: 'Update CV Education' })
   @ApiResponse({ status: 403, description: 'Forbidden.' })
   //@CheckPolicies((ability: AppAbility) => ability.can(Action.Update, CV))
   async updateCVEducation(
-    @Param('id')
-    id: string,
+    @Req() req: Request & { user: { id: string } },
     @Body(new ValidationPipe({ transform: true }))
     body: {
       education: UpdateCVEducationRequestDto[];
     },
   ) {
+    const userId = req.user.id; 
     return this.commandBus.execute(
-      new UpdateCVEducationCommand(id, body.education),
+      new UpdateCVEducationCommand(userId, body.education),
     );
   }
 }

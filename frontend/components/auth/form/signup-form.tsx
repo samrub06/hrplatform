@@ -1,11 +1,11 @@
 "use client"
 
+import { registerAction } from "@/lib/actions/auth"
 import { ArrowRight } from "lucide-react"
 import Link from "next/link"
 import { useActionState, useEffect } from "react"
 import { useFormStatus } from "react-dom"
 
-import { signupAction } from "@/app/actions/auth"
 import OAuthButtonsClient from "@/components/auth/form/OAuthButtonsClient"
 import { Button } from "@/components/common/button"
 import {
@@ -65,7 +65,7 @@ function SubmitButton() {
 export function SignupForm() {
   const router = useRouter()
   type SignupState = { success: boolean; error: string | null; redirect?: string }
-  const [state, formAction] = useActionState<SignupState, FormData>(signupAction, { success: false, error: null })
+  const [state, formAction] = useActionState<SignupState, FormData>(registerAction, { success: false, error: null })
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),

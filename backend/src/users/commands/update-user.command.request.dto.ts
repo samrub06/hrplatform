@@ -47,7 +47,7 @@ export class UpdateUserRequestDto {
   @ApiProperty()
   @IsOptional()
   @IsNumber()
-  years_of_experience?: number;
+  years_experience?: number;
 
   @ApiProperty()
   @IsOptional()

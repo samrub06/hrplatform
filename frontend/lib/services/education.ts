@@ -1,7 +1,7 @@
-import { updateEducationAction } from "@/app/actions/user"
 import { toast } from "@/hooks/use-toast"
 import { UserData } from "@/lib/types"
 import { EducationFormData, EducationItem } from "@/lib/validations/education"
+import { updateEducationAction } from "../actions/account"
 
 // Data transformation utilities
 export const transformEducationForSubmit = (education: EducationItem[]) => {

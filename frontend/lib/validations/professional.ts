@@ -7,7 +7,7 @@ export const professionalFormSchema = z.object({
   current_company: z.string().optional(),
   desired_position: z.string().optional(),
   salary_expectation: z.string().optional(),
-  years_of_experience: z.number().min(0).max(50).optional(),
+  years_experience: z.number().min(0).max(50).optional(),
 })
 
 // Type definitions based on schema

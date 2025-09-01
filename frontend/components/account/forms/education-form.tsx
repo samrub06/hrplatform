@@ -28,6 +28,7 @@ export default function EducationForm({ userEducationData }: EducationFormProps)
     handleSubmit
   } = useEducationForm(userEducationData)
 
+
   return (
     <Card>
       <CardHeader>

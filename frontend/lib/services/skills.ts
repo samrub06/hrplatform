@@ -1,7 +1,7 @@
-import { updateSkillsAction } from "@/app/actions/user"
 import { toast } from "@/hooks/use-toast"
 import { UserData } from "@/lib/types"
 import { SkillItem, SkillsFormData } from "@/lib/validations/skills"
+import { updateSkillsAction } from "../actions/account"
 
 // Data transformation utilities
 export const transformSkillsForSubmit = (skills: SkillItem[]) => {

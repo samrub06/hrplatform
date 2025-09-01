@@ -10,7 +10,7 @@ import { UpdateCVEducationRequestDto } from './update-cv-education.request.comma
 @Injectable()
 export class UpdateCVEducationCommand {
   constructor(
-    public readonly id: string,
+    public readonly userId: string,
     public readonly education: UpdateCVEducationRequestDto[],
   ) {}
 }
@@ -22,9 +22,9 @@ export class UpdateCVEducationCommandHandler
   constructor(private readonly cvRepository: CVRepository) {}
 
   async execute(command: UpdateCVEducationCommand) {
-    const { id, education } = command;
+    const { userId, education } = command;
 
-    if (!id) {
+    if (!userId) {
       throw new BadRequestException('UserId is required');
     }
 
@@ -41,9 +41,9 @@ export class UpdateCVEducationCommandHandler
       }
     }
 
-    const cv = await this.cvRepository.findEducationByUserId(id);
+    const cv = await this.cvRepository.findEducationByUserId(userId);
     if (!cv) {
-      throw new NotFoundException(`CV for user ${id} not found`);
+      throw new NotFoundException(`CV for user ${userId} not found`);
     }
 
     const updatedEducation = await this.cvRepository.updateEducation(

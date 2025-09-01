@@ -9,7 +9,7 @@ import { useProfessionalForm } from "@/lib/hooks/useProfessionalForm"
 import { UserData } from "@/lib/types"
 
 interface ProfessionalInfoFormProps {
-  userData: Pick<UserData, 'role' | 'current_position' | 'current_company' | 'desired_position' | 'salary_expectation' | 'years_of_experience'>
+  userData: Pick<UserData, 'role' | 'current_position' | 'current_company' | 'desired_position' | 'salary_expectation' | 'years_experience'>
 }
 
 export default function ProfessionalInfoForm({ userData }: ProfessionalInfoFormProps) {
@@ -46,7 +46,7 @@ export default function ProfessionalInfoForm({ userData }: ProfessionalInfoFormP
 
           <FormField
             control={form.control}
-            name="years_of_experience"
+            name="years_experience"
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Years of Experience: {field.value}</FormLabel>
