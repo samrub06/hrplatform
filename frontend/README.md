@@ -115,7 +115,7 @@ app/
 │   ├── dashboard/            # Main dashboard page
 │   ├── candidates/           # Candidate management
 │   ├── contacts/             # Contact management
-│   ├── referals/             # Referral system
+│   ├── referrals/             # Referral system
 │   └── account/              # User account management
 ├── auth/                     # Authentication routes
 │   ├── google/callback/      # Google OAuth callback

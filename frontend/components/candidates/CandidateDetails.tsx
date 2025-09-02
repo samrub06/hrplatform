@@ -1,64 +1,28 @@
-import { Button } from "@/components/common/button";
 import { Avatar, AvatarFallback } from "@/components/common/avatar";
 import { Badge } from "@/components/common/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/common/card";
 import { Separator } from "@/components/common/separator";
 
-import { CV, Experience, Skill } from "@/lib/models";
-import type { Candidate, CandidateData } from "@/lib/types";
+import type { Candidate } from "@/lib/types";
 import { format } from "date-fns";
 import {
-    Briefcase,
-    Clock,
-    Download,
-    ExternalLink,
-    Github,
-    Globe,
-    GraduationCap,
-    Linkedin,
-    Mail,
-    MapPin,
-    Phone,
-    Star
+  Briefcase,
+  Clock,
+  ExternalLink,
+  Github,
+  Globe,
+  Linkedin,
+  Mail,
+  MapPin,
+  Phone,
+  Star
 } from "lucide-react";
-import { useEffect, useState } from "react";
 
 interface CandidateDetailsProps {
   candidate: Candidate | null;
 }
 
 export default function CandidateDetails({ candidate }: CandidateDetailsProps) {
-  const [candidateData, setCandidateData] = useState<CandidateData>({
-    cvs: [],
-    skills: [],
-    experiences: []
-  });
-
-  useEffect(() => {
-    if (candidate) {
-      loadCandidateDetails();
-    }
-  }, [candidate]);
-
-  const loadCandidateDetails = async () => {
-    if (!candidate) return;
-    
-    try {
-      const [cvs, skills, experiences] = await Promise.all([
-        CV.filter({ user_id: candidate.id }),
-        Skill.filter({ user_id: candidate.id }),
-        Experience.filter({ user_id: candidate.id })
-      ]);
-
-      setCandidateData({
-        cvs,
-        skills,
-        experiences
-      });
-    } catch (error) {
-      console.error("Error loading candidate details:", error);
-    }
-  };
 
   if (!candidate) {
     return (
@@ -84,7 +48,7 @@ export default function CandidateDetails({ candidate }: CandidateDetailsProps) {
             <AvatarFallback className="bg-gradient-to-r from-blue-500 to-indigo-500 text-white font-semibold">
               {candidate.first_name && candidate.last_name 
                 ? `${candidate.first_name[0]}${candidate.last_name[0]}`
-                : candidate.full_name?.split(' ').map((n: string) => n[0]).join('').slice(0, 2) || 'C'
+                : candidate.first_name?.split(' ').map((n: string) => n[0]).join('').slice(0, 2) || 'C'
               }
             </AvatarFallback>
           </Avatar>
@@ -92,7 +56,7 @@ export default function CandidateDetails({ candidate }: CandidateDetailsProps) {
             <CardTitle className="text-lg font-bold text-slate-900">
               {candidate.first_name && candidate.last_name 
                 ? `${candidate.first_name} ${candidate.last_name}`
-                : candidate.full_name || 'Unnamed Candidate'
+                : candidate.first_name || 'Unnamed Candidate'
               }
             </CardTitle>
             <p className="text-sm text-slate-600 capitalize">
@@ -220,103 +184,35 @@ export default function CandidateDetails({ candidate }: CandidateDetailsProps) {
 
         <Separator />
 
-        {/* CVs */}
-        {candidateData.cvs.length > 0 && (
-          <div>
-            <h4 className="font-semibold text-slate-900 mb-3 flex items-center">
-              <GraduationCap className="w-4 h-4 mr-2" />
-              CVs ({candidateData.cvs.length})
-            </h4>
-            <div className="space-y-2">
-              {candidateData.cvs.map((cv) => (
-                <div key={cv.id} className="flex items-center justify-between p-3 bg-slate-50 rounded-lg">
-                  <div>
-                    <p className="text-sm font-medium text-slate-900">{cv.file_name}</p>
-                    <p className="text-xs text-slate-500">
-                      {format(new Date(cv.created_date), 'MMM d, yyyy')}
-                    </p>
-                  </div>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    asChild
-                  >
-                    <a href={cv.file_url} target="_blank" rel="noopener noreferrer">
-                      <Download className="w-4 h-4" />
-                    </a>
-                  </Button>
-                </div>
-              ))}
+        {/* Bio */}
+        {candidate.bio && (
+          <>
+            <Separator />
+            <div>
+              <h4 className="font-semibold text-slate-900 mb-3">About</h4>
+              <div className="p-3 bg-slate-50 rounded-lg">
+                <p className="text-sm text-slate-700">{candidate.bio}</p>
+              </div>
             </div>
+          </>
+        )}
+
+        {/* Profile Status */}
+        <Separator />
+        <div>
+          <h4 className="font-semibold text-slate-900 mb-3">Profile Status</h4>
+          <div className="flex items-center space-x-2">
+            <Badge 
+              variant={candidate.profile_complete ? "default" : "secondary"}
+              className="text-xs"
+            >
+              {candidate.profile_complete ? "Complete" : "Incomplete"}
+            </Badge>
+            <span className="text-xs text-slate-500">
+              Created {format(new Date(candidate.created_date), 'MMM d, yyyy')}
+            </span>
           </div>
-        )}
-
-        {/* Skills */}
-        {candidateData.skills.length > 0 && (
-          <>
-            <Separator />
-            <div>
-              <h4 className="font-semibold text-slate-900 mb-3 flex items-center">
-                <Star className="w-4 h-4 mr-2" />
-                Skills ({candidateData.skills.length})
-              </h4>
-              <div className="flex flex-wrap gap-2">
-                {candidateData.skills.slice(0, 10).map((skill) => (
-                  <Badge 
-                    key={skill.id}
-                    variant="secondary"
-                    className="text-xs"
-                  >
-                    {skill.skill_name}
-                  </Badge>
-                ))}
-                {candidateData.skills.length > 10 && (
-                  <Badge variant="outline" className="text-xs">
-                    +{candidateData.skills.length - 10} more
-                  </Badge>
-                )}
-              </div>
-            </div>
-          </>
-        )}
-
-        {/* Recent Experience */}
-        {candidateData.experiences.length > 0 && (
-          <>
-            <Separator />
-            <div>
-              <h4 className="font-semibold text-slate-900 mb-3 flex items-center">
-                <Briefcase className="w-4 h-4 mr-2" />
-                Recent Experience
-              </h4>
-              <div className="space-y-3">
-                {candidateData.experiences.slice(0, 3).map((exp) => (
-                  <div key={exp.id} className="p-3 bg-slate-50 rounded-lg">
-                    <p className="font-medium text-slate-900 text-sm">{exp.position_title}</p>
-                    <p className="text-xs text-slate-600">{exp.company_name}</p>
-                    <p className="text-xs text-slate-500 mt-1">
-                      {format(new Date(exp.start_date), 'MMM yyyy')} - 
-                      {exp.is_current ? ' Present' : format(new Date(exp.end_date!), 'MMM yyyy')}
-                    </p>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </>
-        )}
-
-        {/* Admin Notes */}
-        {candidate.admin_notes && (
-          <>
-            <Separator />
-            <div>
-              <h4 className="font-semibold text-slate-900 mb-3">Admin Notes</h4>
-              <div className="p-3 bg-amber-50 border border-amber-200 rounded-lg">
-                <p className="text-sm text-amber-800">{candidate.admin_notes}</p>
-              </div>
-            </div>
-          </>
-        )}
+        </div>
       </CardContent>
     </Card>
   );

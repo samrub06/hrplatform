@@ -5,19 +5,19 @@ import { Button } from "@/components/common/button"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/common/card"
 import { Separator } from "@/components/common/separator"
 import {
-    ArrowLeft,
-    Bookmark,
-    Briefcase,
-    Building,
-    Clock,
-    DollarSign,
-    ExternalLink,
-    Globe,
-    Mail,
-    MapPin,
-    Phone,
-    Share2,
-    User,
+  ArrowLeft,
+  Bookmark,
+  Briefcase,
+  Building,
+  Clock,
+  DollarSign,
+  ExternalLink,
+  Globe,
+  Mail,
+  MapPin,
+  Phone,
+  Share2,
+  User,
 } from "lucide-react"
 import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
@@ -216,7 +216,7 @@ function ReferralDetails({ id }: { id: string }) {
   if (!job) {
     return (
       <div className="container mx-auto py-8">
-        <Button variant="ghost" onClick={() => router.push("/referals")} className="mb-4">
+        <Button variant="ghost" onClick={() => router.push("/referrals")} className="mb-4">
           <ArrowLeft className="mr-2 h-4 w-4" /> Back to Jobs
         </Button>
         <Card>
@@ -254,7 +254,7 @@ function ReferralDetails({ id }: { id: string }) {
 
   return (
     <div className="container mx-auto py-8">
-      <Button variant="ghost" onClick={() => router.push("/referals")} className="mb-4">
+      <Button variant="ghost" onClick={() => router.push("/referrals")} className="mb-4">
         <ArrowLeft className="mr-2 h-4 w-4" /> Back to Jobs
       </Button>
 
@@ -435,7 +435,7 @@ function ReferralDetails({ id }: { id: string }) {
                     <div key={similarJob.id} className="border-b pb-3 last:border-0 last:pb-0">
                       <h4
                         className="font-medium hover:underline cursor-pointer"
-                        onClick={() => router.push(`referals/${similarJob.id}`)}
+                        onClick={() => router.push(`referrals/${similarJob.id}`)}
                       >
                         {similarJob.name}
                       </h4>

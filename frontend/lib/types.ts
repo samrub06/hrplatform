@@ -29,8 +29,17 @@ export interface UserData {
       endDate?: string
       current: boolean
     }>  
+    experiences: Array<{
+      id: string
+      position_title: string
+      company_name: string
+      start_date: string
+      end_date?: string
+      is_current: boolean
+    }>
   }
   updatedAt?: Date
+  admin_notes?: string
 }
 
 // Interface for server data (dates as strings)

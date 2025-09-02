@@ -1,7 +1,7 @@
 'use server'
 
 import { backendFetch } from '@/lib/backendFetch'
-import { type UserData } from '@/lib/types'
+import { Candidate, type UserData } from '@/lib/types'
 
 // Get user data for account settings
 export async function getUserDataAction(): Promise<UserData | null> {
@@ -43,14 +43,20 @@ export async function getUserDataAction(): Promise<UserData | null> {
 }
 
 // Get candidates data
-export async function getCandidatesAction(): Promise<any[]> {
+export async function getCandidatesAction(): Promise<Candidate[]> {
   try {
     const response = await backendFetch('/candidates', {
       method: 'GET',
       credentials: 'include'
     })
     
-    return response || []
+    // Ensure we always return an array
+    if (Array.isArray(response)) {
+      return response
+    }
+    
+    // If response is not an array, return empty array
+    return []
   } catch (error) {
     console.error('Error fetching candidates:', error)
     return []

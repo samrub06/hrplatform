@@ -45,15 +45,18 @@ export default function Candidates() {
     setIsLoading(true);
     try {
       const data = await getCandidatesAction();
-      setCandidates(data);
+      // Ensure data is always an array
+      setCandidates(Array.isArray(data) ? data : []);
     } catch (error) {
       console.error("Error loading candidates:", error);
+      setCandidates([]);
     }
     setIsLoading(false);
   };
 
   const filterCandidates = () => {
-    let filtered = candidates;
+    // Ensure candidates is always an array
+    let filtered = Array.isArray(candidates) ? candidates : [];
 
     // Search filter
     if (searchTerm) {
@@ -155,9 +158,9 @@ export default function Candidates() {
         >
           <div className="flex items-center justify-between">
             <p className="text-slate-600">
-              {isLoading ? "Loading..." : `${filteredCandidates.length} candidates found`}
+              {isLoading ? "Loading..." : `${Array.isArray(filteredCandidates) ? filteredCandidates.length : 0} candidates found`}
             </p>
-            {filteredCandidates.length > 0 && (
+            {Array.isArray(filteredCandidates) && filteredCandidates.length > 0 && (
               <Button variant="outline" size="sm" className="gap-2">
                 <Download className="w-4 h-4" />
                 Export Results
@@ -185,7 +188,7 @@ export default function Candidates() {
                   </Card>
                 ))}
               </div>
-            ) : filteredCandidates.length === 0 ? (
+            ) : !Array.isArray(filteredCandidates) || filteredCandidates.length === 0 ? (
               <Card className="border-0 bg-white/70 backdrop-blur-sm">
                 <CardContent className="p-12 text-center">
                   <div className="w-16 h-16 mx-auto mb-4 bg-slate-100 rounded-full flex items-center justify-center">
@@ -210,7 +213,7 @@ export default function Candidates() {
               </Card>
             ) : (
               <div className="grid gap-6">
-                {filteredCandidates.map((candidate, index) => (
+                {Array.isArray(filteredCandidates) && filteredCandidates.map((candidate, index) => (
                   <motion.div
                     key={candidate.id}
                     initial={{ opacity: 0, y: 20 }}

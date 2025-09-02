@@ -28,11 +28,9 @@ export default async function RootLayout({
   console.log(user)
   const navMain = [
     { title: "Dashboard", url: "/dashboard", icon: null },
-    { title: "Users", url: "/users", icon: null },
     { title: "Contacts", url: "/contacts", icon: null },
     { title: "Referrals", url: "/referrals", icon: null },
-    { title: "Reports", url: "/reports", icon: null },
-    { title: "Settings", url: "/settings", icon: null },
+    { title: "Settings", url: "/account", icon: null },
   ]
   
   const sidebarData = {
